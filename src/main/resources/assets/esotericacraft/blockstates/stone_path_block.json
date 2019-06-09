@@ -1,0 +1,6 @@
+{
+    "variants":
+	{
+        "": { "model": "esotericacraft:block/stone_path_block" }
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "ABA",
+        " A ",
+		" A "
+    ],
+    "key":
+    {
+        "A":
+		{
+			"item": "minecraft:stick"
+        },
+		"B":
+		{
+			"item": "minecraft:saddle"
+		}
+    },
+    "result":
+    {
+        "item": "esotericacraft:pogo_stick"
+    }
+}

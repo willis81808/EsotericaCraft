@@ -1,0 +1,8 @@
+{
+    "parent": "block/carpet",
+    "textures":
+	{
+		"particle": "esotericacraft:block/stone_path_block",
+        "wool": "esotericacraft:block/stone_path_block"
+    }
+}
