@@ -151,15 +151,46 @@ public class RuneList {
 
 	private static final String[] mundaneBlocks =
 	{
+		// sandstone
+		"block.minecraft.sandstone",
+		"block.minecraft.red_sandstone",
+		
+		// planks
+		"block.minecraft.oak_planks",
+		"block.minecraft.spruce_planks",
+		"block.minecraft.birch_planks",
+		"block.minecraft.jungle_planks",
+		"block.minecraft.acacia_planks",
+		"block.minecraft.dark_oak_planks",
+		
 		// basics
 		"block.minecraft.cobblestone",
 		"block.minecraft.dirt"
 	};
 	private static final String[] enchantedBlocks =
 	{
+		// nether
+		"block.minecraft.quartz_block",
+		"block.minecraft.chiseled_quartz_block",
+		"block.minecraft.quartz_pillar",
+		"block.minecraft.smooth_quartz",
+		"block.minecraft.netherrack",
+		"block.minecraft.glowstone",
+			
 		// ore blocks
 		"block.minecraft.diamond_block",
+		"block.minecraft.emerald_block",
 		"block.minecraft.redstone_block",
+		"block.minecraft.gold_block",
+		"block.minecraft.iron_block",
+
+		// cut/polished sandstone
+		"block.minecraft.cut_sandstone",
+		"block.minecraft.chiseled_sandstone",
+		"block.minecraft.smooth_sandstone",
+		"block.minecraft.cut_red_sandstone",
+		"block.minecraft.chiseled_red_sandstone",
+		"block.minecraft.smooth_red_sandstone",
 		
 		// woods
 		"block.minecraft.oak_wood",
