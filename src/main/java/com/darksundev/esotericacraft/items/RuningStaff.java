@@ -44,8 +44,8 @@ public class RuningStaff extends Item
 			}
 			else
 			{
-				byte[] data = item.getTag().getByteArray(TELEPORT_KEY);
-				RuneList.teleportLinks = SerializationUtils.deserialize(data);
+				//byte[] data = item.getTag().getByteArray(TELEPORT_KEY);
+				//RuneList.teleportLinks = SerializationUtils.deserialize(data);
 			}
 			
 			// get cast root
@@ -86,7 +86,7 @@ public class RuningStaff extends Item
 			}
 
 			// save new data
-			item.getTag().putByteArray(TELEPORT_KEY, SerializationUtils.serialize(RuneList.teleportLinks));
+			//item.getTag().putByteArray(TELEPORT_KEY, SerializationUtils.serialize(RuneList.teleportLinks));
 		}
 		return super.onItemUse(context);
 	}
