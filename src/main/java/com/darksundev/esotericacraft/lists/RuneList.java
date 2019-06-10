@@ -164,8 +164,7 @@ public class RuneList {
 		"block.minecraft.dark_oak_planks",
 		
 		// basics
-		"block.minecraft.cobblestone",
-		"block.minecraft.dirt"
+		"block.minecraft.cobblestone"
 	};
 	private static final String[] enchantedBlocks =
 	{
