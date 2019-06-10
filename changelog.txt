@@ -1,3 +1,28 @@
+Build: 1.14.2-26.0.13 - Sun Jun 09 18:19:15 GMT 2019
+	lex:
+		Fix gameDir argument error on dedicated server.
+
+=========
+Build: 1.14.2-26.0.12 - Sun Jun 09 08:24:28 GMT 2019
+	tterrag:
+		Add registry flag for syncing
+
+	tterrag:
+		Add forge registries for most vanilla registries
+		Made all registry names consistent with their vanilla counterparts Also
+		added a system for legacy registry names, so no data will be lost 
+		Cleaned up formatting in GameData and ForgeRegistries
+
+=========
+Build: 1.14.2-26.0.10 - Sun Jun 09 04:19:52 GMT 2019
+	tterrag:
+		Add forge registry for container types, expose
+		ScreenManager.registerFactory
+
+	tterrag:
+		Fix issues preventing test mods loading
+
+=========
 Build: 1.14.2-26.0.8 - Sat Jun 08 18:30:30 GMT 2019
 	cpw:
 		Don't NPE during construction of ModLoadingException..
