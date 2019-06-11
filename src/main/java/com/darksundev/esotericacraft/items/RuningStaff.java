@@ -45,9 +45,6 @@ public class RuningStaff extends Item
 		ItemStack item = context.getItem();
 		if (!world.isRemote)
 		{
-			EsotericaCraft.logger.info(Minecraft.getInstance().gameDir.toString());
-			EsotericaCraft.logger.info(FMLPaths.GAMEDIR.get().toString());
-			
 			// deserialize data
 			if (!item.hasTag())
 			{
@@ -87,8 +84,7 @@ public class RuningStaff extends Item
 					}
 				}
 			}
-			EsotericaCraft.logger.info("");
-			
+
 			// look for rune in area
 			RuneCast cast = RuneManager.getRune(area);
 			if (cast.getRune() != null)
