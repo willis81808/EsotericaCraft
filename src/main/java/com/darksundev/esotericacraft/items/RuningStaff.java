@@ -1,13 +1,19 @@
 package com.darksundev.esotericacraft.items;
 
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
+import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneCast;
 import com.darksundev.esotericacraft.runes.RuneManager;
+import com.darksundev.esotericacraft.runes.TeleportLink;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
@@ -15,6 +21,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 public class RuningStaff extends Item
 {
@@ -28,14 +35,19 @@ public class RuningStaff extends Item
 		);
 	}
 	
+	
+	
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context)
-	{
+	{		
 		World world = context.getWorld();
 		BlockPos rootPos = context.getPos();
 		ItemStack item = context.getItem();
 		if (!world.isRemote)
 		{
+			EsotericaCraft.logger.info(Minecraft.getInstance().gameDir.toString());
+			EsotericaCraft.logger.info(FMLPaths.GAMEDIR.get().toString());
+			
 			// deserialize data
 			if (!item.hasTag())
 			{
@@ -83,10 +95,10 @@ public class RuningStaff extends Item
 			{
 				// cast rune
 				cast.getRune().onCast(context, area, cast.getEnchantBlocks());
+				
+				// backup rune data
+				EsotericaWorldSave.backupData();
 			}
-
-			// save new data
-			//item.getTag().putByteArray(TELEPORT_KEY, SerializationUtils.serialize(RuneList.teleportLinks));
 		}
 		return super.onItemUse(context);
 	}

@@ -71,6 +71,7 @@ public class RuneManager
 		}
 
 		// return rune of pattern or null if no pattern found
-		return new RuneCast(patternMap.get(Rune.StringFromPattern(pattern)), enchantBlocks.toArray(new BlockState[] {}));
+		String key = Rune.StringFromPattern(pattern);
+		return new RuneCast(key, patternMap.get(key), enchantBlocks.toArray(new BlockState[] {}));
 	}
 }

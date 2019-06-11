@@ -74,8 +74,6 @@ public class RuneList {
 					);
 				}
 			}
-			
-			EsotericaWorldSave.get(context.getWorld());
 		}
 		
 	};
@@ -134,8 +132,6 @@ public class RuneList {
 					);
 				}
 			}
-			
-			EsotericaWorldSave.get(context.getWorld());
 		}
 		
 	};
