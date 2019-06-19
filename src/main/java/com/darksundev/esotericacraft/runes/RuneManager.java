@@ -14,7 +14,7 @@ public class RuneManager
 	public static enum Tier { NONE, MUNDANE, ENCHANTED }
 	
 	private static HashMap<String, Rune> patternMap = new HashMap<String, Rune>();
-	private static HashMap<String, Tier> blockTierMap = new HashMap<String, Tier>();
+	private static HashMap<String, RuneMaterial> blockTierMap = new HashMap<String, RuneMaterial>();
 
 	public RuneManager()
 	{
@@ -28,7 +28,7 @@ public class RuneManager
 		}
 		
 		RuneList.registerRunes();
-		RuneList.registerBlocks();
+		RuneList.registerAllRuneMaterials();
 	}
 	
 	public static void registerRune(Rune r)
@@ -39,20 +39,21 @@ public class RuneManager
 			patternMap.put(key, r);
 		}
 	}
-	public static void registerTier(String blockId, Tier tier)
+	public static void registerRuneMaterial(RuneMaterial material)
 	{
-		if (!blockTierMap.containsKey(blockId))
+		if (!blockTierMap.containsKey(material.blockID))
 		{
-			blockTierMap.put(blockId, tier);
+			blockTierMap.put(material.blockID, material);
 		}
 	}
 	
 	public static Tier getTier(String blockId)
 	{
-		Tier result = blockTierMap.get(blockId);
+		RuneMaterial result = blockTierMap.get(blockId);
 		if (result == null)
-			result = Tier.NONE;
-		return result;
+			return Tier.NONE;
+		else
+			return result.tier;
 	}
 	public static RuneCast getRune(BlockState[][] blocks)
 	{

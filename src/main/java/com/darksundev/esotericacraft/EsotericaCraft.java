@@ -28,6 +28,7 @@ public class EsotericaCraft
 		
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
 		MinecraftForge.EVENT_BUS.register(this);
+		EsotericaCraftPacketHandler.register();
 	}
 
 	private void setup(FMLCommonSetupEvent event)

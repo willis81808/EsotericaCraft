@@ -1,31 +1,28 @@
 package com.darksundev.esotericacraft.items;
 
-import java.io.IOException;
-import java.util.HashMap;
-
-import org.apache.commons.lang3.SerializationUtils;
+import java.util.Random;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
+import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
 import com.darksundev.esotericacraft.EsotericaWorldSave;
-import com.darksundev.esotericacraft.lists.RuneList;
+import com.darksundev.esotericacraft.RuneCastMessagePacket;
+import com.darksundev.esotericacraft.RuneCastMessagePacket.ParticleType;
 import com.darksundev.esotericacraft.runes.RuneCast;
 import com.darksundev.esotericacraft.runes.RuneManager;
-import com.darksundev.esotericacraft.runes.TeleportLink;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class RuningStaff extends Item
 {
-	private static final String TELEPORT_KEY = "TeleportLinks";
+	private final Random rand = new Random();
 	
 	public RuningStaff(Properties properties)
 	{
@@ -35,27 +32,15 @@ public class RuningStaff extends Item
 		);
 	}
 	
-	
-	
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context)
 	{		
 		World world = context.getWorld();
 		BlockPos rootPos = context.getPos();
 		ItemStack item = context.getItem();
+
 		if (!world.isRemote)
 		{
-			// deserialize data
-			if (!item.hasTag())
-			{
-				item.setTag(new CompoundNBT());
-				item.getTag().putByteArray(TELEPORT_KEY, SerializationUtils.serialize(RuneList.teleportLinks));
-			}
-			else
-			{
-				//byte[] data = item.getTag().getByteArray(TELEPORT_KEY);
-				//RuneList.teleportLinks = SerializationUtils.deserialize(data);
-			}
 			
 			// get cast root
 			BlockState block = world.getBlockState(rootPos);
@@ -89,6 +74,9 @@ public class RuningStaff extends Item
 			RuneCast cast = RuneManager.getRune(area);
 			if (cast.getRune() != null)
 			{
+				// send message to all clients saying rune was cast, and telling them to spawn particles
+				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
+				
 				// cast rune
 				cast.getRune().onCast(context, area, cast.getEnchantBlocks());
 				
