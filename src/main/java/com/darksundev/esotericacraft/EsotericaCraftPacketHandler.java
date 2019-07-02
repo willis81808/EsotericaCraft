@@ -15,8 +15,8 @@ public class EsotericaCraftPacketHandler
 	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
 	    new ResourceLocation(EsotericaCraft.modid, "main"),
 	    () -> PROTOCOL_VERSION,
-	    (x) -> true,
-	    (x) -> true
+	    PROTOCOL_VERSION::equals,
+	    PROTOCOL_VERSION::equals
 	);
 	
 	private static int packetID = 0;
