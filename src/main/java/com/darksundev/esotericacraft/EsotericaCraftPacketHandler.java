@@ -1,32 +1,30 @@
 package com.darksundev.esotericacraft;
 
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent.Context;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class EsotericaCraftPacketHandler
 {
-	private static final String PROTOCOL_VERSION = "1";
+	private static final String PROTOCOL_VERSION = "1.1";
 	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
 	    new ResourceLocation(EsotericaCraft.modid, "main"),
 	    () -> PROTOCOL_VERSION,
-	    PROTOCOL_VERSION::equals,
-	    PROTOCOL_VERSION::equals
+	    (x) -> true,
+	    (x) -> true
 	);
 	
 	private static int packetID = 0;
 	
-	public static void register()
+	public static void registerConsumer(BiConsumer<RuneCastMessagePacket, Supplier<Context>> messageConsumer)
 	{
-		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, EsotericaCraftPacketHandler::messageConsumer);
+		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, messageConsumer);
 	}
-	
 	
 	private static void messageEncoder(RuneCastMessagePacket msg, PacketBuffer buffer)
 	{
@@ -36,6 +34,17 @@ public class EsotericaCraftPacketHandler
 	{
 		return RuneCastMessagePacket.fromBuffer(buffer);
 	}
+
+	/*
+	public static void registerClient()
+	{
+		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, EsotericaCraftPacketHandler::messageConsumer);
+	}
+	public static void registerServer()
+	{
+		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, (msg, ctx) -> {});
+	}
+	@OnlyIn(Dist.CLIENT)
 	private static void messageConsumer(RuneCastMessagePacket msg, Supplier<NetworkEvent.Context> ctx)
 	{
 		ctx.get().enqueueWork(() ->
@@ -44,4 +53,5 @@ public class EsotericaCraftPacketHandler
 			msg.spawnParticle(w);
 		});
 	}
+	*/	
 }

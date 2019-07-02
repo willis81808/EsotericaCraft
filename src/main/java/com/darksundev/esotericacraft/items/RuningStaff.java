@@ -1,7 +1,5 @@
 package com.darksundev.esotericacraft.items;
 
-import java.util.Random;
-
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
 import com.darksundev.esotericacraft.EsotericaWorldSave;
@@ -14,7 +12,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,8 +19,6 @@ import net.minecraftforge.fml.network.PacketDistributor;
 
 public class RuningStaff extends Item
 {
-	private final Random rand = new Random();
-	
 	public RuningStaff(Properties properties)
 	{
 		super
