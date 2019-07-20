@@ -14,7 +14,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.darksundev.esotericacraft.lists.RuneList;
-import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.TeleportLink;
 
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -88,6 +87,7 @@ public class EsotericaWorldSave
 	    os.writeObject(obj);
 	    return out.toByteArray();
 	}
+	@SuppressWarnings("unchecked")
 	private static HashMap<String, TeleportLink> deserialize(byte[] data)
 	{
 		try

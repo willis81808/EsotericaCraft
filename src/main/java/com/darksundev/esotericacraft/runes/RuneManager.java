@@ -41,38 +41,60 @@ public class RuneManager
 	}
 	public static void registerRuneMaterial(RuneMaterial material)
 	{
-		if (!blockTierMap.containsKey(material.blockID))
+		if (!blockTierMap.containsKey(material.getBlockID()))
 		{
-			blockTierMap.put(material.blockID, material);
+			blockTierMap.put(material.getBlockID(), material);
 		}
 	}
 	
-	public static Tier getTier(String blockId)
+	public static RuneMaterial getMaterial(String blockId)
 	{
 		RuneMaterial result = blockTierMap.get(blockId);
-		if (result == null)
-			return Tier.NONE;
-		else
-			return result.tier;
+		return result;
 	}
 	public static RuneCast getRune(BlockState[][] blocks)
 	{
 		// construct pattern from passed blocks
 		ArrayList<BlockState> enchantBlocks = new ArrayList<BlockState>();
+		ArrayList<BlockState> mundaneBlocks = new ArrayList<BlockState>();
 		Tier[][] pattern = new Tier[blocks.length][blocks[0].length];
 		for (int x = 0; x < blocks.length; x++)
 		{
 			for (int y = 0; y < blocks[0].length; y++)
 			{
-				Tier t = getTier(blocks[x][y].getBlock().getTranslationKey());
-				pattern[x][y] = t;
-				if (t == Tier.ENCHANTED)
-					enchantBlocks.add(blocks[x][y]);
+				RuneMaterial mat = getMaterial(blocks[x][y].getBlock().getTranslationKey());
+				// the material is recognized
+				if (mat != null)
+				{
+					pattern[x][y] = mat.getTier();
+					switch (mat.getTier())
+					{
+						case ENCHANTED:
+							enchantBlocks.add(blocks[x][y]);
+							break;
+						case MUNDANE:
+							mundaneBlocks.add(blocks[x][y]);
+							break;
+						case NONE:
+							// do nothing
+							break;
+					}
+				}
+				// the block type is not a RuneMaterial
+				else
+				{
+					pattern[x][y] = Tier.NONE;
+				}
 			}
 		}
 
 		// return rune of pattern or null if no pattern found
 		String key = Rune.StringFromPattern(pattern);
-		return new RuneCast(key, patternMap.get(key), enchantBlocks.toArray(new BlockState[] {}));
+		EsotericaCraft.logger.info(key);
+		return new RuneCast(
+				key,
+				patternMap.get(key),
+				enchantBlocks.toArray(new BlockState[] {}),
+				mundaneBlocks.toArray(new BlockState[] {}) );
 	}
 }

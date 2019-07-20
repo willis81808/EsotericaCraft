@@ -6,7 +6,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class TeleportLink implements Serializable
 {
-	//private static final long serialVersionUID = 7062332256548713629L;
+	private static final long serialVersionUID = 7062332256548713629L;
 	
 	public String id;
 	public Long transmitter, receiver;	// should be converted to/from BlockPos

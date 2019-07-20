@@ -35,23 +35,4 @@ public class EsotericaCraftPacketHandler
 		return RuneCastMessagePacket.fromBuffer(buffer);
 	}
 
-	/*
-	public static void registerClient()
-	{
-		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, EsotericaCraftPacketHandler::messageConsumer);
-	}
-	public static void registerServer()
-	{
-		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, (msg, ctx) -> {});
-	}
-	@OnlyIn(Dist.CLIENT)
-	private static void messageConsumer(RuneCastMessagePacket msg, Supplier<NetworkEvent.Context> ctx)
-	{
-		ctx.get().enqueueWork(() ->
-		{
-			World w = Minecraft.getInstance().world;
-			msg.spawnParticle(w);
-		});
-	}
-	*/	
 }

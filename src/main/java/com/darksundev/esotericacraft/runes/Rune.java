@@ -53,7 +53,7 @@ public class Rune
 		return pattern;
 	}
 	
-	public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks)
+	public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
 		PlayerEntity player = context.getPlayer();
 		EsotericaCraft.logger.info(String.format("Player '%s' cast rune: '%s'", player.getName().getFormattedText(), name));

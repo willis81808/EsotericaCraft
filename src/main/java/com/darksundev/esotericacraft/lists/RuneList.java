@@ -3,21 +3,35 @@ package com.darksundev.esotericacraft.lists;
 import java.util.HashMap;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
-import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
-import com.darksundev.esotericacraft.runes.RuneMaterial;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
+import com.darksundev.esotericacraft.runes.RuneMaterial;
 import com.darksundev.esotericacraft.runes.TeleportLink;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.math.BlockPos;
 
-public class RuneList {
+public class RuneList
+{
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Rune and Rune Material registration
+	public static void registerRunes()
+	{
+		RuneManager.registerRune(TeleportTransmitter);
+		RuneManager.registerRune(TeleportReceiver);
+	}
+	public static void registerAllRuneMaterials()
+	{
+		for (RuneMaterial block : runeMaterials)
+		{
+			RuneManager.registerRuneMaterial(block);
+		}
+	}
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Shape Recipes
-
 	public static HashMap<String, TeleportLink> teleportLinks = new HashMap<String, TeleportLink>();
 	
 	/*
@@ -31,7 +45,7 @@ public class RuneList {
 	 * 		M M M M M
 	 * 		- M O M -
 	 */
-	public static final Rune TeleportTransmitter = new Rune("Teleport_Transmitter", new Tier[][]{
+	private static final Rune TeleportTransmitter = new Rune("Teleport_Transmitter", new Tier[][]{
 		new Tier[]{Tier.NONE, 		Tier.MUNDANE,	Tier.ENCHANTED,	Tier.MUNDANE,	Tier.NONE},
 		new Tier[]{Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE},
 		new Tier[]{Tier.ENCHANTED,	Tier.MUNDANE,	Tier.NONE,		Tier.MUNDANE,	Tier.ENCHANTED},
@@ -40,9 +54,9 @@ public class RuneList {
 	}) {
 
 		@Override
-		public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks)
+		public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 		{
-			super.onCast(context, pattern, enchantBlocks);
+			super.onCast(context, pattern, enchantBlocks, mundaneBlocks);
 			
 			StringBuilder str = new StringBuilder();
 			for (BlockState markerBlock : enchantBlocks)
@@ -98,9 +112,9 @@ public class RuneList {
 	}) {
 
 		@Override
-		public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks)
+		public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 		{
-			super.onCast(context, pattern, enchantBlocks);
+			super.onCast(context, pattern, enchantBlocks, mundaneBlocks);
 			
 			StringBuilder str = new StringBuilder();
 			for (BlockState markerBlock : enchantBlocks)
@@ -136,12 +150,6 @@ public class RuneList {
 		}
 		
 	};
-	
-	public static void registerRunes()
-	{
-		RuneManager.registerRune(TeleportTransmitter);
-		RuneManager.registerRune(TeleportReceiver);
-	}
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks
@@ -315,76 +323,5 @@ public class RuneList {
 		new RuneMaterial("block.minecraft.stripped_acacia_log",		Tier.ENCHANTED),
 		new RuneMaterial("block.minecraft.stripped_dark_oak_log",	Tier.ENCHANTED),
 	};
-	private static final String[] mundaneBlocks =
-	{
-		// sandstone
-		"block.minecraft.sandstone",
-		"block.minecraft.red_sandstone",
-		
-		// planks
-		"block.minecraft.oak_planks",
-		"block.minecraft.spruce_planks",
-		"block.minecraft.birch_planks",
-		"block.minecraft.jungle_planks",
-		"block.minecraft.acacia_planks",
-		"block.minecraft.dark_oak_planks",
-		
-		// basics
-		"block.minecraft.cobblestone"
-	};
-	private static final String[] enchantedBlocks =
-	{
-		// nether
-		"block.minecraft.quartz_block",
-		"block.minecraft.chiseled_quartz_block",
-		"block.minecraft.quartz_pillar",
-		"block.minecraft.smooth_quartz",
-		"block.minecraft.netherrack",
-		"block.minecraft.glowstone",
-			
-		// ore blocks
-		"block.minecraft.diamond_block",
-		"block.minecraft.emerald_block",
-		"block.minecraft.redstone_block",
-		"block.minecraft.gold_block",
-		"block.minecraft.iron_block",
-
-		// cut/polished sandstone
-		"block.minecraft.cut_sandstone",
-		"block.minecraft.chiseled_sandstone",
-		"block.minecraft.smooth_sandstone",
-		"block.minecraft.cut_red_sandstone",
-		"block.minecraft.chiseled_red_sandstone",
-		"block.minecraft.smooth_red_sandstone",
-		
-		// woods
-		"block.minecraft.oak_wood",
-		"block.minecraft.spruce_wood",
-		"block.minecraft.birch_wood",
-		"block.minecraft.jungle_wood",
-		"block.minecraft.acacia_wood",
-		"block.minecraft.dark_oak_wood"
-	};
 	
-	public static void registerAllRuneMaterials()
-	{
-		for (RuneMaterial block : runeMaterials)
-		{
-			RuneManager.registerRuneMaterial(block);
-		}
-		
-		/* Old block registration method
-		// register mundane
-		for (String mundane : mundaneBlocks)
-		{
-			RuneManager.registerRuneMaterial(mundane, Tier.MUNDANE);
-		}
-		
-		// register enchanted
-		for (String enchanted : enchantedBlocks)
-		{
-			RuneManager.registerRuneMaterial(enchanted, Tier.ENCHANTED);
-		}
-		*/
-	}
 }

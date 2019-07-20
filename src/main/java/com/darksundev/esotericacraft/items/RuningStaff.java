@@ -10,7 +10,6 @@ import com.darksundev.esotericacraft.runes.RuneManager;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
@@ -32,7 +31,6 @@ public class RuningStaff extends Item
 	{		
 		World world = context.getWorld();
 		BlockPos rootPos = context.getPos();
-		ItemStack item = context.getItem();
 
 		if (!world.isRemote)
 		{
@@ -69,14 +67,19 @@ public class RuningStaff extends Item
 			RuneCast cast = RuneManager.getRune(area);
 			if (cast.getRune() != null)
 			{
-				// send message to all clients saying rune was cast, and telling them to spawn particles
-				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
+				// spawn fire particles on sucessfull cast
+				//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
 				
 				// cast rune
-				cast.getRune().onCast(context, area, cast.getEnchantBlocks());
+				cast.getRune().onCast(context, area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
 				
 				// backup rune data
 				EsotericaWorldSave.backupData();
+			}
+			else
+			{
+				// spawn smoke particles when invalid rune/area is selected
+				//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
 			}
 		}
 		return super.onItemUse(context);

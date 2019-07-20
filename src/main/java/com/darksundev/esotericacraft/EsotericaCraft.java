@@ -16,6 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(EsotericaCraft.modid)
+@SuppressWarnings("unused")
 public class EsotericaCraft
 {
 	public static EsotericaCraft instance;
@@ -26,10 +27,8 @@ public class EsotericaCraft
 	public static final Logger logger = LogManager.getLogger(modid);
 	
 	public static IProxy proxy = DistExecutor.runForDist(
-		() ->
-			() -> new ClientProxy(),
-		() ->
-			() -> new ServerProxy()
+		() -> () -> new ClientProxy(),
+		() -> () -> new ServerProxy()
 	);
 	
 	public EsotericaCraft()
