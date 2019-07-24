@@ -26,6 +26,38 @@ public class RuningStaff extends Item
 		);
 	}
 	
+	private BlockState[][] getArea(World world, BlockPos rootPos)
+	{
+		BlockState block = world.getBlockState(rootPos);
+		BlockState[][] area = new BlockState[5][5];
+		area[2][2] = block;
+
+		// log block clicked
+		EsotericaCraft.logger.info(block.getBlock().getTranslationKey());
+		
+		// get area
+		for (int x = -2; x <= 2; x++)
+		{
+			int xVal = rootPos.getX() + x;
+			for (int z = -2; z <= 2; z++)
+			{
+				BlockState b;
+				if (!(x == 0 && z == 0))
+				{
+					int zVal = rootPos.getZ() + z;
+					b = world.getBlockState(new BlockPos(xVal, rootPos.getY(), zVal));
+					area[2+x][2+z] = b;
+				}
+				else 
+				{
+					b = block;
+				}
+			}
+		}
+		
+		return area;
+	}
+	
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context)
 	{		
@@ -34,37 +66,20 @@ public class RuningStaff extends Item
 
 		if (!world.isRemote)
 		{
-			
-			// get cast root
-			BlockState block = world.getBlockState(rootPos);
-			BlockState[][] area = new BlockState[5][5];
-			area[2][2] = block;
-
-			// log block clicked
-			EsotericaCraft.logger.info(block.getBlock().getTranslationKey());
-			
-			// get area
-			for (int x = -2; x <= 2; x++)
-			{
-				int xVal = rootPos.getX() + x;
-				for (int z = -2; z <= 2; z++)
-				{
-					BlockState b;
-					if (!(x == 0 && z == 0))
-					{
-						int zVal = rootPos.getZ() + z;
-						b = world.getBlockState(new BlockPos(xVal, rootPos.getY(), zVal));
-						area[2+x][2+z] = b;
-					}
-					else 
-					{
-						b = block;
-					}
-				}
-			}
-
 			// look for rune in area
+			BlockState[][] area = getArea(world, rootPos);
 			RuneCast cast = RuneManager.getRune(area);
+			
+			// try looking above selected area if first try didn't work
+			// (this covers a situation where the player hasn't filled in the center
+			// of the rune, and has to select the block below the center)
+			if (cast.getRune() == null)
+			{
+				area = getArea(world, rootPos.up());
+				cast = RuneManager.getRune(area);
+			}
+			
+			// cast rune if valid
 			if (cast.getRune() != null)
 			{
 				// spawn fire particles on sucessfull cast

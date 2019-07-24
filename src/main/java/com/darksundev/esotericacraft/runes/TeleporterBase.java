@@ -58,7 +58,9 @@ public abstract class TeleporterBase extends Rune
 				}
 			}
 			// this rune has already been linked
-			else if (getThisSide(link) == context.getPos().toLong())
+			else if (getThisSide(link) == context.getPos().toLong() ||
+					getThisSide(link) == context.getPos().up().toLong() ||
+					getThisSide(link) == context.getPos().down().toLong())
 			{
 				// if both sides are linked then teleport player
 				if (getOtherSide(link) != -1)
