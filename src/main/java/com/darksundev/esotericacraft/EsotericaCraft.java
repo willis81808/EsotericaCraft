@@ -8,7 +8,12 @@ import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
 import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneManager;
+import com.mojang.brigadier.Message;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentUtils;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -49,5 +54,24 @@ public class EsotericaCraft
 		
 		// run sided initialization
 		proxy.init();
+	}
+	
+	public static void messagePlayer(PlayerEntity player, String message, TextFormatting...formattings)
+	{
+		// construct message
+		ITextComponent text = TextComponentUtils.toTextComponent(new Message() {
+			@Override
+			public String getString() { return message; }
+		});
+		if (formattings == null || formattings.length > 0)
+		{
+			text.applyTextStyles(formattings);
+		}
+		else
+		{
+			text.applyTextStyles(TextFormatting.YELLOW, TextFormatting.ITALIC);
+		}
+		// send message
+		player.sendMessage(text);
 	}
 }

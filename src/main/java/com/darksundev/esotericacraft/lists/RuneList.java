@@ -2,16 +2,13 @@ package com.darksundev.esotericacraft.lists;
 
 import java.util.HashMap;
 
-import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 import com.darksundev.esotericacraft.runes.RuneMaterial;
 import com.darksundev.esotericacraft.runes.TeleportLink;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.math.BlockPos;
+import com.darksundev.esotericacraft.runes.TeleportReceiver;
+import com.darksundev.esotericacraft.runes.TeleportTransmitter;
 
 public class RuneList
 {
@@ -19,8 +16,8 @@ public class RuneList
 	// Rune and Rune Material registration
 	public static void registerRunes()
 	{
-		RuneManager.registerRune(TeleportTransmitter);
-		RuneManager.registerRune(TeleportReceiver);
+		RuneManager.registerRune(teleportTransmitter);
+		RuneManager.registerRune(teleportReceiver);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -45,53 +42,7 @@ public class RuneList
 	 * 		M M M M M
 	 * 		- M O M -
 	 */
-	private static final Rune TeleportTransmitter = new Rune("Teleport_Transmitter", new Tier[][]{
-		new Tier[]{Tier.NONE, 		Tier.MUNDANE,	Tier.ENCHANTED,	Tier.MUNDANE,	Tier.NONE},
-		new Tier[]{Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE},
-		new Tier[]{Tier.ENCHANTED,	Tier.MUNDANE,	Tier.NONE,		Tier.MUNDANE,	Tier.ENCHANTED},
-		new Tier[]{Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE},
-		new Tier[]{Tier.NONE, 		Tier.MUNDANE,	Tier.ENCHANTED,	Tier.MUNDANE,	Tier.NONE}
-	}) {
-
-		@Override
-		public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
-		{
-			super.onCast(context, pattern, enchantBlocks, mundaneBlocks);
-			
-			StringBuilder str = new StringBuilder();
-			for (BlockState markerBlock : enchantBlocks)
-			{
-				str.append(markerBlock.getBlock().getTranslationKey());
-				str.append(';');
-			}
-			String key = str.toString();
-
-			if (!teleportLinks.containsKey(key))
-			{
-				TeleportLink link = new TeleportLink(key, context.getPos(), null);
-				teleportLinks.put(key, link);
-			}
-			else
-			{
-				TeleportLink link = teleportLinks.get(key);
-				if (link.transmitter != -1)
-					EsotericaCraft.logger.info("Overwriting portal receiver");
-				link.transmitter = context.getPos().toLong();
-				
-				if (link.receiver != -1)
-				{
-					// teleport player
-					BlockPos recieverPos = BlockPos.fromLong(link.receiver);
-					context.getPlayer().setPositionAndUpdate(
-						recieverPos.getX(),
-						recieverPos.getY()+1,
-						recieverPos.getZ()
-					);
-				}
-			}
-		}
-		
-	};
+	private static final Rune teleportTransmitter = new TeleportTransmitter();
 	/*
 	 * 	-: Ignored
 	 * 	M: Mundane required
@@ -103,58 +54,25 @@ public class RuneList
 	 * 		M M O M M
 	 * 		- M M M -
 	 */
-	public static final Rune TeleportReceiver = new Rune("Teleport_Receiver", new Tier[][]{
-		new Tier[]{Tier.NONE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.NONE},
-		new Tier[]{Tier.MUNDANE,Tier.MUNDANE,	Tier.ENCHANTED,	Tier.MUNDANE,	Tier.MUNDANE},
-		new Tier[]{Tier.MUNDANE,Tier.ENCHANTED,	Tier.NONE,		Tier.ENCHANTED,	Tier.MUNDANE},
-		new Tier[]{Tier.MUNDANE,Tier.MUNDANE,	Tier.ENCHANTED,	Tier.MUNDANE,	Tier.MUNDANE},
-		new Tier[]{Tier.NONE, 	Tier.MUNDANE,	Tier.MUNDANE,	Tier.MUNDANE,	Tier.NONE}
-	}) {
-
-		@Override
-		public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
-		{
-			super.onCast(context, pattern, enchantBlocks, mundaneBlocks);
-			
-			StringBuilder str = new StringBuilder();
-			for (BlockState markerBlock : enchantBlocks)
-			{
-				str.append(markerBlock.getBlock().getTranslationKey());
-				str.append(';');
-			}
-			String key = str.toString();
-
-			if (!teleportLinks.containsKey(key))
-			{
-				TeleportLink link = new TeleportLink(key, null, context.getPos());
-				teleportLinks.put(key, link);
-			}
-			else
-			{
-				TeleportLink link = teleportLinks.get(key);
-				if (link.receiver != -1)
-					EsotericaCraft.logger.info("Overwriting portal receiver");
-				link.receiver = context.getPos().toLong();
-
-				if (link.transmitter != -1)
-				{
-					// teleport player
-					BlockPos transmitterPos = BlockPos.fromLong(link.transmitter);
-					context.getPlayer().setPositionAndUpdate(
-						transmitterPos.getX(),
-						transmitterPos.getY()+1,
-						transmitterPos.getZ()
-					);
-				}
-			}
-		}
-		
-	};
+	public static final Rune teleportReceiver = new TeleportReceiver();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks
 	private static final RuneMaterial[] runeMaterials =
 	{
+							/*-------- MIXED --------*/
+		// Prismarine
+		new RuneMaterial("block.minecraft.prismarine", 				Tier.MUNDANE),
+		new RuneMaterial("block.minecraft.prismarine_bricks", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_prismarine", 		Tier.ENCHANTED),
+		// End
+		new RuneMaterial("block.minecraft.end_stone_bricks", 		Tier.MUNDANE),
+		new RuneMaterial("block.minecraft.end_stone", 				Tier.MUNDANE),
+		new RuneMaterial("block.minecraft.end_rod", 				Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.purpur_block", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.purpur_pillar", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.obsidian", 				Tier.ENCHANTED),
+			
 							/*-------- MUNDANE --------*/
 		// Basics
 		new RuneMaterial("block.minecraft.red_sandstone", 			Tier.MUNDANE),
@@ -295,6 +213,7 @@ public class RuneList
 		new RuneMaterial("block.minecraft.smooth_quartz", 			Tier.ENCHANTED),
 		new RuneMaterial("block.minecraft.netherrack",	 			Tier.ENCHANTED),
 		new RuneMaterial("block.minecraft.glowstone",	 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.nether_wart_block",		Tier.ENCHANTED),
 		// Polished or Cut Sandstone
 		new RuneMaterial("block.minecraft.cut_sandstone", 			Tier.ENCHANTED),
 		new RuneMaterial("block.minecraft.chiseled_sandstone",		Tier.ENCHANTED),
@@ -322,6 +241,101 @@ public class RuneList
 		new RuneMaterial("block.minecraft.stripped_jungle_log", 	Tier.ENCHANTED),
 		new RuneMaterial("block.minecraft.stripped_acacia_log",		Tier.ENCHANTED),
 		new RuneMaterial("block.minecraft.stripped_dark_oak_log",	Tier.ENCHANTED),
+		// Stairs
+		new RuneMaterial("block.minecraft.oak_stairs", 				Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.spruce_stairs",			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.birch_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.jungle_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.acacia_stairs",			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_oak_stairs",			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.oak_stairs", 				Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.cobblestone_stairs", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.brick_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.stone_brick_stairs", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.nether_brick_stairs", 	Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.sandstone_stairs", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.spruce_stairs",			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.birch_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.jungle_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.quartz_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.acacia_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_oak_stairs", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.red_sandstone_stairs", 	Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.purpur_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.prismarine_stairs", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.prismarine_brick_stairs", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_prismarine_stairs", 	Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.granite_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.polished_granite_stairs", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.diorite_stairs", 			Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.polished_diorite_stairs", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.andesite_stairs", 		Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.polished_andesite_stairs",Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.red_nether_brick_stairs", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.end_stone_brick_stairs", 	Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.mossy_stone_brick_stairs",Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.mossy_cobblestone_stairs",Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_sandstone_stairs", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_red_sandstone_stairs",Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_quartz_stairs", 	Tier.ENCHANTED),
+		// Slabs
+		new RuneMaterial("block.minecraft.red_sandstone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.purpur_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_stone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.sandstone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.petrified_oak_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.cobblestone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.stone_brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.nether_brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.quartz_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.oak_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.spruce_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.birch_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.jungle_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.acacia_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_oak_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.prismarine_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.prismarine_brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_prismarine_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.granite_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.polished_granite_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.diorite_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.polished_diorite_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.andesite_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.polished_andesite_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.red_nether_brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.end_stone_brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.mossy_stone_brick_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.mossy_cobblestone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_sandstone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_red_sandstone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.smooth_quartz_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.cut_sandstone_slab", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.cut_red_sandstone_slab", Tier.ENCHANTED),
+		// Walls
+		new RuneMaterial("block.minecraft.cobblestone_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.mossy_cobblestone_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.brick_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.granite_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.diorite_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.andesite_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.prismarine_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.stone_brick_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.mossy_stone_brick_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.end_stone_brick_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.nether_brick_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.red_nether_brick_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.sandstone_wall", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.red_sandstone_wall", Tier.ENCHANTED),
+		// Fences
+		new RuneMaterial("block.minecraft.oak_fence", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.spruce_fence", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.birch_fence", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.jungle_fence", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.acacia_fence", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.dark_oak_fence", Tier.ENCHANTED),
+		new RuneMaterial("block.minecraft.nether_brick_fence", Tier.ENCHANTED),
 	};
 	
 }

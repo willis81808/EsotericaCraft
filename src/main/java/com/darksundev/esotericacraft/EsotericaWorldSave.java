@@ -37,7 +37,13 @@ public class EsotericaWorldSave
 			EsotericaCraft.logger.error("EsotericaWorldSave already instantiated!!");
 		}
 	}
-	
+	public static void printData()
+	{
+		for (Object key : RuneList.teleportLinks.keySet().toArray())
+		{
+			EsotericaCraft.logger.info("Link Key: " + key);
+		}
+	}
 	public static void restoreData()
 	{
 		HashMap<String, TeleportLink> teleportLinks = Deserialize();

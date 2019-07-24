@@ -68,7 +68,7 @@ public class RuningStaff extends Item
 			if (cast.getRune() != null)
 			{
 				// spawn fire particles on sucessfull cast
-				//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
+				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
 				
 				// cast rune
 				cast.getRune().onCast(context, area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
@@ -79,7 +79,7 @@ public class RuningStaff extends Item
 			else
 			{
 				// spawn smoke particles when invalid rune/area is selected
-				//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
+				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
 			}
 		}
 		return super.onItemUse(context);
