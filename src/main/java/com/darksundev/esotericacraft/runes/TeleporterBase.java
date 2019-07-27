@@ -71,20 +71,29 @@ public abstract class TeleporterBase extends Rune
 			// this portal signature has already been linked to another rune!
 			else
 			{
-				// send warning message to casting player
-				EsotericaCraft.messagePlayer(context.getPlayer(),
-						"The Aether resists!",
-						TextFormatting.RED
+				// there is already a linked pair of portals with this signature
+				if (getOtherSide(link) != -1)
+				{
+					// send warning message to casting player
+					EsotericaCraft.messagePlayer(context.getPlayer(),
+							"The Aether resists!",
+							TextFormatting.RED
 						);
-				EsotericaCraft.messagePlayer(context.getPlayer(),
-						"This path must already be in use..."
+					EsotericaCraft.messagePlayer(context.getPlayer(),
+							"This path must already be in use..."
 						);
-				return;
+				}
+				// this signature has been activated in the past, but has not been linked to a second teleporter yet
+				// therefor we overrite the old partial link with a new one
+				else
+				{
+					RuneList.teleportLinks.put(key, makeNewLink(key, context.getPos()));
+				}
 			}
 		}
 	}
 	
-	private void teleport(ItemUseContext context, BlockPos target)
+	public static void teleport(ItemUseContext context, BlockPos target)
 	{
 		World w = context.getWorld();
 		int attempts = 0;
@@ -104,10 +113,10 @@ public abstract class TeleporterBase extends Rune
 				EsotericaCraft.messagePlayer(context.getPlayer(),
 						"The Aether resists!",
 						TextFormatting.RED
-						);
+					);
 				EsotericaCraft.messagePlayer(context.getPlayer(),
 						"A safe place could not be found on the other side."
-						);
+					);
 				return;
 			}
 		}
@@ -116,7 +125,7 @@ public abstract class TeleporterBase extends Rune
 				target.getX()+.5,
 				target.getY()+.5,
 				target.getZ()+.5
-				);
+			);
 	}
 
 	protected abstract long getThisSide(TeleportLink link);

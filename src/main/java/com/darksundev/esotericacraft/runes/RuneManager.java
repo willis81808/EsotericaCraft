@@ -90,7 +90,6 @@ public class RuneManager
 
 		// return rune of pattern or null if no pattern found
 		String key = Rune.StringFromPattern(pattern);
-		EsotericaCraft.logger.info(key);
 		return new RuneCast(
 				key,
 				patternMap.get(key),

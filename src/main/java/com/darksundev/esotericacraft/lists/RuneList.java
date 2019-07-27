@@ -6,9 +6,11 @@ import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 import com.darksundev.esotericacraft.runes.RuneMaterial;
+import com.darksundev.esotericacraft.runes.TeleportEraser;
 import com.darksundev.esotericacraft.runes.TeleportLink;
 import com.darksundev.esotericacraft.runes.TeleportReceiver;
 import com.darksundev.esotericacraft.runes.TeleportTransmitter;
+import com.darksundev.esotericacraft.runes.WaypointPortal;
 
 public class RuneList
 {
@@ -18,6 +20,8 @@ public class RuneList
 	{
 		RuneManager.registerRune(teleportTransmitter);
 		RuneManager.registerRune(teleportReceiver);
+		RuneManager.registerRune(waypointPortal);
+		RuneManager.registerRune(teleportEraser);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -55,6 +59,32 @@ public class RuneList
 	 * 		- M M M -
 	 */
 	public static final Rune teleportReceiver = new TeleportReceiver();
+	/*
+	 * 	-: Neither Mundane nor Enchanted
+	 * 	M: Mundane required
+	 * 	O: Enchanted required
+	 *  *: Redstone Required
+	 * 
+	 * 		- - - - -
+	 * 		- * O * -
+	 * 		- O M O -
+	 * 		- * O * -
+	 * 	    - - - - -
+	 */	
+	public static final Rune waypointPortal = new WaypointPortal();
+	/*
+	 * 	-: Neither Mundane nor Enchanted
+	 * 	O: Enchanted required
+	 *  i: Redstone Torches
+	 *  *: Redstone wire
+	 * 
+	 * 		- * - * -
+	 * 		* i O i *
+	 * 		- O O O -
+	 * 		* i O i *
+	 * 	    - * - * -
+	 */	
+	public static final Rune teleportEraser = new TeleportEraser();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks
