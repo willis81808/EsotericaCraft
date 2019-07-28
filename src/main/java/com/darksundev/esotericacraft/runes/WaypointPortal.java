@@ -1,6 +1,8 @@
 package com.darksundev.esotericacraft.runes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
@@ -8,9 +10,16 @@ import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 public class WaypointPortal extends Rune
 {
@@ -69,11 +78,11 @@ public class WaypointPortal extends Rune
 			TeleportLink link = RuneList.teleportLinks.get(key);
 			if (link.receiver != -1)
 			{
-				TeleporterBase.teleport(context, BlockPos.fromLong(link.receiver));
+				simpleTeleport(context, BlockPos.fromLong(link.receiver));
 			}
 			else if (link.transmitter != -1)
 			{
-				TeleporterBase.teleport(context, BlockPos.fromLong(link.transmitter));
+				simpleTeleport(context, BlockPos.fromLong(link.transmitter));
 			}
 			// something is wrong with this link, and it has neither a transmitter nor receiver...
 			else
@@ -81,6 +90,96 @@ public class WaypointPortal extends Rune
 				ShowMissingSignatureErrorMessage(context);
 			}
 		}
+	}
+	private void simpleTeleport(ItemUseContext context, BlockPos target)
+	{
+		// find valid area on other side of teleport linkage
+		World w = context.getWorld();
+		int attempts = 0;
+		boolean valid = false;
+		while (!valid)
+		{
+			target = target.up();
+			BlockPos next = target.up();
+			BlockState destination1 = w.getBlockState(target);
+			BlockState destination2 = w.getBlockState(next);
+			valid = destination1.isAir(context.getWorld(), target) && destination2.isAir(context.getWorld(), next);
+			
+			attempts ++;
+			if (attempts > 10)
+			{
+				EsotericaCraft.messagePlayer(context.getPlayer(),
+						"The Aether resists!",
+						TextFormatting.RED
+					);
+				EsotericaCraft.messagePlayer(context.getPlayer(),
+						"A safe place could not be found on the other side."
+					);
+				return;
+			}
+		}
+		
+		// valid area found- do teleport
+		if (context.getPlayer().isSneaking())
+		{
+			// player is sneaking- teleport entities and not player
+			List<Entity> entities = getEntitiesToTeleport(context, context.getPos());
+			if (entities.size() == 0)
+			{
+				entities = getEntitiesToTeleport(context, target);
+			}
+			
+			for (Entity entity : entities)
+			{
+				entity.setPositionAndUpdate(
+						target.getX()+.5,
+						target.getY()+.5,
+						target.getZ()+.5
+					);
+			}
+		}
+		else
+		{
+			// player wasn't sneaking- teleport player
+			context.getPlayer().setPositionAndUpdate(
+					target.getX()+.5,
+					target.getY()+.5,
+					target.getZ()+.5
+				);
+		}
+	}
+
+	private static List<Entity> getEntitiesToTeleport(ItemUseContext context, BlockPos root)
+	{
+		EsotericaCraft.logger.info("Found entities above rune:");
+		AxisAlignedBB searchArea = new AxisAlignedBB(root).expand(2, 2, 2);
+		
+		// items
+		List<ItemEntity> items = context.getWorld().getEntitiesWithinAABB(ItemEntity.class, searchArea);
+		for (ItemEntity i : items)
+			EsotericaCraft.logger.info(i.getDisplayName().getFormattedText());
+		
+		// mobs
+		List<LivingEntity> mobs = context.getWorld().getEntitiesWithinAABB(LivingEntity.class, searchArea);
+		for (LivingEntity m : mobs)
+			EsotericaCraft.logger.info(m.getDisplayName().getFormattedText());
+
+		// minecarts
+		List<AbstractMinecartEntity> minecarts = context.getWorld().getEntitiesWithinAABB(AbstractMinecartEntity.class, searchArea);
+		for (AbstractMinecartEntity m : minecarts)
+			EsotericaCraft.logger.info(m.getDisplayName().getFormattedText());
+
+		// boats
+		List<BoatEntity> boats = context.getWorld().getEntitiesWithinAABB(BoatEntity.class, searchArea);
+		for (BoatEntity b : boats)
+			EsotericaCraft.logger.info(b.getDisplayName().getFormattedText());
+		
+		// combine lists into one array
+		List<Entity> all = new ArrayList<Entity>(items);
+		all.addAll(mobs);
+		all.addAll(minecarts);
+		all.addAll(boats);
+		return all;
 	}
 	
 	private boolean isValid(ItemUseContext context, BlockState[][] pattern)
