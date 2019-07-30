@@ -1,6 +1,8 @@
 package com.darksundev.esotericacraft.lists;
 
 import com.darksundev.esotericacraft.Registrar;
+import com.darksundev.esotericacraft.items.DiamondDust;
+import com.darksundev.esotericacraft.items.Garnet;
 import com.darksundev.esotericacraft.items.PogoStick;
 import com.darksundev.esotericacraft.items.RuningStaff;
 
@@ -37,9 +39,9 @@ public class ItemList
 				.setRegistryName(Registrar.location("runing_staff"));
 
 		// cafting Items
-		diamond_dust = new RuningStaff(category)
+		diamond_dust = new DiamondDust(category)
 				.setRegistryName(Registrar.location("diamond_dust"));
-		garnet = new RuningStaff(category)
+		garnet = new Garnet(category)
 				.setRegistryName(Registrar.location("garnet"));
 
 		

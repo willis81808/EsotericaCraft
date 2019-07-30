@@ -2,9 +2,9 @@
     "type": "minecraft:crafting_shaped",
     "pattern":
     [
-        "DDD",
-        "DRD",
-		"DDD"
+        " R ",
+        "RDR",
+		" R "
     ],
     "key":
     {
@@ -14,7 +14,7 @@
 		},
 		"R":
 		{
-			"item": "minecraft:redstone_block"
+			"item": "minecraft:redstone"
 		}
     },
     "result":

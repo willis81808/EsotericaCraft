@@ -7,7 +7,10 @@ public class DiamondDust extends Item
 
 	public DiamondDust(Properties properties) 
 	{
-		super(properties);
+		super
+		(
+			properties.maxStackSize(64)
+		);
 	}
 
 }
