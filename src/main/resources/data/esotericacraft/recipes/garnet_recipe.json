@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "DDD",
+        "DRD",
+		"DDD"
+    ],
+    "key":
+    {
+		"D":
+		{
+			"item": "esotericacraft:diamond_dust"
+		},
+		"R":
+		{
+			"item": "minecraft:redstone_block"
+		}
+    },
+    "result":
+    {
+        "item": "esotericacraft:garnet",
+		"count": 1
+    }
+}

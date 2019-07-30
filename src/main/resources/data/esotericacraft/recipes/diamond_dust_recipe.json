@@ -1,0 +1,21 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "   ",
+        " D ",
+		"   "
+    ],
+    "key":
+    {
+		"D":
+		{
+			"item": "minecraft:diamond"
+		}
+    },
+    "result":
+    {
+        "item": "esotericacraft:diamond_dust",
+		"count": 9
+    }
+}

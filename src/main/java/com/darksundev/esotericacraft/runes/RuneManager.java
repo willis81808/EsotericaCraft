@@ -7,6 +7,8 @@ import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.lists.RuneList;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class RuneManager
 {
@@ -45,6 +47,38 @@ public class RuneManager
 		{
 			blockTierMap.put(material.getBlockID(), material);
 		}
+	}
+
+	public static BlockState[][] getArea(World world, BlockPos rootPos)
+	{
+		BlockState block = world.getBlockState(rootPos);
+		BlockState[][] area = new BlockState[5][5];
+		area[2][2] = block;
+
+		// log block clicked
+		EsotericaCraft.logger.info(block.getBlock().getTranslationKey());
+		
+		// get area
+		for (int x = -2; x <= 2; x++)
+		{
+			int xVal = rootPos.getX() + x;
+			for (int z = -2; z <= 2; z++)
+			{
+				BlockState b;
+				if (!(x == 0 && z == 0))
+				{
+					int zVal = rootPos.getZ() + z;
+					b = world.getBlockState(new BlockPos(xVal, rootPos.getY(), zVal));
+					area[2+x][2+z] = b;
+				}
+				else 
+				{
+					b = block;
+				}
+			}
+		}
+		
+		return area;
 	}
 	
 	public static RuneMaterial getMaterial(String blockId)

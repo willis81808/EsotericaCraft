@@ -1,0 +1,13 @@
+{
+    "parent": "block/cube_all",
+    "textures":
+	{
+        "particle": "esotericacraft:block/auto_rune_caster_block_front",
+        "down": "esotericacraft:block/auto_rune_caster_block_down",
+        "up": "esotericacraft:block/auto_rune_caster_block_up",
+        "north": "esotericacraft:block/auto_rune_caster_block_front",
+        "east": "esotericacraft:block/auto_rune_caster_block_right",
+        "south": "esotericacraft:block/auto_rune_caster_block_back",
+        "west": "esotericacraft:block/auto_rune_caster_block_left"
+    }
+}

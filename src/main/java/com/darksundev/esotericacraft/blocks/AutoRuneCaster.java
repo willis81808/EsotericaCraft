@@ -1,5 +1,6 @@
-package com.darksundev.esotericacraft.items;
+package com.darksundev.esotericacraft.blocks;
 
+import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
 import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.RuneCastMessagePacket;
@@ -7,51 +8,56 @@ import com.darksundev.esotericacraft.RuneCastMessagePacket.ParticleType;
 import com.darksundev.esotericacraft.runes.RuneCast;
 import com.darksundev.esotericacraft.runes.RuneManager;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class RuningStaff extends Item
+@EventBusSubscriber(modid = EsotericaCraft.modid, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class AutoRuneCaster extends Block
 {
-	public RuningStaff(Properties properties)
+	private boolean isPowered = false;
+	
+	public AutoRuneCaster()
 	{
 		super
 		(
-			properties.maxStackSize(1)
+			Block.Properties.create(Material.IRON)
+				.hardnessAndResistance(1, 10)
+				.sound(SoundType.STONE)
+				.lightValue(10)
 		);
 	}
-	
-	@Override
-	public ActionResultType onItemUse(ItemUseContext context)
-	{		
-		World world = context.getWorld();
-		BlockPos rootPos = context.getPos();
 
+	@SuppressWarnings("deprecation")
+	@Override
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving)
+	{
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
+		
+		// check for any change to OUR redstone state
+		boolean newPowerStatus = worldIn.isBlockPowered(pos);
+		if (isPowered != newPowerStatus)
+		{
+			isPowered = newPowerStatus;
+			
+			if (isPowered)
+				castRune(worldIn, pos);
+		}
+	}
+	
+	private void castRune(World world, BlockPos rootPos)
+	{
 		if (!world.isRemote)
 		{
 			// look for rune in area
 			BlockState[][] area = RuneManager.getArea(world, rootPos);
 			RuneCast cast = RuneManager.getRune(area);
-			
-			// try looking above selected area if first try didn't work
-			// (this covers a situation where the player hasn't filled in the center
-			// of the rune, and has to select the block below the center)
-			if (cast.getRune() == null)
-			{
-				area = RuneManager.getArea(world, rootPos.up());
-				cast = RuneManager.getRune(area);
-			}
-			// this covers the situation where the top of the rune is obstructed and the
-			// player has to click the block above the middle
-			if (cast.getRune() == null)
-			{
-				area = RuneManager.getArea(world, rootPos.down());
-				cast = RuneManager.getRune(area);
-			}
 			
 			// cast rune if valid
 			if (cast.getRune() != null)
@@ -60,7 +66,7 @@ public class RuningStaff extends Item
 				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
 				
 				// cast rune
-				cast.getRune().onCast(context.getPlayer(), context.getWorld(), context.getPos(), area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
+				cast.getRune().onCast(null, world, rootPos, area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
 				
 				// backup rune data
 				EsotericaWorldSave.backupData();
@@ -71,7 +77,5 @@ public class RuningStaff extends Item
 				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
 			}
 		}
-		return super.onItemUse(context);
 	}
-
 }

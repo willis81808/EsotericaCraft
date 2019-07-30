@@ -13,7 +13,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
@@ -29,9 +29,9 @@ public abstract class TeleporterBase extends Rune
 	
 
 	@Override
-	public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public void onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		super.onCast(context, pattern, enchantBlocks, mundaneBlocks);
+		super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks);
 		
 		StringBuilder strBuilder = new StringBuilder();
 		for (BlockState markerBlock : enchantBlocks)
@@ -44,7 +44,7 @@ public abstract class TeleporterBase extends Rune
 		// this is a new key
 		if (!RuneList.teleportLinks.containsKey(key))
 		{
-			TeleportLink link = makeNewLink(key, context.getPos());
+			TeleportLink link = makeNewLink(key, pos);
 			RuneList.teleportLinks.put(key, link);
 		}
 		// existing key recognized
@@ -57,23 +57,23 @@ public abstract class TeleporterBase extends Rune
 			if (getThisSide(link) == -1)
 			{
 				// link signature to this rune
-				setThisSide(link, context.getPos().toLong());
+				setThisSide(link, pos.toLong());
 
 				// if both portals are linked then teleport player
 				if (getOtherSide(link) != -1)
 				{
-					teleport(context, BlockPos.fromLong(getOtherSide(link)), link);
+					teleport(world, player, pos, BlockPos.fromLong(getOtherSide(link)), link);
 				}
 			}
 			// this rune has already been linked
-			else if (getThisSide(link) == context.getPos().toLong() ||
-					getThisSide(link) == context.getPos().up().toLong() ||
-					getThisSide(link) == context.getPos().down().toLong())
+			else if (getThisSide(link) == pos.toLong() ||
+					getThisSide(link) == pos.up().toLong() ||
+					getThisSide(link) == pos.down().toLong())
 			{
 				// if both sides are linked then teleport player
 				if (getOtherSide(link) != -1)
 				{
-					teleport(context, BlockPos.fromLong(getOtherSide(link)), link);
+					teleport(world, player, pos, BlockPos.fromLong(getOtherSide(link)), link);
 				}
 			}
 			// this portal signature has already been linked to another rune!
@@ -83,11 +83,11 @@ public abstract class TeleporterBase extends Rune
 				if (getOtherSide(link) != -1)
 				{
 					// send warning message to casting player
-					EsotericaCraft.messagePlayer(context.getPlayer(),
+					EsotericaCraft.messagePlayer(player,
 							"The Aether resists!",
 							TextFormatting.RED
 						);
-					EsotericaCraft.messagePlayer(context.getPlayer(),
+					EsotericaCraft.messagePlayer(player,
 							"This path must already be in use..."
 						);
 				}
@@ -95,34 +95,34 @@ public abstract class TeleporterBase extends Rune
 				// therefor we overrite the old partial link with a new one
 				else
 				{
-					RuneList.teleportLinks.put(key, makeNewLink(key, context.getPos()));
+					RuneList.teleportLinks.put(key, makeNewLink(key, pos));
 				}
 			}
 		}
 	}
 	
-	private static List<Entity> getEntitiesToTeleport(ItemUseContext context, BlockPos root)
+	private List<Entity> getEntitiesToTeleport(World world, BlockPos root)
 	{
 		EsotericaCraft.logger.info("Found entities above rune:");
 		AxisAlignedBB searchArea = new AxisAlignedBB(root).expand(2, 2, 2);
 		
 		// items
-		List<ItemEntity> items = context.getWorld().getEntitiesWithinAABB(ItemEntity.class, searchArea);
+		List<ItemEntity> items = world.getEntitiesWithinAABB(ItemEntity.class, searchArea);
 		for (ItemEntity i : items)
 			EsotericaCraft.logger.info(i.getDisplayName().getFormattedText());
 		
 		// mobs
-		List<LivingEntity> mobs = context.getWorld().getEntitiesWithinAABB(LivingEntity.class, searchArea);
+		List<LivingEntity> mobs = world.getEntitiesWithinAABB(LivingEntity.class, searchArea);
 		for (LivingEntity m : mobs)
 			EsotericaCraft.logger.info(m.getDisplayName().getFormattedText());
 
 		// minecarts
-		List<AbstractMinecartEntity> minecarts = context.getWorld().getEntitiesWithinAABB(AbstractMinecartEntity.class, searchArea);
+		List<AbstractMinecartEntity> minecarts = world.getEntitiesWithinAABB(AbstractMinecartEntity.class, searchArea);
 		for (AbstractMinecartEntity m : minecarts)
 			EsotericaCraft.logger.info(m.getDisplayName().getFormattedText());
 
 		// boats
-		List<BoatEntity> boats = context.getWorld().getEntitiesWithinAABB(BoatEntity.class, searchArea);
+		List<BoatEntity> boats = world.getEntitiesWithinAABB(BoatEntity.class, searchArea);
 		for (BoatEntity b : boats)
 			EsotericaCraft.logger.info(b.getDisplayName().getFormattedText());
 		
@@ -134,83 +134,58 @@ public abstract class TeleporterBase extends Rune
 		return all;
 	}
 	
-	private BlockPos getValidTeleportPoint(ItemUseContext context, BlockPos target)
+	private BlockPos getValidTeleportPoint(World world, PlayerEntity player, BlockPos target)
 	{
-		World w = context.getWorld();
 		int attempts = 0;
 		boolean valid = false;
 		while (!valid)
 		{
 			target = target.up();
 			BlockPos next = target.up();
-			BlockState destination1 = w.getBlockState(target);
-			BlockState destination2 = w.getBlockState(next);
-			valid = destination1.isAir(context.getWorld(), target) && destination2.isAir(context.getWorld(), next);
+			BlockState destination1 = world.getBlockState(target);
+			BlockState destination2 = world.getBlockState(next);
+			valid = destination1.isAir(world, target) && destination2.isAir(world, next);
 			
 			attempts ++;
 			if (attempts > 10)
 			{
-				EsotericaCraft.messagePlayer(context.getPlayer(),
-						"The Aether resists!",
-						TextFormatting.RED
-					);
-				EsotericaCraft.messagePlayer(context.getPlayer(),
-						"A safe place could not be found on the other side."
-					);
+				if (player != null)
+				{
+					EsotericaCraft.messagePlayer(player,
+							"The Aether resists!",
+							TextFormatting.RED
+						);
+					EsotericaCraft.messagePlayer(player,
+							"A safe place could not be found on the other side."
+						);
+				}
 				return null;
 			}
 		}
+		
 		return target;
 	}
 	
-	private void teleport(ItemUseContext context, BlockPos target, TeleportLink link)
+	private void teleport(World world, PlayerEntity player, BlockPos from, BlockPos to, TeleportLink link)
 	{
 		// find valid area on other side of teleport linkage
-		target = getValidTeleportPoint(context, target);
-		
-		
-		/*
-		World w = context.getWorld();
-		int attempts = 0;
-		boolean valid = false;
-		while (!valid)
-		{
-			target = target.up();
-			BlockPos next = target.up();
-			BlockState destination1 = w.getBlockState(target);
-			BlockState destination2 = w.getBlockState(next);
-			valid = destination1.isAir(context.getWorld(), target) && destination2.isAir(context.getWorld(), next);
-			
-			attempts ++;
-			if (attempts > 10)
-			{
-				EsotericaCraft.messagePlayer(context.getPlayer(),
-						"The Aether resists!",
-						TextFormatting.RED
-					);
-				EsotericaCraft.messagePlayer(context.getPlayer(),
-						"A safe place could not be found on the other side."
-					);
-				return;
-			}
-		}
-		*/
+		to = getValidTeleportPoint(world, player, to);
 		
 		// valid area found- do teleport
-		if (context.getPlayer().isSneaking())
+		if (player == null || player.isSneaking())
 		{
 			// player is sneaking- teleport entities and not player
-			List<Entity> entities = getEntitiesToTeleport(context, context.getPos());
+			List<Entity> entities = getEntitiesToTeleport(world, from);
 			if (entities.size() == 0)
 			{
-				entities = getEntitiesToTeleport(context, BlockPos.fromLong(getOtherSide(link)));
-				target = getValidTeleportPoint(context, BlockPos.fromLong(getThisSide(link)));
+				entities = getEntitiesToTeleport(world, BlockPos.fromLong(getOtherSide(link)));
+				to = getValidTeleportPoint(world, player, BlockPos.fromLong(getThisSide(link)));
 				for (Entity entity : entities)
 				{
 					entity.setPositionAndUpdate(
-							target.getX()+.5,
-							target.getY()+.5,
-							target.getZ()+.5
+							to.getX()+.5,
+							to.getY()+.5,
+							to.getZ()+.5
 						);
 				}
 			}
@@ -219,9 +194,9 @@ public abstract class TeleporterBase extends Rune
 				for (Entity entity : entities)
 				{
 					entity.setPositionAndUpdate(
-							target.getX()+.5,
-							target.getY()+.5,
-							target.getZ()+.5
+							to.getX()+.5,
+							to.getY()+.5,
+							to.getZ()+.5
 						);
 				}
 			}
@@ -229,10 +204,10 @@ public abstract class TeleporterBase extends Rune
 		else
 		{
 			// player wasn't sneaking- teleport player
-			context.getPlayer().setPositionAndUpdate(
-					target.getX()+.5,
-					target.getY()+.5,
-					target.getZ()+.5
+			player.setPositionAndUpdate(
+					to.getX()+.5,
+					to.getY()+.5,
+					to.getZ()+.5
 				);
 		}
 	}

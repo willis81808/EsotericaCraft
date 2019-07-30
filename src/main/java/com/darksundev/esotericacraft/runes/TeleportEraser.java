@@ -9,7 +9,8 @@ import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
@@ -38,15 +39,15 @@ public class TeleportEraser extends Rune
 		});
 	}
 	@Override
-	public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public void onCast(PlayerEntity player, World w, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
 		// player didn't use redstone in corners, not a valid rune.
 		// abort cast
-		if (!isValid(context, pattern))
+		if (!isValid(player, pattern))
 			return;
 		
 		// if we got here the cast was valid, attempt to teleport
-		super.onCast(context, pattern, enchantBlocks, mundaneBlocks);
+		super.onCast(player, w, pos, pattern, enchantBlocks, mundaneBlocks);
 		
 		StringBuilder strBuilder = new StringBuilder();
 		for (BlockState markerBlock : enchantBlocks)
@@ -62,31 +63,30 @@ public class TeleportEraser extends Rune
 		// this key has no corrosponding link
 		if (!RuneList.teleportLinks.containsKey(key))
 		{
-			ShowMissingSignatureErrorMessage(context);
+			ShowMissingSignatureErrorMessage(player);
 		}
 		// existing key recognized
 		else
 		{
 			// get link with this rune's signature
 			RuneList.teleportLinks.remove(key);
-			World w = context.getWorld();
 			
 			// delete emerald
-			w.removeBlock(context.getPos(), false);
+			w.removeBlock(pos, false);
 			// delete redstone
-			w.removeBlock(context.getPos().north().west(), false);
-			w.removeBlock(context.getPos().north().east(), false);
-			w.removeBlock(context.getPos().south().west(), false);
-			w.removeBlock(context.getPos().south().east(), false);
-			w.notifyBlockUpdate(context.getPos().north().west(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
-			w.notifyBlockUpdate(context.getPos().north().east(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
-			w.notifyBlockUpdate(context.getPos().south().west(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
-			w.notifyBlockUpdate(context.getPos().south().east(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
-			ShowSuccessMessage(context);
+			w.removeBlock(pos.north().west(), false);
+			w.removeBlock(pos.north().east(), false);
+			w.removeBlock(pos.south().west(), false);
+			w.removeBlock(pos.south().east(), false);
+			w.notifyBlockUpdate(pos.north().west(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
+			w.notifyBlockUpdate(pos.north().east(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
+			w.notifyBlockUpdate(pos.south().west(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
+			w.notifyBlockUpdate(pos.south().east(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
+			ShowSuccessMessage(player);
 		}
 	}
 	
-	private boolean isValid(ItemUseContext context, BlockState[][] pattern)
+	private boolean isValid(PlayerEntity player, BlockState[][] pattern)
 	{
 		// check for emerald in the proper place
 		boolean emeraldValid = pattern[2][2].getBlock().getTranslationKey() != "block.minecraft.emerald_block";
@@ -115,57 +115,70 @@ public class TeleportEraser extends Rune
 		wireCondition.add("block.minecraft.redstone_wire");
 		boolean redstoneValid = wireArea.equals(wireCondition);
 		
-		if (!emeraldValid)
+		if (player != null)
 		{
-			EsotericaCraft.messagePlayer(context.getPlayer(),
-					"The Aether resists!",
-					TextFormatting.RED
-				);
-			EsotericaCraft.messagePlayer(context.getPlayer(),
-					"You need a more valuable offering for this magic..."
-				);
+			if (!emeraldValid)
+			{
+				EsotericaCraft.messagePlayer(player,
+						"The Aether resists!",
+						TextFormatting.RED
+					);
+				EsotericaCraft.messagePlayer(player,
+						"You need a more valuable offering for this magic..."
+					);
+			}
+			else if (!torchesValid)
+			{
+				ShowInvalidRedstoneErrorMessage(player, "block.minecraft.redstone_torch", torchArea);
+			}
+			else if (!redstoneValid)
+			{
+				ShowInvalidRedstoneErrorMessage(player, "block.minecraft.redstone_wire", wireArea);
+			}
 		}
-		else if (!torchesValid)
-		{
-			ShowInvalidRedstoneErrorMessage(context, "block.minecraft.redstone_torch", torchArea);
-		}
-		else if (!redstoneValid)
-		{
-			ShowInvalidRedstoneErrorMessage(context, "block.minecraft.redstone_wire", wireArea);
-		}
+		
 		return  emeraldValid && torchesValid && redstoneValid;
 	}
 
-	private void ShowSuccessMessage(ItemUseContext context)
+	private void ShowSuccessMessage(PlayerEntity player)
 	{
-		EsotericaCraft.messagePlayer(context.getPlayer(),
+		if (player == null)
+			return;
+		
+		EsotericaCraft.messagePlayer(player,
 				"The Aether settles...",
 				TextFormatting.BLUE
 			);
-		EsotericaCraft.messagePlayer(context.getPlayer(),
+		EsotericaCraft.messagePlayer(player,
 				"Portals of the given signature can now be moved/replaced"
 			);
 	}
-	private void ShowInvalidRedstoneErrorMessage(ItemUseContext context, String expecting, Set<String> wrongArea)
+	private void ShowInvalidRedstoneErrorMessage(PlayerEntity player, String expecting, Set<String> wrongArea)
 	{
+		if (player == null)
+			return;
+		
 		wrongArea.remove(expecting);
 		
-		EsotericaCraft.messagePlayer(context.getPlayer(),
+		EsotericaCraft.messagePlayer(player,
 				"The Aether resists!",
 				TextFormatting.RED
 			);
-		EsotericaCraft.messagePlayer(context.getPlayer(),
+		EsotericaCraft.messagePlayer(player,
 				"Your alignment is off! Where the Aether expected §a[" + expecting + "] §r§e§oinstead it found §r§a§4" + wrongArea.toString()
 			);
 	}
-	private void ShowMissingSignatureErrorMessage(ItemUseContext context)
-		{
-			EsotericaCraft.messagePlayer(context.getPlayer(),
-					"The Aether resists!",
-					TextFormatting.RED
-				);
-			EsotericaCraft.messagePlayer(context.getPlayer(),
-					"The there exists no link of that signature to be erased..."
-				);
-		}
+	private void ShowMissingSignatureErrorMessage(PlayerEntity player)
+	{
+		if (player == null)
+			return;
+		
+		EsotericaCraft.messagePlayer(player,
+				"The Aether resists!",
+				TextFormatting.RED
+			);
+		EsotericaCraft.messagePlayer(player,
+				"The there exists no link of that signature to be erased..."
+			);
+	}
 }

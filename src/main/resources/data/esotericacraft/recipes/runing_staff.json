@@ -2,9 +2,9 @@
     "type": "minecraft:crafting_shaped",
     "pattern":
     [
-        " SD",
+        "  G",
         " S ",
-		" S "
+		"S  "
     ],
     "key":
     {
@@ -12,9 +12,9 @@
 		{
 			"item": "minecraft:stick"
         },
-		"D":
+		"G":
 		{
-			"item": "minecraft:diamond"
+			"item": "esotericacraft:garnet"
 		}
     },
     "result":

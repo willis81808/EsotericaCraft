@@ -5,7 +5,8 @@ import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class Rune
 {
@@ -52,10 +53,9 @@ public class Rune
 	{
 		return pattern;
 	}
-	
-	public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	//public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public void onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		PlayerEntity player = context.getPlayer();
-		EsotericaCraft.logger.info(String.format("Player '%s' cast rune: '%s'", player.getName().getFormattedText(), name));
+		EsotericaCraft.logger.info("Cast Rune: " + name);
 	}
 }
