@@ -31,6 +31,7 @@ public class SleepManager
 	private static LinkedList<ChangeTimeCommand> commands = new LinkedList<ChangeTimeCommand>();
 
 	// TODO: serialize and save this data to a file, preferrably human readable-editable
+	private static final long MORNING = 1000;
 	private static double percentage = .32;											// this percentage of players or more must be sleeping to skip the night
 	private static List<PlayerEntity> sleeping = new ArrayList<PlayerEntity>();		// list of sleeping players (aka sleep-vote tally)
 	private static String[] flavorText =											// flavor text for sleeping alerts
@@ -81,12 +82,14 @@ public class SleepManager
 	// Tracking votes & sleepers
 	public static boolean playerEnteredBed(PlayerEntity player)
 	{
+		Boolean isDay = player.getServer().getWorld(DimensionType.OVERWORLD).isDaytime();
+		
 		if (sleeping.contains(player))
 		{
 			// player is already in sleeping list...?
 			return false;
 		}
-		else
+		else if (!isDay)
 		{
 			// add player to list
 			sleeping.add(player);
@@ -98,6 +101,10 @@ public class SleepManager
 			// check if vote passed
 			forceSleepCheck(player.getServer());
 			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 	public static boolean playerLeftBed(PlayerEntity player)
@@ -132,7 +139,7 @@ public class SleepManager
 
 			//schedule a change time command
 			commands.add(() -> {
-				server.getWorld(DimensionType.OVERWORLD).setDayTime(1000);
+				server.getWorld(DimensionType.OVERWORLD).setDayTime(MORNING);
 			});
 		}
 		else
