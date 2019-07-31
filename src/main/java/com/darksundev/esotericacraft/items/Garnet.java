@@ -13,5 +13,4 @@ public class Garnet extends Item
 		);
 	}
 
-	
 }

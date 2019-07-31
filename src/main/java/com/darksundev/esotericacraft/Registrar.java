@@ -2,6 +2,7 @@ package com.darksundev.esotericacraft;
 
 import com.darksundev.esotericacraft.lists.BlockList;
 import com.darksundev.esotericacraft.lists.ItemList;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
