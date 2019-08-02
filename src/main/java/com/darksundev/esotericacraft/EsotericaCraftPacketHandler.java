@@ -1,6 +1,7 @@
 package com.darksundev.esotericacraft;
 
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import net.minecraft.network.PacketBuffer;
@@ -21,18 +22,9 @@ public class EsotericaCraftPacketHandler
 	
 	private static int packetID = 0;
 	
-	public static void registerConsumer(BiConsumer<RuneCastMessagePacket, Supplier<Context>> messageConsumer)
+	public static <T> void registerConsumer(Class<T> classType, BiConsumer<T, PacketBuffer> encoder, Function<PacketBuffer, T> decoder, BiConsumer<T, Supplier<Context>> messageConsumer)
 	{
-		INSTANCE.registerMessage(packetID++, RuneCastMessagePacket.class, EsotericaCraftPacketHandler::messageEncoder, EsotericaCraftPacketHandler::messageDecoder, messageConsumer);
+		INSTANCE.registerMessage(packetID++, classType, encoder, decoder, messageConsumer);
 	}
 	
-	private static void messageEncoder(RuneCastMessagePacket msg, PacketBuffer buffer)
-	{
-		msg.writeToBuffer(buffer);
-	}
-	private static RuneCastMessagePacket messageDecoder(PacketBuffer buffer)
-	{
-		return RuneCastMessagePacket.fromBuffer(buffer);
-	}
-
 }

@@ -1,4 +1,4 @@
-package com.darksundev.esotericacraft;
+package com.darksundev.esotericacraft.packets;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.IParticleData;

@@ -3,26 +3,25 @@ package com.darksundev.esotericacraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.darksundev.esotericacraft.commands.CloseInventoryCommand;
+import com.darksundev.esotericacraft.commands.OpenInventoryCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
 import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneManager;
-import com.darksundev.esotericacraft.sleep.SleepManager;
-import com.mojang.brigadier.Message;
+import com.mojang.brigadier.CommandDispatcher;
 
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(EsotericaCraft.modid)
@@ -46,6 +45,7 @@ public class EsotericaCraft
 		instance = this;
 
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
 		MinecraftForge.EVENT_BUS.register(EsotericaCraft.class);
 	}
 	
@@ -53,13 +53,22 @@ public class EsotericaCraft
 	{
 		runeManager = new RuneManager();
 		modSaveData = new EsotericaWorldSave();
-		
 		RuneList.registerRunes();
+
 		logger.info("Registered Runes");
 		
 		// run sided initialization
 		proxy.init();
 	}
+
+    public void serverStarting(FMLServerStartingEvent event)
+    {
+    	CommandDispatcher<CommandSource> dispatch = event.getCommandDispatcher();
+
+    	// register commands
+    	OpenInventoryCommand.register(dispatch);
+    	CloseInventoryCommand.register(dispatch);
+    }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)
 	{

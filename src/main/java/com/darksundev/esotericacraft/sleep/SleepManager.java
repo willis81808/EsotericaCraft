@@ -83,7 +83,6 @@ public class SleepManager
 	public static boolean playerEnteredBed(PlayerEntity player)
 	{
 		Boolean isDay = player.getServer().getWorld(DimensionType.OVERWORLD).isDaytime();
-		
 		if (sleeping.contains(player))
 		{
 			// player is already in sleeping list...?

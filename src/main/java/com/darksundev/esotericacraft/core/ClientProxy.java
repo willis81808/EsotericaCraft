@@ -1,13 +1,11 @@
 package com.darksundev.esotericacraft.core;
 
-import java.util.function.Supplier;
-
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
-import com.darksundev.esotericacraft.RuneCastMessagePacket;
+import com.darksundev.esotericacraft.packets.PlayerInventoryMessagePacket;
+import com.darksundev.esotericacraft.packets.RuneCastMessagePacket;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
 
 public class ClientProxy implements IProxy
 {
@@ -15,16 +13,46 @@ public class ClientProxy implements IProxy
 	@Override
 	public void init()
 	{
-		// initialize network packet consumer
-		EsotericaCraftPacketHandler.registerConsumer(ClientProxy::messageConsumer);
-	}
+		// register rune particle packet
+		EsotericaCraftPacketHandler.registerConsumer(RuneCastMessagePacket.class,
+				// encoder
+				(msg, buffer) ->
+				{
+					msg.writeToBuffer(buffer);
+				},
+				// decoder
+				(buffer) ->
+				{ 
+					return RuneCastMessagePacket.fromBuffer(buffer);
+				},
+				// consumer
+				(msg, context) -> {
+					context.get().enqueueWork(() ->
+					{
+						World w = Minecraft.getInstance().world;
+						msg.spawnParticle(w);
+					});
+				});
 
-	static void messageConsumer(RuneCastMessagePacket msg, Supplier<NetworkEvent.Context> ctx)
-	{
-		ctx.get().enqueueWork(() ->
-		{
-			World w = Minecraft.getInstance().world;
-			msg.spawnParticle(w);
-		});
+		// reset inventory packet received
+		EsotericaCraftPacketHandler.registerConsumer(PlayerInventoryMessagePacket.class,
+				// encoder
+				(msg, buffer) ->
+				{
+					msg.writeToBuffer(buffer);
+				},
+				// decoder
+				(buffer) ->
+				{
+					return PlayerInventoryMessagePacket.fromBuffer(buffer);
+				},
+				// consumer
+				(msg, context) ->
+				{
+					context.get().enqueueWork(() ->
+					{
+						Minecraft.getInstance().player.container.setAll(msg.items);
+					});
+				});
 	}
 }

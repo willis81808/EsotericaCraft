@@ -2,8 +2,8 @@ package com.darksundev.esotericacraft.items;
 
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
 import com.darksundev.esotericacraft.EsotericaWorldSave;
-import com.darksundev.esotericacraft.RuneCastMessagePacket;
-import com.darksundev.esotericacraft.RuneCastMessagePacket.ParticleType;
+import com.darksundev.esotericacraft.packets.RuneCastMessagePacket;
+import com.darksundev.esotericacraft.packets.RuneCastMessagePacket.ParticleType;
 import com.darksundev.esotericacraft.runes.RuneCast;
 import com.darksundev.esotericacraft.runes.RuneManager;
 
