@@ -32,7 +32,6 @@ public class StonePath extends CarpetBlock
 				.hardnessAndResistance(1, 10)
 				.sound(SoundType.STONE)
 		);
-		
 	}
 	
 	@Override
@@ -44,9 +43,9 @@ public class StonePath extends CarpetBlock
 		
 		// get player values
 		PlayerEntity player = (PlayerEntity)entityIn;
+		
 		//NewPlayerSpeed(player);
 		OldPlayerSpeed(player);
-
 	}
 	private void OldPlayerSpeed(PlayerEntity player)
 	{
@@ -71,6 +70,7 @@ public class StonePath extends CarpetBlock
 		}
 		player.setMotion(x, player.getMotion().y, z);
 	}
+	@SuppressWarnings("unused")
 	private void NewPlayerSpeed(PlayerEntity player)
 	{
 		Vec3d motion 		= player.getMotion();

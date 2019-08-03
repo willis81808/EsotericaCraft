@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.darksundev.esotericacraft.commands.CloseInventoryCommand;
 import com.darksundev.esotericacraft.commands.OpenInventoryCommand;
+import com.darksundev.esotericacraft.commands.ShopOverrideCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
@@ -68,6 +69,7 @@ public class EsotericaCraft
     	// register commands
     	OpenInventoryCommand.register(dispatch);
     	CloseInventoryCommand.register(dispatch);
+    	ShopOverrideCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)

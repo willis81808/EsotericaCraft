@@ -61,7 +61,6 @@ public class OpenInventoryCommand
 			{
 				sender.sendSlotContents(target.openContainer, slotInd, stack);
 			}
-			
 		};
 		target.container.addListener(listener);
 		listeners.put(target.getCachedUniqueIdString(), listener);
