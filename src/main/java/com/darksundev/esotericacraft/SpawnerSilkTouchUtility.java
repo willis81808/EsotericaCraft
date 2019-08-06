@@ -11,15 +11,48 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 @EventBusSubscriber(modid = EsotericaCraft.modid)
 public class SpawnerSilkTouchUtility
 {
+
+	@SubscribeEvent
+	public static void onPlayerTick(PlayerTickEvent event)
+	{
+		PlayerEntity player = event.player;
+		World w = player.world;
+		if (w.isRemote)
+			return;
+		
+		// look for player's with spawners in their inventory
+		boolean appliedDebuf = false;
+		player.container.getInventory().forEach((item) -> {
+			if (item.getItem() == Items.SPAWNER)
+			{
+				// apply debuff to them
+				if (!appliedDebuf)
+					doSpawnerDebuff(player);
+			}
+		});
+	}
+	
+	private static void doSpawnerDebuff(PlayerEntity player)
+	{
+		if (!player.isPotionActive(Effects.HUNGER) || !player.isPotionActive(Effects.WEAKNESS))
+		{
+			player.addPotionEffect(new EffectInstance(Effects.HUNGER, 100, 4));
+			player.addPotionEffect(new EffectInstance(Effects.WEAKNESS, 100, 2));
+		}
+	}
+	
 	@SubscribeEvent
 	public static void onPlayerBreakBlock(BreakEvent event)
 	{
@@ -45,6 +78,9 @@ public class SpawnerSilkTouchUtility
 						// drop spawner item in world
 						ItemEntity item = new ItemEntity(w, pos.getX(), pos.getY() + .5, pos.getZ(), new ItemStack(Blocks.SPAWNER));
 						w.addEntity(item);
+						// damage player... bite back!
+						player.addPotionEffect(new EffectInstance(Effects.INSTANT_DAMAGE, 4));
+						player.addPotionEffect(new EffectInstance(Effects.POISON, 200));
 					}
 				}
 			}
