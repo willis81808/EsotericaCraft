@@ -4,13 +4,14 @@ import java.util.List;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.Utils;
-import com.darksundev.esotericacraft.commands.ShopOverrideCommand;
+import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.WallSignBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -36,10 +37,15 @@ public class SignShopManager
 		// server side only
 		//if (event.getWorld().isRemote)
 		//	return;
-
 		PlayerEntity player = event.getEntityPlayer();
 		World w = event.getWorld();
 		BlockState b = w.getBlockState(event.getPos());
+
+		// only once per right click, even if there are two items equiped (main hand and offhand)
+		ItemStack item = event.getItemStack();
+		if (item.getItem() == Items.AIR && player.getHeldItemMainhand().getItem() != Items.AIR)
+			return;
+		
 		if (b.getBlock() instanceof WallSignBlock)
 		{
 			// get sign entity
@@ -71,24 +77,24 @@ public class SignShopManager
 					// info-only activation
 					if (player.isSneaking() && !w.isRemote)
 					{
-						EsotericaCraft.messagePlayer(player, "~~~~~~~~~~", TextFormatting.GREEN);
-						EsotericaCraft.messagePlayer(player, "~~ Shop ~~", TextFormatting.GREEN);
-						EsotericaCraft.messagePlayer(player, "~~~~~~~~~~", TextFormatting.GREEN);
+						EsotericaCraft.messagePlayer(player, " ", TextFormatting.RESET);
+						EsotericaCraft.messagePlayer(player, "~~ Shop ~~", TextFormatting.DARK_GREEN);
 						EsotericaCraft.messagePlayer(player,
 								Utils.textComponentFromString("Owner: ")
-									.applyTextStyles(TextFormatting.YELLOW, TextFormatting.ITALIC)
 									.appendText(data.owner));
 						EsotericaCraft.messagePlayer(player,
 								Utils.textComponentFromString("Stocked: ")
-									.applyTextStyles(TextFormatting.YELLOW, TextFormatting.ITALIC)
 									.appendSibling(Utils.textComponentFromString(stockSize >= data.give.count ? "Yes" : "No")
-											.applyTextStyle(stockSize >= data.give.count ? TextFormatting.GREEN : TextFormatting.RED)) );
-						EsotericaCraft.messagePlayer(player, String.format("They are offering %d %s in exchange for %d %s", data.ask.count, data.ask.name, data.give.count, data.give.name));
+											.applyTextStyle(stockSize >= data.give.count ? TextFormatting.GREEN : TextFormatting.RED)));
+						EsotericaCraft.messagePlayer(player,
+								String.format("They are requesting %d %s in exchange for %d %s", data.ask.count, data.ask.name, data.give.count, data.give.name),
+								TextFormatting.GRAY, TextFormatting.ITALIC);
+						EsotericaCraft.messagePlayer(player, " ", TextFormatting.RESET);
 						return;
 					}
 					
 					// attempt to process purchase
-					if (data.owner.equals(player.getDisplayName().getFormattedText()))
+					if (data.owner.equals(player.getDisplayName().getString()))
 					{
 						// we own this shop
 						EsotericaCraft.messagePlayer(player, "Owner recognized", TextFormatting.GREEN);
@@ -178,7 +184,7 @@ public class SignShopManager
 				if (data.isValidShop)
 				{
 					// is this player the shop owner?
-					if (data.owner.equals(player.getDisplayName().getFormattedText()) || ShopOverrideCommand.hasOverridePermission(player))
+					if (data.owner.equals(player.getDisplayName().getString()) || ModOverrideCommand.hasOverridePermission(player))
 					{
 						event.setUseBlock(Result.ALLOW);
 					}
@@ -197,10 +203,13 @@ public class SignShopManager
 	public static void onPlayerBreakBlock(BreakEvent event)
 	{
 		boolean validUse = true;
-		
+
+		// unpack event
 		PlayerEntity player = event.getPlayer();
 		World w = player.world;
 		BlockState b = w.getBlockState(event.getPos());
+		
+		// trying to break a chest or wall sign?
 		if (b.getBlock() instanceof WallSignBlock)
 		{
 			// is this a valid shop sign?
@@ -209,7 +218,7 @@ public class SignShopManager
 			if (data.isValidShop)
 			{
 				// is this player the shop owner?
-				if (!data.owner.equals(player.getDisplayName().getFormattedText()))
+				if (!data.owner.equals(player.getDisplayName().getString()))
 				{
 					validUse = false;
 				}
@@ -226,7 +235,7 @@ public class SignShopManager
 				if (data.isValidShop)
 				{
 					// is this player the shop owner?
-					if (!data.owner.equals(player.getDisplayName().getFormattedText()))
+					if (!data.owner.equals(player.getDisplayName().getString()))
 					{
 						validUse = false;
 					}
@@ -234,7 +243,7 @@ public class SignShopManager
 			}
 		}
 		
-		if (!validUse && !ShopOverrideCommand.hasOverridePermission(player))
+		if (!validUse && !ModOverrideCommand.hasOverridePermission(player))
 		{
 			event.setCanceled(true);;
 		}

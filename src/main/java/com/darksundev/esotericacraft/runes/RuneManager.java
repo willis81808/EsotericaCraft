@@ -84,6 +84,10 @@ public class RuneManager
 	public static RuneMaterial getMaterial(String blockId)
 	{
 		RuneMaterial result = blockTierMap.get(blockId);
+		if (result == null)
+		{
+			result = new RuneMaterial(blockId, Tier.NONE);
+		}
 		return result;
 	}
 	public static RuneCast getRune(BlockState[][] blocks)

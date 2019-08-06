@@ -13,6 +13,7 @@ public class RuneCast
 		this.key = key;
 		this.rune = rune;
 		this.enchantBlocks = enchantBlocks;
+		this.mundaneBlocks = mundaneBlocks;
 	}
 	public Rune getRune()
 	{

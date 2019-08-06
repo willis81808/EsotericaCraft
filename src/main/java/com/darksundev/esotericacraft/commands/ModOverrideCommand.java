@@ -10,13 +10,13 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 
-public class ShopOverrideCommand
+public class ModOverrideCommand
 {
 	private static Set<String> players = new HashSet<String>();
 	
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
-		dispatcher.register(Commands.literal("shopoverride")
+		dispatcher.register(Commands.literal("override")
 				.requires((cs) -> 
 				{
 					return cs.hasPermissionLevel(2);

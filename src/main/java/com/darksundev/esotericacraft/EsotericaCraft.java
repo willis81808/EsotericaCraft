@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.darksundev.esotericacraft.commands.CloseInventoryCommand;
 import com.darksundev.esotericacraft.commands.OpenInventoryCommand;
-import com.darksundev.esotericacraft.commands.ShopOverrideCommand;
+import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
@@ -16,9 +16,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.management.PlayerList;
+import net.minecraft.tileentity.BeaconTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -55,13 +59,13 @@ public class EsotericaCraft
 		runeManager = new RuneManager();
 		modSaveData = new EsotericaWorldSave();
 		RuneList.registerRunes();
-
+		
 		logger.info("Registered Runes");
 		
 		// run sided initialization
 		proxy.init();
 	}
-
+	
     public void serverStarting(FMLServerStartingEvent event)
     {
     	CommandDispatcher<CommandSource> dispatch = event.getCommandDispatcher();
@@ -69,7 +73,7 @@ public class EsotericaCraft
     	// register commands
     	OpenInventoryCommand.register(dispatch);
     	CloseInventoryCommand.register(dispatch);
-    	ShopOverrideCommand.register(dispatch);
+    	ModOverrideCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)

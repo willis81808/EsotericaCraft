@@ -27,7 +27,6 @@ public class CloseInventoryCommand
 	private static int executeCommand(CommandSource source, ServerPlayerEntity sender, ServerPlayerEntity target)
 	{
 		// send admin their normal inventory
-		//sender.sendContainerToPlayer(sender.container);
 		OpenInventoryCommand.clearListeners(target);
 		OpenInventoryCommand.resetInventory(sender);
 		return 1;

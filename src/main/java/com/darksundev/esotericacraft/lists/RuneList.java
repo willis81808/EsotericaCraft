@@ -2,6 +2,7 @@ package com.darksundev.esotericacraft.lists;
 
 import java.util.HashMap;
 
+import com.darksundev.esotericacraft.runes.Dampen;
 import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
@@ -24,6 +25,7 @@ public class RuneList
 		RuneManager.registerRune(waypointPortal);
 		RuneManager.registerRune(teleportEraser);
 		RuneManager.registerRune(soulTrap);
+		RuneManager.registerRune(dampen);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -49,6 +51,7 @@ public class RuneList
 	 * 		- M O M -
 	 */
 	private static final Rune teleportTransmitter = new TeleportTransmitter();
+	
 	/*
 	 * 	-: Ignored
 	 * 	M: Mundane required
@@ -61,6 +64,7 @@ public class RuneList
 	 * 		- M M M -
 	 */
 	public static final Rune teleportReceiver = new TeleportReceiver();
+	
 	/*
 	 * 	-: Neither Mundane nor Enchanted
 	 * 	M: Mundane required
@@ -74,6 +78,7 @@ public class RuneList
 	 * 	    - - - - -
 	 */	
 	public static final Rune waypointPortal = new WaypointPortal();
+	
 	/*
 	 * 	-: Neither Mundane nor Enchanted
 	 * 	O: Enchanted required
@@ -87,6 +92,7 @@ public class RuneList
 	 * 	    - * - * -
 	 */	
 	public static final Rune teleportEraser = new TeleportEraser();
+	
 	/*
 	 * 	-: Neither Mundane nor Enchanted
 	 * 	M: Mundane required
@@ -99,6 +105,19 @@ public class RuneList
 	 * 	    O - - - O
 	 */	
 	public static final Rune soulTrap = new SoulTrap();
+
+	/*
+	 * 	-: Neither Mundane nor Enchanted
+	 * 	O: Enchanted required
+	 *  X: Mundane required
+	 * 
+	 * 		- O O O -
+	 * 		O - X - O
+	 * 		O X X X O
+	 * 		O - X - O
+	 * 	    - O O O -
+	 */	
+	public static Rune dampen = new Dampen();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks

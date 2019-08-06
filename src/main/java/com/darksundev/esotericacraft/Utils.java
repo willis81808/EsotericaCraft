@@ -1,10 +1,8 @@
 package com.darksundev.esotericacraft;
 
-import com.mojang.brigadier.Message;
-
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentUtils;
+import net.minecraft.util.text.StringTextComponent;
 
 public class Utils
 {
@@ -18,10 +16,6 @@ public class Utils
 	}
 	public static ITextComponent textComponentFromString(String string)
 	{
-		// construct message
-		return TextComponentUtils.toTextComponent(new Message() {
-			@Override
-			public String getString() { return string; }
-		});
+		return new StringTextComponent(string);
 	}
 }
