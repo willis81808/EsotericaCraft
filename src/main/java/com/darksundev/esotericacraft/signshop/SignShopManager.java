@@ -41,9 +41,12 @@ public class SignShopManager
 		World w = event.getWorld();
 		BlockState b = w.getBlockState(event.getPos());
 
-		// only once per right click, even if there are two items equiped (main hand and offhand)
+		// only allow hand with item to activate this (if we have air in one hand and an item in the other)
 		ItemStack item = event.getItemStack();
-		if (item.getItem() == Items.AIR && player.getHeldItemMainhand().getItem() != Items.AIR)
+		if (item.getItem() == Items.AIR && player.getHeldItemMainhand().getItem() != player.getHeldItemOffhand().getItem())
+			return;
+		// only allow mainhand to activate this if we are holding two items
+		else if (player.getHeldItemMainhand().getItem() != Items.AIR && player.getHeldItemOffhand().getItem() != Items.AIR && item != player.getHeldItemMainhand())
 			return;
 		
 		if (b.getBlock() instanceof WallSignBlock)
