@@ -18,27 +18,31 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.network.PacketDistributor;
 
-public class OpenInventoryCommand
+public class InventoryCommand
 {
 	private static HashMap<String, IContainerListener> listeners = new HashMap<String, IContainerListener>();
 	private static HashMap<String, List<ItemStack>> inventories = new HashMap<String, List<ItemStack>>();
 	
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
-		dispatcher.register(Commands.literal("openinventory")
-				.requires((cs) -> 
-				{
+		dispatcher.register(Commands.literal("inventory")
+				.requires((cs) -> {
 					return cs.hasPermissionLevel(2);
-				})
-				.then(Commands.argument("target", EntityArgument.player())
-						.executes((cs) ->
-						{
-							CommandSource source = cs.getSource();
-							return executeCommand(source, source.asPlayer(), EntityArgument.getPlayer(cs, "target"));
-						})));
+				}).then(Commands.literal("close").then(Commands.argument("target", EntityArgument.player()).executes((cs) -> {
+					return closeInventory(cs.getSource(), cs.getSource().asPlayer(), EntityArgument.getPlayer(cs, "target"));
+				}))).then(Commands.literal("open").then(Commands.argument("target", EntityArgument.player()).executes((cs) -> {
+					return openInventory(cs.getSource(), cs.getSource().asPlayer(), EntityArgument.getPlayer(cs, "target"));
+				}))));
 	}
 	
-	private static int executeCommand(CommandSource source, ServerPlayerEntity sender, ServerPlayerEntity target)
+	private static int closeInventory(CommandSource source, ServerPlayerEntity sender, ServerPlayerEntity target)
+	{
+		// send admin their normal inventory
+		clearListeners(target);
+		resetInventory(sender);
+		return 1;
+	}
+	private static int openInventory(CommandSource source, ServerPlayerEntity sender, ServerPlayerEntity target)
 	{
 		if (listeners.containsKey(target.getCachedUniqueIdString()) || inventories.containsKey(sender.getCachedUniqueIdString()))
 		{
@@ -90,4 +94,5 @@ public class OpenInventoryCommand
 		EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> { return sender; }), new PlayerInventoryMessagePacket(inv));
 		inventories.remove(UID);
 	}
+
 }

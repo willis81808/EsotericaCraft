@@ -1,6 +1,8 @@
-package com.darksundev.esotericacraft;
+package com.darksundev.esotericacraft.plugins;
 
 import java.util.Map;
+
+import com.darksundev.esotericacraft.EsotericaCraft;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

@@ -1,11 +1,18 @@
 package com.darksundev.esotericacraft.runes;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -64,6 +71,12 @@ public class SoulTrap extends Rune
 	{
 		super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks);
 		
+		// allow only emerald to be used
+		Set<BlockState> enchant = new HashSet<BlockState>();
+		Collections.addAll(enchant, enchantBlocks);
+		if (enchant.size() != 1 || enchant.iterator().next().getBlock() != Blocks.EMERALD_BLOCK)
+			return;
+		
 		// attempt to find entities above the runet
 		List<LivingEntity> entities = getMobs(world, pos);
 
@@ -72,7 +85,7 @@ public class SoulTrap extends Rune
 		{
 			// pick first entity and convert them to an egg
 			LivingEntity chosenOne = entities.get(0);
-			ItemStack item = new ItemStack(SpawnEggItem.getEgg(chosenOne.getType()));
+			ItemStack item = new ItemStack(getEgg(chosenOne.getType()));
 			
 			// spawn item in world
 			BlockPos p = chosenOne.getPosition();
@@ -83,5 +96,7 @@ public class SoulTrap extends Rune
 			chosenOne.remove();
 		}
 	}
-	
+	public static SpawnEggItem getEgg(@Nullable EntityType<?> type) {
+	      return SpawnEggItem.EGGS.get(type);
+	   }
 }

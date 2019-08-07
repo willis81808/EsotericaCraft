@@ -1,4 +1,4 @@
-package com.darksundev.esotericacraft.sleep;
+package com.darksundev.esotericacraft.plugins;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -32,6 +32,7 @@ public class SleepManager
 
 	// TODO: serialize and save this data to a file, preferrably human readable-editable
 	private static final long MORNING = 1000;
+	private static boolean alertsEnabled = true;
 	private static double percentage = .32;											// this percentage of players or more must be sleeping to skip the night
 	private static List<PlayerEntity> sleeping = new ArrayList<PlayerEntity>();		// list of sleeping players (aka sleep-vote tally)
 	private static String[] flavorText =											// flavor text for sleeping alerts
@@ -77,6 +78,24 @@ public class SleepManager
 		{
 			playerLeftBed(player);
 		}
+	}
+
+	public static void setAlertsEnabled(boolean enabled)
+	{
+		alertsEnabled = enabled;
+	}
+	public static boolean getAlertsEnabled()
+	{
+		return alertsEnabled;
+	}
+
+	public static void setSleepPercentage(double percentage)
+	{
+		SleepManager.percentage = Math.max(0, Math.min(1, percentage));
+	}
+	public static double getSleepPercentage()
+	{
+		return SleepManager.percentage;
 	}
 	
 	// Tracking votes & sleepers
@@ -139,9 +158,10 @@ public class SleepManager
 			//schedule a change time command
 			commands.add(() -> {
 				server.getWorld(DimensionType.OVERWORLD).setDayTime(MORNING);
+				sleeping.clear();
 			});
 		}
-		else
+		else if (alertsEnabled)
 		{
 			EsotericaCraft.messageAllPlayers(players,
 					String.format("%s/%s players sleeping. %s more votes needed to skip the night", sleeping.size(), playerCount, Math.ceil(playerCount * percentage) - sleeping.size())

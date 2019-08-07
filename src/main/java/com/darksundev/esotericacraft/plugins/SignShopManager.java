@@ -1,4 +1,4 @@
-package com.darksundev.esotericacraft.signshop;
+package com.darksundev.esotericacraft.plugins;
 
 import java.util.List;
 
@@ -82,16 +82,15 @@ public class SignShopManager
 					{
 						EsotericaCraft.messagePlayer(player, " ", TextFormatting.RESET);
 						EsotericaCraft.messagePlayer(player, "~~ Shop ~~", TextFormatting.DARK_GREEN);
-						EsotericaCraft.messagePlayer(player,
-								Utils.textComponentFromString("Owner: ")
-									.appendText(data.owner));
+						EsotericaCraft.messagePlayer(player, Utils.textComponentFromString("Owner: ").appendText(data.owner));
 						EsotericaCraft.messagePlayer(player,
 								Utils.textComponentFromString("Stocked: ")
 									.appendSibling(Utils.textComponentFromString(stockSize >= data.give.count ? "Yes" : "No")
 											.applyTextStyle(stockSize >= data.give.count ? TextFormatting.GREEN : TextFormatting.RED)));
 						EsotericaCraft.messagePlayer(player,
-								String.format("They are requesting %d %s in exchange for %d %s", data.ask.count, data.ask.name, data.give.count, data.give.name),
-								TextFormatting.GRAY, TextFormatting.ITALIC);
+								String.format("They want: %d %s.", data.ask.count, data.ask.name), TextFormatting.GRAY, TextFormatting.ITALIC);
+						EsotericaCraft.messagePlayer(player,
+								String.format("They offer: %d %s.", data.give.count, data.give.name), TextFormatting.GRAY, TextFormatting.ITALIC);
 						EsotericaCraft.messagePlayer(player, " ", TextFormatting.RESET);
 						return;
 					}

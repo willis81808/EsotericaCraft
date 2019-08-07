@@ -3,9 +3,9 @@ package com.darksundev.esotericacraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.darksundev.esotericacraft.commands.CloseInventoryCommand;
-import com.darksundev.esotericacraft.commands.OpenInventoryCommand;
+import com.darksundev.esotericacraft.commands.InventoryCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
+import com.darksundev.esotericacraft.commands.SleepVoteCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
@@ -16,13 +16,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.management.PlayerList;
-import net.minecraft.tileentity.BeaconTileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -71,16 +67,16 @@ public class EsotericaCraft
     	CommandDispatcher<CommandSource> dispatch = event.getCommandDispatcher();
 
     	// register commands
-    	OpenInventoryCommand.register(dispatch);
-    	CloseInventoryCommand.register(dispatch);
+    	InventoryCommand.register(dispatch);
     	ModOverrideCommand.register(dispatch);
+    	SleepVoteCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)
 	{
 		// construct message
 		ITextComponent text = Utils.textComponentFromString(message);
-		if (formattings == null || formattings.length > 0)
+		if (formattings != null && formattings.length > 0)
 		{
 			text.applyTextStyles(formattings);
 		}
@@ -93,14 +89,11 @@ public class EsotericaCraft
 	}
 	public static void messagePlayer(PlayerEntity player, ITextComponent message, TextFormatting... formattings)
 	{
-		if (formattings == null || formattings.length > 0)
+		if (formattings != null && formattings.length > 0)
 		{
 			message.applyTextStyles(formattings);
 		}
-		else
-		{
-			message.applyTextStyles(TextFormatting.YELLOW, TextFormatting.ITALIC);
-		}
+
 		// send message
 		player.sendMessage(message);
 	}
@@ -108,7 +101,7 @@ public class EsotericaCraft
 	{
 		// construct message
 		ITextComponent text = Utils.textComponentFromString(message);
-		if (formattings == null || formattings.length > 0)
+		if (formattings != null && formattings.length > 0)
 		{
 			text.applyTextStyles(formattings);
 		}
@@ -121,14 +114,11 @@ public class EsotericaCraft
 	}
 	public static void messageAllPlayers(PlayerList players, ITextComponent message, TextFormatting... formattings)
 	{
-		if (formattings == null || formattings.length > 0)
+		if (formattings != null && formattings.length > 0)
 		{
 			message.applyTextStyles(formattings);
 		}
-		else
-		{
-			message.applyTextStyles(TextFormatting.YELLOW, TextFormatting.ITALIC);
-		}
+
 		// send message
 		players.sendMessage(message);
 	}
