@@ -16,6 +16,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 public class InventoryCommand
@@ -40,6 +41,7 @@ public class InventoryCommand
 		// send admin their normal inventory
 		clearListeners(target);
 		resetInventory(sender);
+		source.sendFeedback(new StringTextComponent("Closed ").appendSibling(target.getDisplayName()).appendText("'s inventory"), true);
 		return 1;
 	}
 	private static int openInventory(CommandSource source, ServerPlayerEntity sender, ServerPlayerEntity target)
@@ -68,6 +70,7 @@ public class InventoryCommand
 		};
 		target.container.addListener(listener);
 		listeners.put(target.getCachedUniqueIdString(), listener);
+		source.sendFeedback(new StringTextComponent("Opened ").appendSibling(target.getDisplayName()).appendText("'s inventory"), true);
 		return 1;
 	}
 	

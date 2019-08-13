@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
+import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
@@ -99,6 +100,9 @@ public abstract class TeleporterBase extends Rune
 				}
 			}
 		}
+		
+		// backup rune data
+		EsotericaWorldSave.backupData();
 	}
 	
 	private List<Entity> getEntitiesToTeleport(World world, BlockPos root)

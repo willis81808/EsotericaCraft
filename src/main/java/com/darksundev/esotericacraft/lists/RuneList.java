@@ -3,6 +3,7 @@ package com.darksundev.esotericacraft.lists;
 import java.util.HashMap;
 
 import com.darksundev.esotericacraft.runes.Dampen;
+import com.darksundev.esotericacraft.runes.Disintegrate;
 import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
@@ -26,6 +27,7 @@ public class RuneList
 		RuneManager.registerRune(teleportEraser);
 		RuneManager.registerRune(soulTrap);
 		RuneManager.registerRune(dampen);
+		RuneManager.registerRune(disintegrate);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -92,23 +94,23 @@ public class RuneList
 	 * 	    - * - * -
 	 */	
 	public static final Rune teleportEraser = new TeleportEraser();
-	
+
 	/*
 	 * 	-: Neither Mundane nor Enchanted
 	 * 	M: Mundane required
-	 * 	O: Enchanted required
+	 * 	O: Enchanted required  (specifically Emerald blocks)
 	 * 
 	 * 		O - - - O
 	 * 		- O - O -
 	 * 		- - M - -
 	 * 		- O - O -
-	 * 	    O - - - O
-	 */	
+	 *		O - - - O
+	 */
 	public static final Rune soulTrap = new SoulTrap();
 
 	/*
 	 * 	-: Neither Mundane nor Enchanted
-	 * 	O: Enchanted required
+	 * 	O: Enchanted required  (specifically Emerald or Diamond blocks)
 	 *  X: Mundane required
 	 * 
 	 * 		- O O O -
@@ -118,6 +120,19 @@ public class RuneList
 	 * 	    - O O O -
 	 */	
 	public static Rune dampen = new Dampen();
+
+	/*
+	 * 	-: Neither Mundane nor Enchanted
+	 * 	M: Mundane required
+	 * 	O: Enchanted required
+	 * 
+	 * 		- - O - -
+	 * 		- O - O -
+	 *		O - M - O
+	 * 		- O - O -
+	 *		- - O - -
+	 */
+	public static Rune disintegrate = new Disintegrate();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks

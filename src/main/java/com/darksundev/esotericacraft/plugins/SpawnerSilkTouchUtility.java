@@ -25,14 +25,15 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 @EventBusSubscriber(modid = EsotericaCraft.modid)
 public class SpawnerSilkTouchUtility
 {
-
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent event)
 	{
 		PlayerEntity player = event.player;
 		World w = player.world;
 		if (w.isRemote)
+		{
 			return;
+		}
 		
 		// look for player's with spawners in their inventory
 		boolean appliedDebuf = false;

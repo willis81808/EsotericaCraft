@@ -11,7 +11,6 @@ import net.minecraft.block.WallSignBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -35,20 +34,17 @@ public class SignShopManager
 	public static void onPlayerRightClickBlock(RightClickBlock event)
 	{
 		// server side only
-		//if (event.getWorld().isRemote)
-		//	return;
+		if (event.getWorld().isRemote)
+			return;
+		
 		PlayerEntity player = event.getEntityPlayer();
 		World w = event.getWorld();
 		BlockState b = w.getBlockState(event.getPos());
 
 		// only allow hand with item to activate this (if we have air in one hand and an item in the other)
 		ItemStack item = event.getItemStack();
-		if (item.getItem() == Items.AIR && player.getHeldItemMainhand().getItem() != player.getHeldItemOffhand().getItem())
+		if (item != player.getHeldItemMainhand())
 			return;
-		// only allow mainhand to activate this if we are holding two items
-		else if (player.getHeldItemMainhand().getItem() != Items.AIR && player.getHeldItemOffhand().getItem() != Items.AIR && item != player.getHeldItemMainhand())
-			return;
-		
 		if (b.getBlock() instanceof WallSignBlock)
 		{
 			// get sign entity
@@ -71,6 +67,11 @@ public class SignShopManager
 					event.setUseItem(Result.DENY);
 					
 					// check stock
+					ResourceLocation r = new ResourceLocation("minecraft:"+data.give.name);
+					if (!ForgeRegistries.ITEMS.containsKey(r))
+					{
+						return;
+					}
 					Item product = ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft:"+data.give.name));
 					int stockSize = 0;
 					for (ItemStack i : chest.getItems()) {

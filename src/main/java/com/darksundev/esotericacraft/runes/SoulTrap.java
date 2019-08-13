@@ -17,6 +17,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +28,7 @@ public class SoulTrap extends Rune
 	/*
 	 * 	-: Neither Mundane nor Enchanted
 	 * 	M: Mundane required
-	 * 	O: Enchanted required
+	 * 	O: Enchanted required (specifically Emerald blocks)
 	 * 
 	 * 		O - - - O
 	 * 		- O - O -
@@ -44,7 +45,6 @@ public class SoulTrap extends Rune
 			new Tier[]{Tier.NONE,		Tier.ENCHANTED,	Tier.NONE,		Tier.ENCHANTED,	Tier.NONE},
 			new Tier[]{Tier.ENCHANTED, 	Tier.NONE,		Tier.NONE,		Tier.NONE,	Tier.ENCHANTED}
 		});
-
 	}
 
 	private static List<LivingEntity> getMobs(World world, BlockPos pos)
@@ -87,13 +87,16 @@ public class SoulTrap extends Rune
 			LivingEntity chosenOne = entities.get(0);
 			ItemStack item = new ItemStack(getEgg(chosenOne.getType()));
 			
-			// spawn item in world
-			BlockPos p = chosenOne.getPosition();
-			world.addEntity(new ItemEntity(world, p.getX(), p.getY() + .5, p.getZ(), item));
-			
-			// destroy and replace entity with egg
-			EsotericaCraft.logger.info("Converting " + chosenOne.getDisplayName().getFormattedText() + " to an egg");
-			chosenOne.remove();
+			if (item != null || item.getItem() == Items.AIR)
+			{
+				// spawn item in world
+				BlockPos p = chosenOne.getPosition();
+				world.addEntity(new ItemEntity(world, p.getX(), p.getY() + .5, p.getZ(), item));
+				
+				// destroy and replace entity with egg
+				EsotericaCraft.logger.info("Converting " + chosenOne.getDisplayName().getFormattedText() + " to an egg");
+				chosenOne.remove();
+			}
 		}
 	}
 	public static SpawnEggItem getEgg(@Nullable EntityType<?> type) {

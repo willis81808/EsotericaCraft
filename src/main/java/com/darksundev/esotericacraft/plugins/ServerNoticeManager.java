@@ -1,6 +1,6 @@
 package com.darksundev.esotericacraft.plugins;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 
@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 @EventBusSubscriber(modid = EsotericaCraft.modid)
 public class ServerNoticeManager
 {
-	private static HashSet<String> notices = new HashSet<String>();
+	private static ArrayList<String> notices = new ArrayList<String>();
 	
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerLoggedInEvent event)
@@ -23,18 +23,16 @@ public class ServerNoticeManager
 		}
 	}
 	
-	public static void addNotice(String notice)
-	{
-		if (!notices.contains(notice))
-			notices.add(notice);
-	}
-	public static HashSet<String> getNotices()
+	public static ArrayList<String> getNotices()
 	{
 		return notices;
 	}
-	public static void setNotices(HashSet<String> notices)
+	public static void setNotices(ArrayList<String> notices)
 	{
-		ServerNoticeManager.notices.clear();
-		ServerNoticeManager.notices.addAll(notices);
+		if (notices != ServerNoticeManager.notices)
+		{
+			ServerNoticeManager.notices.clear();
+			ServerNoticeManager.notices.addAll(notices);
+		}
 	}
 }

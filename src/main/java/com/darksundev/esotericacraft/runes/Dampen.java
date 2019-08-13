@@ -28,7 +28,7 @@ public class Dampen extends Rune
 	
 	/*
 	 * 	-: Neither Mundane nor Enchanted
-	 * 	O: Enchanted required
+	 * 	O: Enchanted required  (specifically Emerald or Diamond blocks)
 	 *  X: Mundane required
 	 * 
 	 * 		- O O O -

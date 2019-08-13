@@ -2,7 +2,6 @@ package com.darksundev.esotericacraft.items;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
-import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.packets.RuneCastMessagePacket;
 import com.darksundev.esotericacraft.packets.RuneCastMessagePacket.ParticleType;
 import com.darksundev.esotericacraft.runes.RuneCast;
@@ -64,9 +63,6 @@ public class RuningStaff extends Item
 				
 				// cast rune
 				cast.getRune().onCast(context.getPlayer(), context.getWorld(), context.getPos(), area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
-				
-				// backup rune data
-				EsotericaWorldSave.backupData();
 			}
 			else
 			{

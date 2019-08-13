@@ -9,6 +9,8 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 public class ModOverrideCommand
 {
@@ -34,10 +36,12 @@ public class ModOverrideCommand
 		if (players.contains(id))
 		{
 			players.remove(id);
+			source.sendFeedback(new StringTextComponent(TextFormatting.RED + "Disabled " + TextFormatting.RESET + "Override for ").appendSibling(sender.getDisplayName()), true);
 		}
 		else
 		{
 			players.add(id);
+			source.sendFeedback(new StringTextComponent(TextFormatting.GREEN + "Enabled " + TextFormatting.RESET + "Override for ").appendSibling(sender.getDisplayName()), true);
 		}
 		return 1;
 	}

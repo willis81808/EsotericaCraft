@@ -7,14 +7,23 @@ import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.lists.RuneList;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+@EventBusSubscriber(modid = EsotericaCraft.modid)
 public class RuneManager
 {
 	private static RuneManager instance;
 	public static enum Tier { NONE, MUNDANE, ENCHANTED }
 	
+	private static HashMap<String, Rune> nbtTagMap = new HashMap<String, Rune>();
 	private static HashMap<String, Rune> patternMap = new HashMap<String, Rune>();
 	private static HashMap<String, RuneMaterial> blockTierMap = new HashMap<String, RuneMaterial>();
 
@@ -33,12 +42,102 @@ public class RuneManager
 		RuneList.registerAllRuneMaterials();
 	}
 	
+	@SubscribeEvent
+	public static void onPlayerRightClickBlock(RightClickBlock event)
+	{
+		// server side only
+		if (event.getWorld().isRemote)
+			return;		
+		
+		// attempt to cast rune effects with currently held items
+		attemptExecuteRuneEffect(event, event.getItemStack());
+	}
+	@SubscribeEvent
+	public static void onPlayerAttackEntity(AttackEntityEvent event)
+	{
+		// server side only
+		if (event.getEntity().world.isRemote)
+			return;		
+		
+		// attempt to cast rune effects with currently held items
+		attemptExecuteRuneEffect(event, event.getEntityPlayer().getHeldItemMainhand());
+	}
+	@SubscribeEvent
+	public static void onDisplayTooltip(ItemTooltipEvent event)
+	{
+		CompoundNBT data = event.getItemStack().getTag();
+		// check for any rune effect tags
+		if (data != null)
+		{
+			for (String key : data.keySet())
+			{
+				if (nbtTagMap.containsKey(key))
+				{
+					// execute rune effect, and pass this item to the event
+					((IItemEffect)nbtTagMap.get(key)).displayTooltip(event);
+				}
+			}
+		}
+	}
+	
+	private static boolean attemptExecuteRuneEffect(RightClickBlock event, ItemStack item)
+	{
+		CompoundNBT data = item.getTag();
+		
+		boolean executed = false;
+
+		// check for any rune effect tags
+		if (data != null)
+		{
+			for (String key : data.keySet())
+			{
+				if (nbtTagMap.containsKey(key))
+				{
+					// execute rune effect, and pass this item to the event
+					((IItemEffect)nbtTagMap.get(key)).doRightClickBlockEffect(event, item);;
+					executed = true;
+				}
+			}
+		}
+		
+		return executed;
+	}
+	private static boolean attemptExecuteRuneEffect(AttackEntityEvent event, ItemStack item)
+	{
+		CompoundNBT data = item.getTag();
+		
+		boolean executed = false;
+
+		// check for any rune effect tags
+		if (data != null)
+		{
+			for (String key : data.keySet())
+			{
+				if (nbtTagMap.containsKey(key))
+				{
+					// execute rune effect, and pass this item to the event
+					((IItemEffect)nbtTagMap.get(key)).doAttackEntityEffect(event, item);;
+					executed = true;
+				}
+			}
+		}
+		
+		return executed;
+	}	
+
 	public static void registerRune(Rune r)
 	{
+		// map runes to their pattern keys
 		String key = r.getKey();
 		if (!patternMap.containsKey(key))
 		{
 			patternMap.put(key, r);
+		}
+		// map runes with item effects to their effect tag
+		if (r instanceof IItemEffect)
+		{
+			IItemEffect i = (IItemEffect)r;
+			nbtTagMap.put(i.getNBTEffectTag(), r);
 		}
 	}
 	public static void registerRuneMaterial(RuneMaterial material)
