@@ -7,11 +7,11 @@ import java.util.HashSet;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
@@ -27,9 +27,11 @@ public class PlayerLoginManager
 {
 	public static class UserProfile implements Serializable
 	{
+		private static final long serialVersionUID = 9073653257361832232L;
 		private String nickname;
 		private String password;
 		private Long loginPosition;
+		private boolean isOperator;
 		
 		// nickname getter & setter
 		public UserProfile setNickname(String nickname)
@@ -91,6 +93,11 @@ public class PlayerLoginManager
 		if (success && !authenticatedUsers.contains(uuid))
 		{
 			authenticatedUsers.add(uuid);
+			if (profile.isOperator)
+			{
+				MinecraftServer server = player.getServer();
+				server.getCommandManager().handleCommand(server.getCommandSource(), "/op " + player.getName().getString());
+			}
 		}
 		return success;
 	}
@@ -111,6 +118,15 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(PlayerInteractEvent event)
 	{
+		if (event.getWorld().isRemote)
+			return;
+		try
+		{
+			if (Minecraft.getInstance().isSingleplayer())
+				return;
+		}
+		catch (Exception e) {}
+		
 		if (!authenticatedUsers.contains(event.getEntityPlayer().getCachedUniqueIdString()) && event.isCancelable())
 		{
 			event.setCanceled(true);
@@ -120,6 +136,15 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(BreakEvent event)
 	{
+		if (event.getWorld().isRemote())
+			return;
+		try
+		{
+			if (Minecraft.getInstance().isSingleplayer())
+				return;
+		}
+		catch (Exception e) {}
+		
 		if (!authenticatedUsers.contains(event.getPlayer().getCachedUniqueIdString()) && event.isCancelable())
 		{
 			event.setCanceled(true);
@@ -129,6 +154,15 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(EntityPlaceEvent event)
 	{
+		if (event.getWorld().isRemote())
+			return;
+		try
+		{
+			if (Minecraft.getInstance().isSingleplayer())
+				return;
+		}
+		catch (Exception e) {}
+		
 		if (event.getEntity() instanceof PlayerEntity)
 		{
 			PlayerEntity player = (PlayerEntity) event.getEntity();
@@ -139,22 +173,22 @@ public class PlayerLoginManager
 			}
 		}
 	}
-	@SubscribeEvent
-	public static void onUserInteract(PlayerContainerEvent.Open event)
-	{
-		if (!authenticatedUsers.contains(event.getEntityPlayer().getCachedUniqueIdString()) && event.isCancelable())
-		{
-			event.setCanceled(true);
-			displayAuthenticationErrorMessage(event.getEntityPlayer());
-		}
-	}
+
 	@SubscribeEvent
 	public static void onUserLogin(PlayerLoggedInEvent event)
 	{
+		try
+		{
+			if (Minecraft.getInstance().isSingleplayer())
+				return;
+		}
+		catch (Exception e) {}
+		
 		// record login
 		PlayerEntity player = event.getPlayer();
-		activeUsers.add(player);
-		
+		if (!activeUsers.contains(player))
+			activeUsers.add(player);
+
 		// find user profile
 		String uuid = player.getCachedUniqueIdString();
 		UserProfile profile = accounts.get(uuid);
@@ -190,6 +224,15 @@ public class PlayerLoginManager
 		}
 		
 		profile.setLoginPosition(player.getPosition());
+		
+		// de op player (if they are normally an operator)
+		MinecraftServer server = player.getServer();
+		if (server.getOpPermissionLevel() == server.getPermissionLevel(server.getPlayerProfileCache().getProfileByUUID(player.getUniqueID())))
+		{
+			profile.isOperator = true;
+			server.getCommandManager().handleCommand(server.getCommandSource(), "/deop " + player.getName().getString());
+		}
+		
 	}
 	@SubscribeEvent
 	public static void onUserLogout(PlayerLoggedOutEvent event)
@@ -197,11 +240,5 @@ public class PlayerLoginManager
 		// de-authenticate user
 		authenticatedUsers.remove(event.getPlayer().getCachedUniqueIdString());
 		activeUsers.remove(event.getPlayer());
-	}
-	
-	@SubscribeEvent
-	public static void onRetrieveName(NameFormat event)
-	{
-		event.setDisplayname("some bitch");
 	}
 }
