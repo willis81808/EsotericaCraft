@@ -1,11 +1,10 @@
 package com.darksundev.esotericacraft;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -14,6 +13,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.darksundev.esotericacraft.lists.RuneList;
+import com.darksundev.esotericacraft.plugins.PlayerLoginManager;
+import com.darksundev.esotericacraft.plugins.PlayerLoginManager.UserProfile;
 import com.darksundev.esotericacraft.runes.TeleportLink;
 
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -22,14 +23,15 @@ public class EsotericaWorldSave
 {
 	public static final String DATA_NAME = EsotericaCraft.modid + "_WorldData";
 	public static EsotericaWorldSave instance;
-	private static Path saveFilePath;
+	private static Path teleportLinksFilePath, userProfileFilePath;
 
 	public EsotericaWorldSave()
 	{
 		if (instance == null)
 		{
 			instance = this;
-			saveFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "teleportLinks.txt");
+			teleportLinksFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "teleportLinks.txt");
+			userProfileFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "userProfiles.txt");
 			restoreData();
 		}
 		else
@@ -37,32 +39,32 @@ public class EsotericaWorldSave
 			EsotericaCraft.logger.error("EsotericaWorldSave already instantiated!!");
 		}
 	}
-	public static void printData()
-	{
-		for (Object key : RuneList.teleportLinks.keySet().toArray())
-		{
-			EsotericaCraft.logger.info("Link Key: " + key);
-		}
-	}
+	
 	public static void restoreData()
 	{
-		HashMap<String, TeleportLink> teleportLinks = Deserialize();
+		HashMap<String, TeleportLink> teleportLinks = (HashMap<String, TeleportLink>)Deserialize(teleportLinksFilePath);
 		if (!(teleportLinks == null || teleportLinks.isEmpty()))
 		{
 			RuneList.teleportLinks = teleportLinks;
 		}
+		HashMap<String, UserProfile> accounts = (HashMap<String, UserProfile>)Deserialize(userProfileFilePath);
+		if (!(accounts == null || accounts.isEmpty()))
+		{
+			PlayerLoginManager.accounts = accounts;
+		}
 	}
 	public static void backupData()
 	{
-		Serialize(RuneList.teleportLinks);
+		Serialize(RuneList.teleportLinks, teleportLinksFilePath);
+		Serialize(PlayerLoginManager.accounts, userProfileFilePath);
 	}
 	
-	private static void Serialize(HashMap<String, TeleportLink> data)
+	private static void Serialize(Serializable data, Path filePath)
 	{
 		byte[] serializedData = SerializationUtils.serialize(data);
 		try
 		{
-			FileUtils.writeByteArrayToFile(new File(saveFilePath.toString()), serializedData);
+			FileUtils.writeByteArrayToFile(new File(filePath.toString()), serializedData);
 		}
 		catch (IOException e)
 		{
@@ -70,40 +72,24 @@ public class EsotericaWorldSave
 			e.printStackTrace();
 		}
 	}
-	private static HashMap<String, TeleportLink> Deserialize()
+	@SuppressWarnings("unchecked")
+	private static Object Deserialize(Path filePath)
 	{
 		try
 		{
-			byte[] data = FileUtils.readFileToByteArray(new File(saveFilePath.toString()));
-			return deserialize(data);
+			byte[] data = FileUtils.readFileToByteArray(new File(filePath.toString()));
+		    ByteArrayInputStream in = new ByteArrayInputStream(data);
+		    ObjectInputStream is = new ObjectInputStream(in);
+		    return is.readObject();
 		}
 		catch (IOException e)
 		{
 			EsotericaCraft.logger.error("Failed to deserialize data!!");
 			e.printStackTrace();
 			return null;
-		}
-	}
-	
-	@SuppressWarnings("unused")
-	private static byte[] serialize(Object obj) throws IOException
-	{
-	    ByteArrayOutputStream out = new ByteArrayOutputStream();
-	    ObjectOutputStream os = new ObjectOutputStream(out);
-	    os.writeObject(obj);
-	    return out.toByteArray();
-	}
-	@SuppressWarnings("unchecked")
-	private static HashMap<String, TeleportLink> deserialize(byte[] data)
-	{
-		try
-		{
-		    ByteArrayInputStream in = new ByteArrayInputStream(data);
-		    ObjectInputStream is = new ObjectInputStream(in);
-		    return (HashMap<String, TeleportLink>)is.readObject();
-		}
-		catch(Exception e)
-		{
+		} catch (ClassNotFoundException e) {
+			EsotericaCraft.logger.error("Failed to deserialize data!!");
+			e.printStackTrace();
 			return null;
 		}
 	}

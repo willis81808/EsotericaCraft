@@ -1,15 +1,41 @@
 package com.darksundev.esotericacraft.core;
 
+import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
 import com.darksundev.esotericacraft.packets.PlayerInventoryMessagePacket;
 import com.darksundev.esotericacraft.packets.RuneCastMessagePacket;
+import com.darksundev.esotericacraft.runes.IItemEffect;
+import com.darksundev.esotericacraft.runes.RuneManager;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+@EventBusSubscriber(modid = EsotericaCraft.modid, value = Dist.CLIENT)
 public class ClientProxy implements IProxy
 {
-
+	@SubscribeEvent
+	public static void onDisplayTooltip(ItemTooltipEvent event)
+	{
+		CompoundNBT data = event.getItemStack().getTag();
+		// check for any rune effect tags
+		if (data != null)
+		{
+			for (String key : data.keySet())
+			{
+				if (RuneManager.nbtTagMap.containsKey(key))
+				{
+					// execute rune effect, and pass this item to the event
+					((IItemEffect)RuneManager.nbtTagMap.get(key)).displayTooltip(event);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void init()
 	{

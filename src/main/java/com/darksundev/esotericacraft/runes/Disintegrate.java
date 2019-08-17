@@ -1,27 +1,36 @@
 package com.darksundev.esotericacraft.runes;
 
+import java.util.Collections;
+import java.util.HashSet;
+
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.lists.ItemList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
 
 public class Disintegrate extends Rune implements IItemEffect
 {
 	private static final String NBT_TAG = "disintegrate_effect";
-	private static final int ENCHANTMENT_USES = 5;
+	private static final int ENCHANTMENT_USES = 2;
+	private static final int RANGE = 50;
 	
 	/*
 	 * 	-: Neither Mundane nor Enchanted
@@ -41,7 +50,7 @@ public class Disintegrate extends Rune implements IItemEffect
 			new Tier[]{Tier.NONE,		Tier.ENCHANTED,	Tier.NONE,		Tier.ENCHANTED,	Tier.NONE},
 			new Tier[]{Tier.ENCHANTED,	Tier.NONE,		Tier.MUNDANE,	Tier.NONE,		Tier.ENCHANTED},
 			new Tier[]{Tier.NONE,		Tier.ENCHANTED,	Tier.NONE,		Tier.ENCHANTED,	Tier.NONE},
-			new Tier[]{Tier.NONE, 		Tier.NONE,		Tier.ENCHANTED,	Tier.NONE,	Tier.NONE}
+			new Tier[]{Tier.NONE, 		Tier.NONE,		Tier.ENCHANTED,	Tier.NONE,		Tier.NONE}
 		});
 	}
 
@@ -59,10 +68,70 @@ public class Disintegrate extends Rune implements IItemEffect
 		}
 		
 		// enchant garnet
-		EsotericaCraft.messagePlayer(player, "Disintegrate", TextFormatting.DARK_RED);
-		addData(garnet.getOrCreateTag());
+		int strength = getStrength(enchantBlocks);
+		if (strength > 0)
+		{
+			EsotericaCraft.messagePlayer(player, "Zzzap! Energy crackles from the rune and is drawn into the garnet", TextFormatting.RED);
+			addData(garnet.getOrCreateTag(), strength);
+			worldIn.removeBlock(pos.north().north(), false);
+			worldIn.removeBlock(pos.north().east(), false);
+			worldIn.removeBlock(pos.north().west(), false);
+			worldIn.removeBlock(pos.east().east(), false);
+			worldIn.removeBlock(pos.west().west(), false);
+			worldIn.removeBlock(pos.south().east(), false);
+			worldIn.removeBlock(pos.south().west(), false);
+			worldIn.removeBlock(pos.south().south(), false);
+
+			worldIn.notifyBlockUpdate(pos.north().north(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.north().east(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.north().west(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.east().east(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.west().west(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.south().east(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.south().west(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			worldIn.notifyBlockUpdate(pos.south().south(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+		}
+		else 
+		{
+			// send warning message to casting player
+			EsotericaCraft.messagePlayer(player,
+					"The Aether resists!",
+					TextFormatting.RED
+				);
+			EsotericaCraft.messagePlayer(player,
+					"Either your rune is impure, your offering is not valuable enough, or both!"
+				);
+		}
 	}
 
+	private int getStrength(BlockState[] enchantBlocks)
+	{
+		HashSet<BlockState> names = new HashSet<BlockState>();
+		Collections.addAll(names, enchantBlocks);
+		
+		if (names.size() == 1)
+		{
+			Block b = enchantBlocks[0].getBlock();
+			if (Blocks.EMERALD_BLOCK == b)
+			{
+				return 4;
+			}
+			else if (Blocks.DIAMOND_BLOCK == b)
+			{
+				return 3;
+			}
+			else if (Blocks.GOLD_BLOCK == b)
+			{
+				return 2;
+			}
+			else if (Blocks.IRON_BLOCK == b)
+			{
+				return 1;
+			}
+		}
+		
+		return 0;
+	}
 	private ItemStack getEnchantableGarnet(PlayerEntity player)
 	{
 		Item main = player.getHeldItemMainhand().getItem();
@@ -79,27 +148,49 @@ public class Disintegrate extends Rune implements IItemEffect
 
 		return null;
 	}
-
+	private Vec3d getTargetPoint(PlayerEntity player, World world)
+	{
+		// get look direction, and range
+		Vec3d lookDir = player.getLookVec().mul(RANGE, RANGE, RANGE);
+		// get eye position
+		Vec3d vec3d = new Vec3d(player.posX, player.posY + (double)player.getEyeHeight(), player.posZ);
+		// get point we're looking at
+		Vec3d vec3d1 = new Vec3d(player.posX + lookDir.x, player.posY + (double)player.getEyeHeight() + lookDir.y, player.posZ + lookDir.z);
+		RayTraceResult result = world.rayTraceBlocks(new RayTraceContext(vec3d, vec3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.SOURCE_ONLY, player));
+		if (result.getType() != RayTraceResult.Type.MISS)
+		{
+			// return ray hit point
+			return result.getHitVec();
+		}
+		else
+		{
+			// ray hit nothing
+			return null;
+		}
+	}
 	
 	@Override
 	public String getNBTEffectTag()
 	{
 		return NBT_TAG;
 	}
-
 	@Override
-	public void doRightClickBlockEffect(RightClickBlock event, ItemStack item)
+	public void doRightClickBlockEffect(RightClickItem event, ItemStack item)
 	{
-		if (event.getEntityPlayer().getHeldItemMainhand() != item)
+		PlayerEntity p = event.getEntityPlayer();
+		World w = event.getWorld();
+		if (p.getHeldItemMainhand() != item)
 			return;
 		
 		int usesRemaining = item.getTag().getInt(getNBTEffectTag());
-		BlockPos pos = event.getPos();
 		if (usesRemaining > 0)
 		{
 			// spawn lightning
-	        LightningBoltEntity lightningboltentity = new LightningBoltEntity(event.getWorld(), pos.getX(), pos.getY(), pos.getZ(), false);
-	        event.getWorld().getServer().getWorld(event.getWorld().getDimension().getType()).addLightningBolt(lightningboltentity);
+			Vec3d pos = getTargetPoint(p, w);
+			if (pos == null)
+					return;
+	        LightningBoltEntity lightningboltentity = new LightningBoltEntity(w, pos.getX(), pos.getY(), pos.getZ(), false);
+	        w.getServer().getWorld(w.getDimension().getType()).addLightningBolt(lightningboltentity);
 			item.getTag().putInt(getNBTEffectTag(), --usesRemaining);
 		}
 		
@@ -109,13 +200,20 @@ public class Disintegrate extends Rune implements IItemEffect
 			item.getTag().remove(getNBTEffectTag());
 		}
 	}
-
 	@Override
-	public void addData(CompoundNBT nbt)
+	public void addData(CompoundNBT nbt, Object... args)
 	{
-		nbt.putInt(getNBTEffectTag(), ENCHANTMENT_USES);
+		int strength = (int) args[0];
+		if (nbt.getInt(getNBTEffectTag()) != 0)
+		{
+			int oldCount = nbt.getInt(getNBTEffectTag());
+			nbt.putInt(getNBTEffectTag(), oldCount + ENCHANTMENT_USES * strength);
+		}
+		else
+		{
+			nbt.putInt(getNBTEffectTag(), ENCHANTMENT_USES * strength);
+		}
 	}
-
 	@Override
 	public void displayTooltip(ItemTooltipEvent event)
 	{
@@ -123,7 +221,6 @@ public class Disintegrate extends Rune implements IItemEffect
 		int uses = data.getInt(getNBTEffectTag());
 		event.getToolTip().add(new StringTextComponent(TextFormatting.LIGHT_PURPLE + "Disintegrate: " + TextFormatting.RESET + uses));
 	}
-
 	@Override
 	public void doAttackEntityEffect(AttackEntityEvent event, ItemStack item)
 	{

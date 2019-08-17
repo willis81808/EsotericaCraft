@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.darksundev.esotericacraft.commands.InventoryCommand;
+import com.darksundev.esotericacraft.commands.LoginCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 import com.darksundev.esotericacraft.commands.NoticeCommand;
 import com.darksundev.esotericacraft.commands.SleepVoteCommand;
@@ -75,6 +76,7 @@ public class EsotericaCraft
     	ModOverrideCommand.register(dispatch);
     	SleepVoteCommand.register(dispatch);
     	NoticeCommand.register(dispatch);
+    	LoginCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)

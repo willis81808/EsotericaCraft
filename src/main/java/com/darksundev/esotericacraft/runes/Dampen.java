@@ -110,7 +110,7 @@ public class Dampen extends Rune
 			return false;
 		}
 		// enforce only [ diamond, emerald ] as enchanted block options
-		boolean isValidEnchantedBlock = enchantBlocks[1].getBlock() == Blocks.DIAMOND_BLOCK || enchantBlocks[1].getBlock() == Blocks.EMERALD_BLOCK;
+		boolean isValidEnchantedBlock = enchantBlocks[0].getBlock() == Blocks.DIAMOND_BLOCK || enchantBlocks[0].getBlock() == Blocks.EMERALD_BLOCK;
 		if (!isValidEnchantedBlock)
 		{
 			EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
