@@ -1,6 +1,7 @@
 package com.darksundev.esotericacraft.commands;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
+import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.plugins.PlayerLoginManager;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -46,6 +47,7 @@ public class LoginCommand
 		{
 			source.sendFeedback(new StringTextComponent(TextFormatting.RED + "Failed to authenticate user"), true);
 		}
+
 		return 1;
 	}
 	public static int changePassword(CommandSource source, PlayerEntity player, String oldPassword, String newPassword)
@@ -60,6 +62,8 @@ public class LoginCommand
 		{
 			source.sendFeedback(new StringTextComponent(TextFormatting.RED + "Failed to verify old password! No changes made"), true);
 		}
+		
+		EsotericaWorldSave.backupData();
 		return 1;
 	}
 }
