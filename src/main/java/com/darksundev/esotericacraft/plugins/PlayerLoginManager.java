@@ -110,7 +110,7 @@ public class PlayerLoginManager
 			if (!authenticatedUsers.contains(p.getCachedUniqueIdString()))
 			{
 				BlockPos pos = BlockPos.fromLong(accounts.get(p.getCachedUniqueIdString()).getLoginPosition());
-				p.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+				p.setPositionAndUpdate(pos.getX()+.5, pos.getY(), pos.getZ()+.5);
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
@@ -19,7 +20,7 @@ public class ServerNoticeManager
 		for (String n : notices)
 		{
 			// send notice to player
-			EsotericaCraft.messagePlayer(event.getPlayer(), String.format("NOTICE: %s", n));
+			EsotericaCraft.messagePlayer(event.getPlayer(), TextFormatting.RESET + (TextFormatting.GRAY + "NOTICE: ") + TextFormatting.YELLOW + TextFormatting.ITALIC + n + "\n");
 		}
 	}
 	
