@@ -7,7 +7,6 @@ import java.util.HashSet;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -67,6 +66,8 @@ public class PlayerLoginManager
 		}
 	}
 	
+	public static boolean isSingleplayer = false;
+	
 	// all online userse
 	private static ArrayList<PlayerEntity> activeUsers = new ArrayList<PlayerEntity>();
 	// logged in users
@@ -98,6 +99,9 @@ public class PlayerLoginManager
 				MinecraftServer server = player.getServer();
 				server.getCommandManager().handleCommand(server.getCommandSource(), "/op " + player.getName().getString());
 			}
+			
+			// remove invulnerability
+			player.setInvulnerable(false);
 		}
 		return success;
 	}
@@ -118,14 +122,8 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(PlayerInteractEvent event)
 	{
-		if (event.getWorld().isRemote)
+		if (event.getWorld().isRemote || isSingleplayer)
 			return;
-		try
-		{
-			if (Minecraft.getInstance().isSingleplayer())
-				return;
-		}
-		catch (Exception e) {}
 		
 		if (!authenticatedUsers.contains(event.getEntityPlayer().getCachedUniqueIdString()) && event.isCancelable())
 		{
@@ -136,14 +134,8 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(BreakEvent event)
 	{
-		if (event.getWorld().isRemote())
+		if (event.getWorld().isRemote() || isSingleplayer)
 			return;
-		try
-		{
-			if (Minecraft.getInstance().isSingleplayer())
-				return;
-		}
-		catch (Exception e) {}
 		
 		if (!authenticatedUsers.contains(event.getPlayer().getCachedUniqueIdString()) && event.isCancelable())
 		{
@@ -154,14 +146,8 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(EntityPlaceEvent event)
 	{
-		if (event.getWorld().isRemote())
+		if (event.getWorld().isRemote() || isSingleplayer)
 			return;
-		try
-		{
-			if (Minecraft.getInstance().isSingleplayer())
-				return;
-		}
-		catch (Exception e) {}
 		
 		if (event.getEntity() instanceof PlayerEntity)
 		{
@@ -177,17 +163,15 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserLogin(PlayerLoggedInEvent event)
 	{
-		try
-		{
-			if (Minecraft.getInstance().isSingleplayer())
-				return;
-		}
-		catch (Exception e) {}
+		if (isSingleplayer)
+			return;
 		
 		// record login
 		PlayerEntity player = event.getPlayer();
 		if (!activeUsers.contains(player))
 			activeUsers.add(player);
+		// make player invulnerable until they're authenticated
+		player.setInvulnerable(true);
 
 		// find user profile
 		String uuid = player.getCachedUniqueIdString();

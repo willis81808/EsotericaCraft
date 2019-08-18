@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '2.9_1'
+version = '2.9_2'
 group = 'com.darksundev.esotericacraft' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'esotericacraft'
 

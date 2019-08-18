@@ -14,11 +14,14 @@ import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
 import com.darksundev.esotericacraft.lists.RuneList;
+import com.darksundev.esotericacraft.plugins.PlayerLoginManager;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.mojang.brigadier.CommandDispatcher;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -60,6 +63,11 @@ public class EsotericaCraft
 		runeManager = new RuneManager();
 		modSaveData = new EsotericaWorldSave();
 		RuneList.registerRunes();
+		try
+		{
+			PlayerLoginManager.isSingleplayer = Minecraft.getInstance().isSingleplayer();
+		} 
+		catch (Exception e) {}
 		
 		logger.info("Registered Runes");
 		
