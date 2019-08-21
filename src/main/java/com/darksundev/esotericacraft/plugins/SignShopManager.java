@@ -37,7 +37,7 @@ public class SignShopManager
 		if (event.getWorld().isRemote)
 			return;
 		
-		PlayerEntity player = event.getEntityPlayer();
+		PlayerEntity player = event.getPlayer();
 		World w = event.getWorld();
 		BlockState b = w.getBlockState(event.getPos());
 

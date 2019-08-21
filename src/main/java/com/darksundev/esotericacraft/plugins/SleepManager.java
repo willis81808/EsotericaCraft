@@ -13,11 +13,11 @@ import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 @EventBusSubscriber(modid = EsotericaCraft.modid)
 public class SleepManager
@@ -67,13 +67,13 @@ public class SleepManager
 	@SubscribeEvent
 	public static void onPlayerSleep(PlayerSleepInBedEvent event)
 	{
-		PlayerEntity player = event.getEntityPlayer();
+		PlayerEntity player = event.getPlayer();
 		playerEnteredBed(player);
 	}
 	@SubscribeEvent
 	public static void onPlayerWakeUp(PlayerWakeUpEvent event)
 	{
-		PlayerEntity player = event.getEntityPlayer();
+		PlayerEntity player = event.getPlayer();
 		if(!player.world.isRemote())
 		{
 			playerLeftBed(player);

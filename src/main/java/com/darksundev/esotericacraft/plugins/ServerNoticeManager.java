@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import com.darksundev.esotericacraft.EsotericaCraft;
 
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 @EventBusSubscriber(modid = EsotericaCraft.modid)
 public class ServerNoticeManager

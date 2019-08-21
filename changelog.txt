@@ -1,3 +1,291 @@
+Build: 1.14.4-28.0.49 - Thu Aug 15 18:04:06 GMT 2019
+	williewillus:
+		Add hook to load custom mrls/rls not attached to a block or item. 
+		(#6010)
+
+=========
+Build: 1.14.4-28.0.48 - Thu Aug 15 17:35:07 GMT 2019
+	bl4ckscor33:
+		Cover more cases for RightClickBlock event and restore onItemUseFirst
+		(#6009)
+
+=========
+Build: 1.14.4-28.0.47 - Thu Aug 15 17:17:36 GMT 2019
+	kirderf4:
+		Make DimensionManager.SavedEntry save sky light consistently (#6019)
+
+=========
+Build: 1.14.4-28.0.46 - Wed Aug 14 23:13:25 GMT 2019
+	lex:
+		Fix extract inheritance not using proper classpath and update
+		buildscript for FG asm changes.
+
+=========
+Build: 1.14.4-28.0.45 - Mon Aug 05 12:56:59 GMT 2019
+	cpw:
+		Grrr. Stupid error. Sorry lex: I fixed it.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+	cpw:
+		Bump modlauncher to 3.2.x. Add a sender modid and document IMC. Closes
+		#5746
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+	cpw:
+		Move fml's PlayerEvent and TickEvent to forge. Update `import
+		net.minecraftforge.fml.common.gameevent.PlayerEvent;` to `import
+		net.minecraftforge.event.entity.player.PlayerEvent;` and `import
+		net.minecraftforge.fml.common.gameevent.TickEvent;` to `import
+		net.minecraftforge.event.TickEvent;`
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+	cpw:
+		Actually reload config when it changes on disk. Closes #5541 and #5959
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.41 - Mon Aug 05 01:19:19 GMT 2019
+	cpw:
+		Turned minecraft into a proper Mod, with a "dummy" language provider.
+		Also fixed the "translations" not being available early if an exception
+		occurs by force loading the forge and MC ones. Closes #5984
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.40 - Sat Aug 03 01:48:54 GMT 2019
+	daemon.umbra:
+		Fix a crash I caused by misunderstanding formatToString (#6007)
+
+=========
+Build: 1.14.4-28.0.39 - Sat Aug 03 01:03:37 GMT 2019
+	lex:
+		Fix userdev setup by moving SAS concept to FG.
+
+=========
+Build: 1.14.4-28.0.38 - Fri Aug 02 21:13:51 GMT 2019
+	mods.itsmeow:
+		Add piston events (#5798)
+
+=========
+Build: 1.14.4-28.0.37 - Fri Aug 02 21:07:42 GMT 2019
+	des.herriott:
+		Make ParticleManager.IParticleMetaFactory public (#5926)
+
+	mods.itsmeow:
+		Fix AT for EntitySpawnPlacementRegistry.register
+
+=========
+Build: 1.14.4-28.0.35 - Fri Aug 02 21:01:02 GMT 2019
+	jojohostert:
+		Add button to open mods folder (#5986)
+
+=========
+Build: 1.14.4-28.0.34 - Fri Aug 02 20:50:19 GMT 2019
+	mh:
+		Fixed PlayerInteractEvents not working (#5976)
+
+	daemon.umbra:
+		Change ModLoadingException to display ModID instead of ModInfo instance
+		identifier. (#5999)
+
+=========
+Build: 1.14.4-28.0.32 - Fri Aug 02 20:44:09 GMT 2019
+	Gamebuster19901:
+		Fix LazyOptional throwing NPE to consumers when owners null. (#5772)
+
+	Gamebuster19901:
+		Fixed Buttons in the error screen are incorrectly rendered if they are
+		extremely long Closes #5687 (#5924)
+
+=========
+Build: 1.14.4-28.0.30 - Fri Aug 02 20:37:17 GMT 2019
+	lex:
+		Make Villager profession unlocalized name use modids when not
+		'minecraft' Closes #5977 Fixed trees able to be generated through water.
+		Closes #6000 Change Block#toString to use getRegistryName instead of
+		getNameForObject Closes #5937 Allow Cooking Recipes to deserialize
+		results with stack sizes. Closes #5960
+
+=========
+Build: 1.14.4-28.0.29 - Thu Aug 01 05:43:58 GMT 2019
+	lex:
+		Fixed DimensionType.getRegistryName() returning null Closes #5992 Fixed
+		RegisterDimensionEvent not firing for new worlds. Closes #5987
+
+=========
+Build: 1.14.4-28.0.28 - Thu Aug 01 04:15:51 GMT 2019
+	lex:
+		Introduce new Side Annotation Stripper system to semi-automate the
+		shipment of Sided methods and cleanup patches. New forge:checkSAS task
+		to validate this config file. Closes #5995
+
+=========
+Build: 1.14.4-28.0.27 - Tue Jul 30 23:42:43 GMT 2019
+	ichttt:
+		Move world unload patch to tick function to prevent duplicate unloading,
+		fix log message in dim manager, fix javadoc for unload method (#5964)
+
+=========
+Build: 1.14.4-28.0.26 - Tue Jul 30 23:36:37 GMT 2019
+	bl4ckscor33:
+		fix melon and pumpkin seeds being peaceable on more than just farmland
+		(#5980)
+
+=========
+Build: 1.14.4-28.0.25 - Tue Jul 30 23:30:21 GMT 2019
+	thecheaterpaul:
+		Fixed possible ClassCastException with dye-able armor. (#5985)
+
+=========
+Build: 1.14.4-28.0.24 - Tue Jul 30 00:20:04 GMT 2019
+	cpw:
+		Fix naming for dev launch providers - they're in MCP..
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.23 - Mon Jul 29 01:10:50 GMT 2019
+	cpw:
+		Register a config command. Currently one subcommand: showfile, which
+		when passed a modid and a type (CLIENT, COMMON or SERVER) will display a
+		link in the caller's chat to open that file in the OS file viewer of
+		choice.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.22 - Sun Jul 28 17:45:41 GMT 2019
+	cpw:
+		Load default configs from the defaultconfig directory by default. (Can
+		be overridden in the fml.toml config file if desired).
+		Will load any type of config tracked file from there - client, common,
+		server or custom tracked file. This means you can ship defaults for your
+		pack in a defaultconfig directory. I am thinking about ways to force a
+		specific config override for an existing config.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.21 - Sat Jul 27 16:48:19 GMT 2019
+	cpw:
+		Fix vanilla bug that hardcore death doesn't clean up properly, leaving a
+		running server and a broken GUI. Vanilla bug MC-148865
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.20 - Sat Jul 27 09:35:20 GMT 2019
+	lex:
+		Fixed network ticking player entity while it is dead. And explicitly
+		prevent overworld from unloading. Closes #5978
+
+=========
+Build: 1.14.4-28.0.19 - Sat Jul 27 00:02:37 GMT 2019
+	cpw:
+		Crash report extended to show ModLauncher FML and Forge data.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.18 - Fri Jul 26 04:35:17 GMT 2019
+	cpw:
+		Fix potion transformer to look up the right name depending on context.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.17 - Fri Jul 26 03:02:48 GMT 2019
+	cpw:
+		Added a coremod, shush, don't tell Lex.
+		Seriously, this is how to do targeted changes to specific classes.
+		In this case, adding a fieldtomethod redirect for EffectInstance.potion 
+		to allow substitution.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.16 - Fri Jul 26 01:00:15 GMT 2019
+	lex:
+		Fix @ObjectHolderRegistry not properly detecting vanilla class level
+		references. Closes #5958
+
+	lex:
+		Fix Slimes not splitting on death Closes #5973
+
+=========
+Build: 1.14.4-28.0.14 - Wed Jul 24 18:15:36 GMT 2019
+	lex:
+		Fixed missed patch causing blocks to not dropping EXP and BreakEvent to
+		not fire.
+
+=========
+Build: 1.14.4-28.0.13 - Tue Jul 23 02:23:28 GMT 2019
+	gigaherz:
+		Fix & Improve state comparison when checking vanilla block replacements
+		(#5922)
+
+=========
+Build: 1.14.4-28.0.12 - Mon Jul 22 22:45:51 GMT 2019
+	lex:
+		Keep player cap data until they have revived. Closes #5956
+
+=========
+Build: 1.14.4-28.0.11 - Sun Jul 21 01:04:23 GMT 2019
+	cpw:
+		Fix datafixer exception catch: Closes #5951
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+	cpw:
+		Fix objloader registering at wrong time. Closes #5847. Added test class
+		as suggested in the issue.
+		Note: most tests are commented out at the present time, pending rework.
+		Tests that work, work.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.9 - Sat Jul 20 23:38:35 GMT 2019
+	Barteks2x:
+		Fix RegistryObject when used with generic registry entry classes
+
+	cpw:
+		Realms' removal has removed the need for additional jar transformation.
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+	cpw:
+		Fix error when ModsDiscoverer visits a non existent mods dir.
+		Closes cpw/modlauncher#30
+		Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.5 - Sat Jul 20 23:20:18 GMT 2019
+	cpw:
+		Make I18N format errors less spammy, also remove single apostrophes from
+		current translations in en_us.json. Other langs may still have problems.
+		Closes #5952 Signed-off-by: cpw <cpw+github@weeksfamily.ca>
+
+=========
+Build: 1.14.4-28.0.4 - Sat Jul 20 21:55:28 GMT 2019
+	jojohostert:
+		Fix spam during startup (#5957)
+
+=========
+Build: 1.14.4-28.0.3 - Sat Jul 20 19:59:31 GMT 2019
+	ichttt:
+		Fix forge 1.14.4 startup in obfed enviroment (#5955)
+
+=========
+Build: 1.14.4-28.0.2 - Sat Jul 20 16:06:15 GMT 2019
+	thaun1:
+		Updated Example Version Range for 1.14.4 (#5950)
+		* Updated Example Version Range for 1.14.4
+		
+		* Also changed loader version and version range
+
+=========
+Build: 1.14.4-28.0.1 - Sat Jul 20 06:27:42 GMT 2019
+	lex:
+		Fix javac compile issues.
+
+	cpw:
+		Provisional update to 1.14.4. Missing a lot of playerinteractionmanager
+		patches because everything moved and I'm tired.
+		Fix up immediate problems.
+		bump to 28.
+
+=========
 Build: 1.14.3-27.0.60 - Fri Jul 19 16:08:38 GMT 2019
 	cpw:
 		Update mappings to 20190719 in prep for 1.14.4..
