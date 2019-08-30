@@ -64,15 +64,14 @@ public class SignShopManager
 				}
 				else
 				{
-					event.setUseItem(Result.DENY);
-					
 					// check stock
 					ResourceLocation r = new ResourceLocation("minecraft:"+data.give.name);
 					if (!ForgeRegistries.ITEMS.containsKey(r))
 					{
 						return;
 					}
-					Item product = ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft:"+data.give.name));
+					event.setUseItem(Result.DENY);
+					Item product = ForgeRegistries.ITEMS.getValue(r);
 					int stockSize = 0;
 					for (ItemStack i : chest.getItems()) {
 						if (i.getItem() == product)

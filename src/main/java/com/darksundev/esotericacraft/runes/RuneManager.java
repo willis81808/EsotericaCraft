@@ -59,7 +59,7 @@ public class RuneManager
 			return;		
 		
 		// attempt to cast rune effects with currently held items
-		attemptExecuteRuneEffect(event, event.getEntityPlayer().getHeldItemMainhand());
+		attemptExecuteRuneEffect(event, event.getPlayer().getHeldItemMainhand());
 	}
 	
 	private static boolean attemptExecuteRuneEffect(RightClickItem event, ItemStack item)

@@ -177,7 +177,7 @@ public class Disintegrate extends Rune implements IItemEffect
 	@Override
 	public void doRightClickBlockEffect(RightClickItem event, ItemStack item)
 	{
-		PlayerEntity p = event.getEntityPlayer();
+		PlayerEntity p = event.getPlayer();
 		World w = event.getWorld();
 		if (p.getHeldItemMainhand() != item)
 			return;

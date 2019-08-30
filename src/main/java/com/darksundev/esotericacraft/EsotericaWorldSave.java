@@ -40,6 +40,7 @@ public class EsotericaWorldSave
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void restoreData()
 	{
 		HashMap<String, TeleportLink> teleportLinks = (HashMap<String, TeleportLink>)Deserialize(teleportLinksFilePath);
@@ -72,7 +73,6 @@ public class EsotericaWorldSave
 			e.printStackTrace();
 		}
 	}
-	@SuppressWarnings("unchecked")
 	private static Object Deserialize(Path filePath)
 	{
 		try
