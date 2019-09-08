@@ -87,7 +87,6 @@ public class RuneManager
 	private static boolean attemptExecuteRuneEffect(AttackEntityEvent event, ItemStack item)
 	{
 		CompoundNBT data = item.getTag();
-		
 		boolean executed = false;
 
 		// check for any rune effect tags

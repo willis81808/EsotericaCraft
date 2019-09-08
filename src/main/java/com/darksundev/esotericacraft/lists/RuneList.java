@@ -112,14 +112,15 @@ public class RuneList
 
 	/*
 	 * 	-: Neither Mundane nor Enchanted
-	 * 	M: Mundane required
-	 * 	O: Enchanted required  (specifically Emerald blocks)
+	 * 	E: Emerald Block required
+	 * 	O: Enchanted required
+	 *  +: End Rod required
 	 * 
-	 * 		- - O - -
-	 * 		- - O - -
-	 * 		O O - O O
-	 * 		- - O - -
-	 *		- - O - -
+	 * 		- - E - -
+	 * 		- - + - -
+	 * 		E + O + E
+	 * 		- - + - -
+	 *		- - E - -
 	 */
 	public static final Rune soulTrapLite = new SoulTrapLite();
 

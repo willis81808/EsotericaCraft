@@ -8,8 +8,8 @@ import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -31,7 +31,7 @@ public class SoulTrapLite extends Rune implements IItemEffect
 		super("Soul Trap Lite", new Tier[][]{
 			new Tier[]{Tier.NONE,		Tier.NONE,		Tier.ENCHANTED,		Tier.NONE,		Tier.NONE},
 			new Tier[]{Tier.NONE,		Tier.NONE,		Tier.ENCHANTED,		Tier.NONE,		Tier.NONE},
-			new Tier[]{Tier.ENCHANTED,	Tier.ENCHANTED,	Tier.NONE,			Tier.ENCHANTED,	Tier.ENCHANTED},
+			new Tier[]{Tier.ENCHANTED,	Tier.ENCHANTED,	Tier.ENCHANTED,			Tier.ENCHANTED,	Tier.ENCHANTED},
 			new Tier[]{Tier.NONE,		Tier.NONE,		Tier.ENCHANTED,		Tier.NONE,		Tier.NONE},
 			new Tier[]{Tier.NONE, 		Tier.NONE,		Tier.ENCHANTED,		Tier.NONE,		Tier.NONE}
 		});
@@ -73,12 +73,12 @@ public class SoulTrapLite extends Rune implements IItemEffect
 		
 		workingSet.clear();
 		
-		// check purpur blocks
+		// check emerald blocks
 		workingSet.add(pattern[0][2].getBlock().getRegistryName().toString());
 		workingSet.add(pattern[4][2].getBlock().getRegistryName().toString());
 		workingSet.add(pattern[2][0].getBlock().getRegistryName().toString());
 		workingSet.add(pattern[2][4].getBlock().getRegistryName().toString());
-		if (workingSet.size() > 1 || pattern[0][2].getBlock() != Blocks.PURPUR_BLOCK)
+		if (workingSet.size() > 1 || pattern[0][2].getBlock() != Blocks.EMERALD_BLOCK)
 			return false;
 		
 		return true;
@@ -89,10 +89,10 @@ public class SoulTrapLite extends Rune implements IItemEffect
 		world.removeBlock(pos.south().south(), false);
 		world.removeBlock(pos.east().east(), false);
 		world.removeBlock(pos.west().west(), false);
-		world.notifyBlockUpdate(pos.north().north(), Blocks.PURPUR_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
-		world.notifyBlockUpdate(pos.south().south(), Blocks.PURPUR_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
-		world.notifyBlockUpdate(pos.east().east(), Blocks.PURPUR_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
-		world.notifyBlockUpdate(pos.west().west(), Blocks.PURPUR_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
+		world.notifyBlockUpdate(pos.north().north(), Blocks.EMERALD_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
+		world.notifyBlockUpdate(pos.south().south(), Blocks.EMERALD_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
+		world.notifyBlockUpdate(pos.east().east(), Blocks.EMERALD_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
+		world.notifyBlockUpdate(pos.west().west(), Blocks.EMERALD_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
 	}
 
 	// Interface methods
@@ -110,12 +110,14 @@ public class SoulTrapLite extends Rune implements IItemEffect
 	public void doAttackEntityEffect(AttackEntityEvent event, ItemStack item)
 	{
 		// only apply to mobs
-		if (!(event.getEntity() instanceof MobEntity))
-			return;
+		EntityType<?> type = event.getTarget().getType();
+		boolean invalid = (type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
+		if (invalid) return;
+		
 		// convert entity into egg
-		LivingEntity entity = event.getEntityLiving();
+		Entity entity = event.getTarget();
 		World world = entity.world;
-		ItemStack egg = new ItemStack(SoulTrap.getEgg(entity.getType()));	
+		ItemStack egg = new ItemStack(SoulTrap.getEgg(type));	
 		if (egg != null || egg.getItem() != Items.AIR)
 		{
 			// spawn item in world
@@ -123,6 +125,18 @@ public class SoulTrapLite extends Rune implements IItemEffect
 			world.addEntity(new ItemEntity(world, p.getX(), p.getY() + .5, p.getZ(), egg));
 			entity.remove();
 			EsotericaCraft.logger.info(String.format("Converting %s to an egg", entity.getDisplayName().getFormattedText()));
+
+			// remove charge from staff
+			int usesRemaining = item.getTag().getInt(getNBTEffectTag());
+			if (usesRemaining > 0)
+			{
+				item.getTag().putInt(getNBTEffectTag(), --usesRemaining);
+			}
+			if (usesRemaining == 0)
+			{
+				// out of usages, remove enchantment data
+				item.getTag().remove(getNBTEffectTag());
+			}
 		}
 	}
 	@Override
