@@ -1,5 +1,6 @@
 package com.darksundev.esotericacraft.runes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -77,7 +78,7 @@ public class SoulTrap extends Rune
 		if (enchant.size() != 1 || enchant.iterator().next().getBlock() != Blocks.EMERALD_BLOCK)
 			return;
 		
-		// attempt to find entities above the runet
+		// attempt to find entities above the rune
 		List<LivingEntity> entities = getMobs(world, pos);
 
 		// valid entities found
@@ -85,21 +86,59 @@ public class SoulTrap extends Rune
 		{
 			// pick first entity and convert them to an egg
 			LivingEntity chosenOne = entities.get(0);
-			ItemStack item = new ItemStack(getEgg(chosenOne.getType()));
+
+			EntityType<?> type = chosenOne.getType();
+			boolean invalid = (type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
+			if (invalid) return;
 			
-			if (item != null || item.getItem() == Items.AIR)
+			ItemStack item = new ItemStack(getEgg(chosenOne.getType()));	
+			if (item != null || item.getItem() != Items.AIR)
 			{
 				// spawn item in world
 				BlockPos p = chosenOne.getPosition();
 				world.addEntity(new ItemEntity(world, p.getX(), p.getY() + .5, p.getZ(), item));
 				
 				// destroy and replace entity with egg
-				EsotericaCraft.logger.info("Converting " + chosenOne.getDisplayName().getFormattedText() + " to an egg");
+				EsotericaCraft.logger.info(String.format("Converting %s to an egg", chosenOne.getDisplayName().getFormattedText()));
 				chosenOne.remove();
+				
+				// roll to consume emerald blocks
+				rollConsumeBlocks(world, pos);
 			}
 		}
 	}
-	public static SpawnEggItem getEgg(@Nullable EntityType<?> type) {
-	      return SpawnEggItem.EGGS.get(type);
-	   }
+	
+	private static void rollConsumeBlocks(World world, BlockPos pos)
+	{
+		int count = EsotericaCraft.rng.nextInt(4);
+		if (count > 0)
+		{
+			ArrayList<BlockPos> offerings = getOfferings(pos);
+			for (int i=0; i<count; i++)
+			{
+				BlockPos p = offerings.get(EsotericaCraft.rng.nextInt(offerings.size()));
+				world.removeBlock(p, false);
+				world.notifyBlockUpdate(p, Blocks.EMERALD_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
+				offerings.remove(p);
+			}
+		}
+	}
+	private static ArrayList<BlockPos> getOfferings(BlockPos pos)
+	{
+		ArrayList<BlockPos> offerings = new ArrayList<BlockPos>();
+		offerings.add(pos.north().east());
+		offerings.add(pos.north().west());
+		offerings.add(pos.south().east());
+		offerings.add(pos.south().west());
+		offerings.add(pos.north().east().north().east());
+		offerings.add(pos.north().west().north().west());
+		offerings.add(pos.south().east().south().east());
+		offerings.add(pos.south().west().south().west());
+		return offerings;
+	}
+	
+	public static SpawnEggItem getEgg(@Nullable EntityType<?> type)
+	{
+			return SpawnEggItem.EGGS.get(type);
+	}
 }

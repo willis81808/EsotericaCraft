@@ -9,6 +9,7 @@ import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 import com.darksundev.esotericacraft.runes.RuneMaterial;
 import com.darksundev.esotericacraft.runes.SoulTrap;
+import com.darksundev.esotericacraft.runes.SoulTrapLite;
 import com.darksundev.esotericacraft.runes.TeleportEraser;
 import com.darksundev.esotericacraft.runes.TeleportLink;
 import com.darksundev.esotericacraft.runes.TeleportReceiver;
@@ -26,6 +27,7 @@ public class RuneList
 		RuneManager.registerRune(waypointPortal);
 		RuneManager.registerRune(teleportEraser);
 		RuneManager.registerRune(soulTrap);
+		RuneManager.registerRune(soulTrapLite);
 		RuneManager.registerRune(dampen);
 		RuneManager.registerRune(disintegrate);
 	}
@@ -107,6 +109,19 @@ public class RuneList
 	 *		O - - - O
 	 */
 	public static final Rune soulTrap = new SoulTrap();
+
+	/*
+	 * 	-: Neither Mundane nor Enchanted
+	 * 	M: Mundane required
+	 * 	O: Enchanted required  (specifically Emerald blocks)
+	 * 
+	 * 		- - O - -
+	 * 		- - O - -
+	 * 		O O - O O
+	 * 		- - O - -
+	 *		- - O - -
+	 */
+	public static final Rune soulTrapLite = new SoulTrapLite();
 
 	/*
 	 * 	-: Neither Mundane nor Enchanted

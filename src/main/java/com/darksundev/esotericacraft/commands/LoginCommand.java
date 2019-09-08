@@ -14,7 +14,6 @@ import net.minecraft.util.text.TextFormatting;
 
 public class LoginCommand
 {
-
 	public static void register(CommandDispatcher<CommandSource> dispatcher)
 	{
 		dispatcher.register(Commands.literal("login")
@@ -62,7 +61,7 @@ public class LoginCommand
 		{
 			source.sendFeedback(new StringTextComponent(TextFormatting.RED + "Failed to verify old password! No changes made"), true);
 		}
-		
+
 		EsotericaWorldSave.backupData();
 		return 1;
 	}

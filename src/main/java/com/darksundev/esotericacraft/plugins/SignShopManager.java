@@ -32,7 +32,7 @@ public class SignShopManager
 {
 	@SubscribeEvent
 	public static void onPlayerRightClickBlock(RightClickBlock event)
-	{
+	{		
 		// server side only
 		if (event.getWorld().isRemote)
 			return;
@@ -195,6 +195,7 @@ public class SignShopManager
 						// this player doesn't own the shop, stop them from opening the chest
 						EsotericaCraft.messagePlayer(player, "This shop belongs to " + data.owner, TextFormatting.RED);
 						event.setCanceled(true);
+						event.setUseBlock(Result.DENY);
 					}
 				}
 			}
@@ -290,7 +291,7 @@ public class SignShopManager
 		return null;
 	}
 	
-	private static class SignShopData
+	public static class SignShopData
 	{
 		class Offer
 		{
@@ -304,9 +305,9 @@ public class SignShopManager
 			}
 		}
 		
-		boolean isValidShop;
-		String owner;
-		Offer ask, give;
+		public boolean isValidShop;
+		public String owner;
+		public Offer ask, give;
 		
 		public SignShopData(ITextComponent[] lines)
 		{

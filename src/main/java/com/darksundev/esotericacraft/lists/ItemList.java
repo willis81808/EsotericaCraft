@@ -19,6 +19,7 @@ public class ItemList
 	public static Item runing_staff;
 	public static Item diamond_dust;
 	public static Item garnet;
+	public static Item sacraficial_fire;
 	
 	private static Item.Properties category = new Item.Properties().group(ItemGroup.MISC);
 	
@@ -31,6 +32,8 @@ public class ItemList
 				.setRegistryName(BlockList.stone_path_block.getRegistryName());
 		auto_rune_caster_block = new BlockItem(BlockList.auto_rune_caster_block, category)
 				.setRegistryName(BlockList.auto_rune_caster_block.getRegistryName());
+		sacraficial_fire = new BlockItem(BlockList.sacraficial_fire, category)
+				.setRegistryName(BlockList.sacraficial_fire.getRegistryName());
 		
 		// tools
 		pogo_stick = new PogoStick(category)
@@ -46,6 +49,10 @@ public class ItemList
 
 		
 		/* Registration */
-		registry.registerAll(stone_path_block, auto_rune_caster_block, pogo_stick, runing_staff, diamond_dust, garnet);
+		registry.registerAll(
+				// blocks
+				stone_path_block, auto_rune_caster_block, sacraficial_fire,
+				// items
+				pogo_stick, runing_staff, diamond_dust, garnet);
 	}
 }

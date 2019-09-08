@@ -11,13 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 
@@ -68,13 +61,13 @@ public class PlayerLoginManager
 	
 	public static boolean isSingleplayer = false;
 	
-	// all online userse
+	// all online users
 	private static ArrayList<PlayerEntity> activeUsers = new ArrayList<PlayerEntity>();
 	// logged in users
 	private static HashSet<String> authenticatedUsers = new HashSet<String>();
 	// all user profile data
 	public static HashMap<String, UserProfile> accounts = new HashMap<String, UserProfile>();
-	
+
 	private static void displayAuthenticationErrorMessage(PlayerEntity player)
 	{
 		EsotericaCraft.messagePlayer(player,
@@ -105,7 +98,8 @@ public class PlayerLoginManager
 		}
 		return success;
 	}
-	
+
+	/*
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent event)
 	{
@@ -225,4 +219,6 @@ public class PlayerLoginManager
 		authenticatedUsers.remove(event.getPlayer().getCachedUniqueIdString());
 		activeUsers.remove(event.getPlayer());
 	}
+	
+	*/
 }

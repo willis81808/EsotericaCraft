@@ -8,11 +8,14 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.darksundev.esotericacraft.lists.RuneList;
+import com.darksundev.esotericacraft.plugins.OfferingManager.Offering;
+import com.darksundev.esotericacraft.plugins.OfferingManager;
 import com.darksundev.esotericacraft.plugins.PlayerLoginManager;
 import com.darksundev.esotericacraft.plugins.PlayerLoginManager.UserProfile;
 import com.darksundev.esotericacraft.runes.TeleportLink;
@@ -23,7 +26,7 @@ public class EsotericaWorldSave
 {
 	public static final String DATA_NAME = EsotericaCraft.modid + "_WorldData";
 	public static EsotericaWorldSave instance;
-	private static Path teleportLinksFilePath, userProfileFilePath;
+	private static Path teleportLinksFilePath, userProfileFilePath, offeringsFilePath;
 
 	public EsotericaWorldSave()
 	{
@@ -32,6 +35,7 @@ public class EsotericaWorldSave
 			instance = this;
 			teleportLinksFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "teleportLinks.txt");
 			userProfileFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "userProfiles.txt");
+			offeringsFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "offerings.txt");
 			restoreData();
 		}
 		else
@@ -53,11 +57,17 @@ public class EsotericaWorldSave
 		{
 			PlayerLoginManager.accounts = accounts;
 		}
+		HashSet<Offering> offerings = (HashSet<Offering>)Deserialize(offeringsFilePath);
+		if (!(offerings == null || offerings.isEmpty()))
+		{
+			OfferingManager.restoreOfferings(offerings);
+		}
 	}
 	public static void backupData()
 	{
 		Serialize(RuneList.teleportLinks, teleportLinksFilePath);
 		Serialize(PlayerLoginManager.accounts, userProfileFilePath);
+		Serialize(OfferingManager.getOfferings(), offeringsFilePath);
 	}
 	
 	private static void Serialize(Serializable data, Path filePath)

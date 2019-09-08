@@ -9,6 +9,7 @@ import com.darksundev.esotericacraft.commands.InventoryCommand;
 import com.darksundev.esotericacraft.commands.LoginCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 import com.darksundev.esotericacraft.commands.NoticeCommand;
+import com.darksundev.esotericacraft.commands.OfferingsCommand;
 import com.darksundev.esotericacraft.commands.SleepVoteCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
@@ -43,6 +44,7 @@ public class EsotericaCraft
 	public static final String modid = "esotericacraft";
 	public static final Logger logger = LogManager.getLogger(modid);
 	public static final Random rng = new Random();
+	public static final String NEW_LINE = "\n";
 	
 	public static IProxy proxy = DistExecutor.runForDist(
 		() -> () -> new ClientProxy(),
@@ -85,6 +87,7 @@ public class EsotericaCraft
     	SleepVoteCommand.register(dispatch);
     	NoticeCommand.register(dispatch);
     	LoginCommand.register(dispatch);
+    	OfferingsCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)
