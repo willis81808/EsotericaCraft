@@ -66,15 +66,13 @@ public class PlayerLoginManager
 		}
 	}
 	
-	public static boolean isSingleplayer = false;
-	
-	// all online userse
+	// all online users
 	private static ArrayList<PlayerEntity> activeUsers = new ArrayList<PlayerEntity>();
 	// logged in users
 	private static HashSet<String> authenticatedUsers = new HashSet<String>();
 	// all user profile data
 	public static HashMap<String, UserProfile> accounts = new HashMap<String, UserProfile>();
-	
+
 	private static void displayAuthenticationErrorMessage(PlayerEntity player)
 	{
 		EsotericaCraft.messagePlayer(player,
@@ -105,7 +103,7 @@ public class PlayerLoginManager
 		}
 		return success;
 	}
-	
+
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent event)
 	{
@@ -122,19 +120,19 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(PlayerInteractEvent event)
 	{
-		if (event.getWorld().isRemote || isSingleplayer)
+		if (event.getWorld().isRemote || event.getWorld().getServer().isSinglePlayer())
 			return;
 		
-		if (!authenticatedUsers.contains(event.getEntityPlayer().getCachedUniqueIdString()) && event.isCancelable())
+		if (!authenticatedUsers.contains(event.getPlayer().getCachedUniqueIdString()) && event.isCancelable())
 		{
 			event.setCanceled(true);
-			displayAuthenticationErrorMessage(event.getEntityPlayer());
+			displayAuthenticationErrorMessage(event.getPlayer());
 		}
 	}
 	@SubscribeEvent
 	public static void onUserInteract(BreakEvent event)
 	{
-		if (event.getWorld().isRemote() || isSingleplayer)
+		if (event.getWorld().isRemote() || event.getWorld().getWorld().getServer().isSinglePlayer())
 			return;
 		
 		if (!authenticatedUsers.contains(event.getPlayer().getCachedUniqueIdString()) && event.isCancelable())
@@ -146,7 +144,7 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(EntityPlaceEvent event)
 	{
-		if (event.getWorld().isRemote() || isSingleplayer)
+		if (event.getWorld().isRemote() || event.getWorld().getWorld().getServer().isSinglePlayer())
 			return;
 		
 		if (event.getEntity() instanceof PlayerEntity)
@@ -163,7 +161,7 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserLogin(PlayerLoggedInEvent event)
 	{
-		if (isSingleplayer)
+		if (event.getPlayer().getServer().isSinglePlayer())
 			return;
 		
 		// record login

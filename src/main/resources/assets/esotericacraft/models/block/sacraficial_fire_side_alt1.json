@@ -1,0 +1,7 @@
+{
+    "parent": "esotericacraft:block/sacraficial_fire_side_alt",
+    "textures": {
+        "particle": "esotericacraft:block/sacraficial_fire_1",
+        "fire": "esotericacraft:block/sacraficial_fire_1"
+    }
+}

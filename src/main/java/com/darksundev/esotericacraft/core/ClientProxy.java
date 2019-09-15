@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(modid = EsotericaCraft.modid, value = Dist.CLIENT)
-public class ClientProxy implements IProxy
+public class ClientProxy
 {
 	@SubscribeEvent
 	public static void onDisplayTooltip(ItemTooltipEvent event)
@@ -36,8 +36,7 @@ public class ClientProxy implements IProxy
 		}
 	}
 	
-	@Override
-	public void init()
+	public static void init()
 	{
 		// register rune particle packet
 		EsotericaCraftPacketHandler.registerConsumer(RuneCastMessagePacket.class,
@@ -58,6 +57,7 @@ public class ClientProxy implements IProxy
 						World w = Minecraft.getInstance().world;
 						msg.spawnParticle(w);
 					});
+					context.get().setPacketHandled(true);
 				});
 
 		// reset inventory packet received
@@ -79,6 +79,7 @@ public class ClientProxy implements IProxy
 					{
 						Minecraft.getInstance().player.container.setAll(msg.items);
 					});
+					context.get().setPacketHandled(true);
 				});
 	}
 }
