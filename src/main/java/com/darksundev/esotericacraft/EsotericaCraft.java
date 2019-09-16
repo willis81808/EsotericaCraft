@@ -26,7 +26,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -48,7 +47,7 @@ public class EsotericaCraft
 	public static final Random rng = new Random();
 	public static final String NEW_LINE = "\n";
 	
-	//public static IProxy proxy = DistExecutor.runForDist( () -> () -> new ClientProxy(), () -> () -> new ServerProxy() );
+	public static IProxy proxy = DistExecutor.runForDist( () -> () -> new ClientProxy(), () -> () -> new ServerProxy() );
 	
 	public EsotericaCraft()
 	{
@@ -68,8 +67,7 @@ public class EsotericaCraft
 		logger.info("Registered Runes");
 		
 		// register client side packets
-		DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> ClientProxy.init());
-		
+		proxy.init();
 	}
 	private void clientSetup(FMLClientSetupEvent event)
 	{

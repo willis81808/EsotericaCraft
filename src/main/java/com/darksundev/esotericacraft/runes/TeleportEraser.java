@@ -61,7 +61,7 @@ public class TeleportEraser extends Rune
 		String key = strBuilder.toString();
 		
 		// this key has no corrosponding link
-		if (!RuneList.teleportLinks.containsKey(key))
+		if (!RuneList.teleportLinksBuffer.containsKey(key))
 		{
 			ShowMissingSignatureErrorMessage(player);
 		}
@@ -69,7 +69,7 @@ public class TeleportEraser extends Rune
 		else
 		{
 			// get link with this rune's signature
-			RuneList.teleportLinks.remove(key);
+			RuneList.teleportLinksBuffer.remove(key);
 			
 			// delete emerald
 			w.removeBlock(pos, false);

@@ -1,8 +1,10 @@
 package com.darksundev.esotericacraft.runes;
 
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
+import com.darksundev.esotericacraft.runes.TeleportLinkAdapter.TeleporterSide;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.dimension.DimensionType;
 
 public class TeleportReceiver extends TeleporterBase
 {
@@ -30,17 +32,28 @@ public class TeleportReceiver extends TeleporterBase
 	}
 
 	@Override
-	protected long getThisSide(TeleportLink link) { return link.receiver; }
-	@Override
-	protected void setThisSide(TeleportLink link, long value) { link.receiver = value; }
-	@Override
-	protected long getOtherSide(TeleportLink link) { return link.transmitter; }
-	@Override
-	protected void setOtherSide(TeleportLink link, long value) { link.transmitter = value;}
+	protected TeleporterSide getThisSide(TeleportLinkAdapter link) {
+		return link.receiver;
+	}
 
 	@Override
-	protected TeleportLink makeNewLink(String key, BlockPos firstLink) {
-		return new TeleportLink(key, null, firstLink);
+	protected void setThisSide(TeleportLinkAdapter link, BlockPos value, DimensionType dimension) {
+		link.receiver = new TeleporterSide(value.toLong(), dimension.getId());
+	}
+
+	@Override
+	protected TeleporterSide getOtherSide(TeleportLinkAdapter link) {
+		return link.transmitter;
+	}
+
+	@Override
+	protected void setOtherSide(TeleportLinkAdapter link, BlockPos value, DimensionType dimension) {
+		link.transmitter = new TeleporterSide(value.toLong(), dimension.getId());
+	}
+
+	@Override
+	protected TeleportLinkAdapter makeNewLinkAdapter(String key, BlockPos firstLink, DimensionType dimension) {
+		return new TeleportLinkAdapter(key, null, null, firstLink, dimension);
 	}
 
 }

@@ -7,6 +7,7 @@ import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaWorldSave;
 import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
+import com.darksundev.esotericacraft.runes.TeleportLinkAdapter.TeleporterSide;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -19,6 +20,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.DimensionManager;
 
 public abstract class TeleporterBase extends Rune
 {
@@ -41,47 +45,45 @@ public abstract class TeleporterBase extends Rune
 			strBuilder.append(';');
 		}
 		String key = strBuilder.toString();
-		
-		// this is a new key
-		if (!RuneList.teleportLinks.containsKey(key))
+		// new links
+		if (!RuneList.teleportLinksBuffer.containsKey(key))
 		{
-			TeleportLink link = makeNewLink(key, pos);
-			RuneList.teleportLinks.put(key, link);
+			RuneList.teleportLinksBuffer.put(key, this.makeNewLinkAdapter(key, pos, world.dimension.getType()));
 		}
-		// existing key recognized
 		else
 		{
-			// get link with this rune's signature
-			TeleportLink link = RuneList.teleportLinks.get(key);
-			
+			TeleportLinkAdapter tp = RuneList.teleportLinksBuffer.get(key);
+
 			// link hasn't been made yet
-			if (getThisSide(link) == -1)
+			if (getThisSide(tp).position == -1)
 			{
 				// link signature to this rune
-				setThisSide(link, pos.toLong());
+				setThisSide(tp, pos, world.dimension.getType());
 
 				// if both portals are linked then teleport player
-				if (getOtherSide(link) != -1)
+				if (getOtherSide(tp).position != -1)
 				{
-					teleport(world, player, pos, BlockPos.fromLong(getOtherSide(link)), link);
+					ServerWorld destination = DimensionManager.getWorld(world.getServer(), DimensionType.getById(getOtherSide(tp).dimension), true, true);
+					teleport(destination, player, pos, BlockPos.fromLong(getOtherSide(tp).position), tp);
 				}
 			}
 			// this rune has already been linked
-			else if (getThisSide(link) == pos.toLong() ||
-					getThisSide(link) == pos.up().toLong() ||
-					getThisSide(link) == pos.down().toLong())
+			else if (getThisSide(tp).position == pos.toLong() ||
+					getThisSide(tp).position == pos.up().toLong() ||
+					getThisSide(tp).position == pos.down().toLong())
 			{
 				// if both sides are linked then teleport player
-				if (getOtherSide(link) != -1)
+				if (getOtherSide(tp).position != -1)
 				{
-					teleport(world, player, pos, BlockPos.fromLong(getOtherSide(link)), link);
+					ServerWorld destination = DimensionManager.getWorld(world.getServer(), DimensionType.getById(getOtherSide(tp).dimension), true, true);
+					teleport(destination, player, pos, BlockPos.fromLong(getOtherSide(tp).position), tp);
 				}
 			}
 			// this portal signature has already been linked to another rune!
 			else
 			{
 				// there is already a linked pair of portals with this signature
-				if (getOtherSide(link) != -1)
+				if (getOtherSide(tp).position != -1)
 				{
 					// send warning message to casting player
 					EsotericaCraft.messagePlayer(player,
@@ -96,7 +98,7 @@ public abstract class TeleporterBase extends Rune
 				// therefor we overrite the old partial link with a new one
 				else
 				{
-					RuneList.teleportLinks.put(key, makeNewLink(key, pos));
+					RuneList.teleportLinksBuffer.put(key, makeNewLinkAdapter(key, pos, world.dimension.getType()));
 				}
 			}
 		}
@@ -155,13 +157,8 @@ public abstract class TeleporterBase extends Rune
 			{
 				if (player != null)
 				{
-					EsotericaCraft.messagePlayer(player,
-							"The Aether resists!",
-							TextFormatting.RED
-						);
-					EsotericaCraft.messagePlayer(player,
-							"A safe place could not be found on the other side."
-						);
+					EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
+					EsotericaCraft.messagePlayer(player, "A safe place could not be found on the other side.");
 				}
 				return null;
 			}
@@ -170,10 +167,14 @@ public abstract class TeleporterBase extends Rune
 		return target;
 	}
 	
-	private void teleport(World world, PlayerEntity player, BlockPos from, BlockPos to, TeleportLink link)
+	private void teleport(World world, PlayerEntity player, BlockPos from, BlockPos to, TeleportLinkAdapter link)
 	{
 		// find valid area on other side of teleport linkage
 		to = getValidTeleportPoint(world, player, to);
+
+		if (getThisSide(link).dimension == -2)
+			getThisSide(link).dimension = player.dimension.getId();
+		DimensionType dimension = DimensionType.getById(getOtherSide(link).dimension);
 		
 		// valid area found- do teleport
 		if (player == null || player.isSneaking())
@@ -182,10 +183,13 @@ public abstract class TeleporterBase extends Rune
 			List<Entity> entities = getEntitiesToTeleport(world, from);
 			if (entities.size() == 0)
 			{
-				entities = getEntitiesToTeleport(world, BlockPos.fromLong(getOtherSide(link)));
-				to = getValidTeleportPoint(world, player, BlockPos.fromLong(getThisSide(link)));
+				entities = getEntitiesToTeleport(world, BlockPos.fromLong(getOtherSide(link).position));
+				to = getValidTeleportPoint(world, player, BlockPos.fromLong(getThisSide(link).position));
 				for (Entity entity : entities)
 				{
+					if (entity.dimension != dimension)
+						entity.changeDimension(dimension);
+					
 					entity.setPositionAndUpdate(
 							to.getX()+.5,
 							to.getY()+.5,
@@ -197,6 +201,9 @@ public abstract class TeleporterBase extends Rune
 			{
 				for (Entity entity : entities)
 				{
+					if (entity.dimension != dimension)
+						entity.changeDimension(dimension);
+					
 					entity.setPositionAndUpdate(
 							to.getX()+.5,
 							to.getY()+.5,
@@ -207,6 +214,9 @@ public abstract class TeleporterBase extends Rune
 		}
 		else
 		{
+			if (player.dimension != dimension)
+				player.changeDimension(dimension);
+			
 			// player wasn't sneaking- teleport player
 			player.setPositionAndUpdate(
 					to.getX()+.5,
@@ -215,10 +225,9 @@ public abstract class TeleporterBase extends Rune
 				);
 		}
 	}
-
-	protected abstract long getThisSide(TeleportLink link);
-	protected abstract void setThisSide(TeleportLink link, long value);
-	protected abstract long getOtherSide(TeleportLink link);
-	protected abstract void setOtherSide(TeleportLink link, long value);
-	protected abstract TeleportLink makeNewLink(String key, BlockPos firstLink);
+	protected abstract TeleporterSide getThisSide(TeleportLinkAdapter link);
+	protected abstract void setThisSide(TeleportLinkAdapter link, BlockPos value, DimensionType dimension);
+	protected abstract TeleporterSide getOtherSide(TeleportLinkAdapter link);
+	protected abstract void setOtherSide(TeleportLinkAdapter link, BlockPos value, DimensionType dimension);
+	protected abstract TeleportLinkAdapter makeNewLinkAdapter(String Key, BlockPos firstLink, DimensionType dimension);
 }

@@ -16,11 +16,11 @@ public class EsotericaCraftPacketHandler
 	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
 	    new ResourceLocation(EsotericaCraft.modid, "main"),
 	    () -> PROTOCOL_VERSION,
-	    PROTOCOL_VERSION::equals,
-	    PROTOCOL_VERSION::equals
+	    s -> { return true; },
+	    s -> { return true; }
 	);
 	/*
-public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
 	    new ResourceLocation(EsotericaCraft.modid, "main"),
 	    () -> PROTOCOL_VERSION,
 	    PROTOCOL_VERSION::equals,

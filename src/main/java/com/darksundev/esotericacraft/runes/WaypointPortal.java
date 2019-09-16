@@ -20,6 +20,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.common.DimensionManager;
 
 public class WaypointPortal extends Rune
 {
@@ -67,7 +69,7 @@ public class WaypointPortal extends Rune
 		String key = strBuilder.toString();
 		
 		// this key has no corrosponding link
-		if (!RuneList.teleportLinks.containsKey(key))
+		if (!RuneList.teleportLinksBuffer.containsKey(key))
 		{
 			ShowMissingSignatureErrorMessage(player);
 		}
@@ -75,14 +77,20 @@ public class WaypointPortal extends Rune
 		else
 		{
 			// get link with this rune's signature
-			TeleportLink link = RuneList.teleportLinks.get(key);
-			if (link.receiver != -1)
+			TeleportLinkAdapter link = RuneList.teleportLinksBuffer.get(key);
+			DimensionType dimension = DimensionType.getById(link.receiver.dimension);
+			if (player.dimension != dimension)
 			{
-				simpleTeleport(world, player, pos, BlockPos.fromLong(link.receiver));
+				player.changeDimension(dimension);
+				world = DimensionManager.getWorld(world.getServer(), dimension, true, true);
 			}
-			else if (link.transmitter != -1)
+			if (link.receiver.position != -1)
 			{
-				simpleTeleport(world, player, pos, BlockPos.fromLong(link.transmitter));
+				simpleTeleport(world, player, pos, BlockPos.fromLong(link.receiver.position));
+			}
+			else if (link.transmitter.position != -1)
+			{
+				simpleTeleport(world, player, pos, BlockPos.fromLong(link.transmitter.position));
 			}
 			// something is wrong with this link, and it has neither a transmitter nor receiver...
 			else

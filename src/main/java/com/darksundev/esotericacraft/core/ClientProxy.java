@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 @EventBusSubscriber(modid = EsotericaCraft.modid, value = Dist.CLIENT)
-public class ClientProxy
+public class ClientProxy implements IProxy
 {
 	@SubscribeEvent
 	public static void onDisplayTooltip(ItemTooltipEvent event)
@@ -36,7 +36,8 @@ public class ClientProxy
 		}
 	}
 	
-	public static void init()
+	@Override
+	public void init()
 	{
 		// register rune particle packet
 		EsotericaCraftPacketHandler.registerConsumer(RuneCastMessagePacket.class,

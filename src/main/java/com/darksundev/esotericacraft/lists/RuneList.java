@@ -11,7 +11,7 @@ import com.darksundev.esotericacraft.runes.RuneMaterial;
 import com.darksundev.esotericacraft.runes.SoulTrap;
 import com.darksundev.esotericacraft.runes.SoulTrapLite;
 import com.darksundev.esotericacraft.runes.TeleportEraser;
-import com.darksundev.esotericacraft.runes.TeleportLink;
+import com.darksundev.esotericacraft.runes.TeleportLinkAdapter;
 import com.darksundev.esotericacraft.runes.TeleportReceiver;
 import com.darksundev.esotericacraft.runes.TeleportTransmitter;
 import com.darksundev.esotericacraft.runes.WaypointPortal;
@@ -41,7 +41,7 @@ public class RuneList
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Shape Recipes
-	public static HashMap<String, TeleportLink> teleportLinks = new HashMap<String, TeleportLink>();
+	public static HashMap<String, TeleportLinkAdapter> teleportLinksBuffer = new HashMap<String, TeleportLinkAdapter>();
 	
 	/*
 	 * 	-: Ignored

@@ -14,11 +14,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.darksundev.esotericacraft.lists.RuneList;
-import com.darksundev.esotericacraft.plugins.OfferingManager.Offering;
 import com.darksundev.esotericacraft.plugins.OfferingManager;
+import com.darksundev.esotericacraft.plugins.OfferingManager.Offering;
 import com.darksundev.esotericacraft.plugins.PlayerLoginManager;
 import com.darksundev.esotericacraft.plugins.PlayerLoginManager.UserProfile;
-import com.darksundev.esotericacraft.runes.TeleportLink;
+import com.darksundev.esotericacraft.runes.TeleportLinkAdapter;
 
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -26,14 +26,14 @@ public class EsotericaWorldSave
 {
 	public static final String DATA_NAME = EsotericaCraft.modid + "_WorldData";
 	public static EsotericaWorldSave instance;
-	private static Path teleportLinksFilePath, userProfileFilePath, offeringsFilePath;
+	private static Path teleportLinksConvertedFilePath, userProfileFilePath, offeringsFilePath;
 
 	public EsotericaWorldSave()
 	{
 		if (instance == null)
 		{
 			instance = this;
-			teleportLinksFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "teleportLinks.txt");
+			teleportLinksConvertedFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "teleportLinks-converted.txt");
 			userProfileFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "userProfiles.txt");
 			offeringsFilePath = Paths.get(FMLPaths.GAMEDIR.get().toString(), "offerings.txt");
 			restoreData();
@@ -47,10 +47,10 @@ public class EsotericaWorldSave
 	@SuppressWarnings("unchecked")
 	public static void restoreData()
 	{
-		HashMap<String, TeleportLink> teleportLinks = (HashMap<String, TeleportLink>)Deserialize(teleportLinksFilePath);
-		if (!(teleportLinks == null || teleportLinks.isEmpty()))
+		HashMap<String, TeleportLinkAdapter> teleportLinksNew = (HashMap<String, TeleportLinkAdapter>)Deserialize(teleportLinksConvertedFilePath);
+		if (!(teleportLinksNew == null || teleportLinksNew.isEmpty()))
 		{
-			RuneList.teleportLinks = teleportLinks;
+			RuneList.teleportLinksBuffer = teleportLinksNew;
 		}
 		HashMap<String, UserProfile> accounts = (HashMap<String, UserProfile>)Deserialize(userProfileFilePath);
 		if (!(accounts == null || accounts.isEmpty()))
@@ -65,7 +65,7 @@ public class EsotericaWorldSave
 	}
 	public static void backupData()
 	{
-		Serialize(RuneList.teleportLinks, teleportLinksFilePath);
+		Serialize(RuneList.teleportLinksBuffer, teleportLinksConvertedFilePath);
 		Serialize(PlayerLoginManager.accounts, userProfileFilePath);
 		Serialize(OfferingManager.getOfferings(), offeringsFilePath);
 	}
