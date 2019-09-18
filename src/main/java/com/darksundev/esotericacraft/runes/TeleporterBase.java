@@ -16,11 +16,15 @@ import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.TicketType;
 import net.minecraftforge.common.DimensionManager;
 
 public abstract class TeleporterBase extends Rune
@@ -89,7 +93,7 @@ public abstract class TeleporterBase extends Rune
 					DimensionType dimension = DimensionType.getById(getOtherSide(link).dimension);
 					if (player.dimension != dimension)
 					{
-						player.changeDimension(dimension);
+						//player.changeDimension(dimension);
 						teleport(DimensionManager.getWorld(world.getServer(), dimension, true, true), player, pos, BlockPos.fromLong(getOtherSide(link).position), link);
 					}
 					else
@@ -228,12 +232,20 @@ public abstract class TeleporterBase extends Rune
 		}
 		else
 		{
+			// preload destination
+			final ChunkPos chunkpos = new ChunkPos(to);
+		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
+		    // teleport player
+		    ((ServerPlayerEntity)player).teleport((ServerWorld)world, to.getX()+.5, to.getY()+.5, to.getZ()+.5, player.rotationYaw, player.prevRotationPitch);
+
+		    /*
 			// player wasn't sneaking- teleport player
 			player.setPositionAndUpdate(
 					to.getX()+.5,
 					to.getY()+.5,
 					to.getZ()+.5
 				);
+			*/
 		}
 	}
 
