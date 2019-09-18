@@ -1,13 +1,11 @@
 package com.darksundev.esotericacraft;
 
 import com.darksundev.esotericacraft.lists.BlockList;
-import com.darksundev.esotericacraft.lists.ContainerList;
 import com.darksundev.esotericacraft.lists.EntityList;
 import com.darksundev.esotericacraft.lists.ItemList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -34,17 +32,11 @@ public final class Registrar
 	@SubscribeEvent
 	public static void registerEntities(RegistryEvent.Register<EntityType<?>> event)
 	{
-		EsotericaCraft.logger.info("Entites registered");
 		final IForgeRegistry<EntityType<?>> registry = event.getRegistry();
 		EntityList.registerEntities(registry);
 		
 	}
-	@SubscribeEvent
-	public static void registerContainers(RegistryEvent.Register<ContainerType<?>> event)
-	{
-		EsotericaCraft.logger.info("Containers registered");
-		ContainerList.registerContainers(event.getRegistry());
-	}
+	
 	public static ResourceLocation location(String name)
 	{
 		return new ResourceLocation(EsotericaCraft.modid, name);

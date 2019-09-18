@@ -78,18 +78,24 @@ public class WaypointPortal extends Rune
 		{
 			// get link with this rune's signature
 			TeleportLinkAdapter link = RuneList.teleportLinksBuffer.get(key);
-			DimensionType dimension = DimensionType.getById(link.receiver.dimension);
-			if (player.dimension != dimension)
-			{
-				player.changeDimension(dimension);
-				world = DimensionManager.getWorld(world.getServer(), dimension, true, true);
-			}
 			if (link.receiver.position != -1)
 			{
+				DimensionType dimension = DimensionType.getById(link.receiver.dimension);
+				if (player.dimension != dimension)
+				{
+					player.changeDimension(dimension);
+					world = DimensionManager.getWorld(world.getServer(), dimension, true, true);
+				}
 				simpleTeleport(world, player, pos, BlockPos.fromLong(link.receiver.position));
 			}
 			else if (link.transmitter.position != -1)
 			{
+				DimensionType dimension = DimensionType.getById(link.transmitter.dimension);
+				if (player.dimension != dimension)
+				{
+					player.changeDimension(dimension);
+					world = DimensionManager.getWorld(world.getServer(), dimension, true, true);
+				}
 				simpleTeleport(world, player, pos, BlockPos.fromLong(link.transmitter.position));
 			}
 			// something is wrong with this link, and it has neither a transmitter nor receiver...

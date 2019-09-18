@@ -14,8 +14,8 @@ public class TeleportLinkAdapter implements Serializable
 	public TeleportLinkAdapter(String id, BlockPos transmitter, DimensionType dimension1, BlockPos receiver, DimensionType dimension2)
 	{
 		this.id = id;
-		this.transmitter = new TeleporterSide(transmitter!=null ? transmitter.toLong() : -1, dimension1 == null ? -1 : dimension1.getId());
-		this.receiver = new TeleporterSide(receiver!=null ? receiver.toLong() : -1, dimension2 == null ? -1 : dimension2.getId());
+		this.transmitter = new TeleporterSide(transmitter == null ? -1 : transmitter.toLong(), dimension1 == null ? -2 : dimension1.getId());
+		this.receiver = new TeleporterSide(receiver == null ? -1 : receiver.toLong(), dimension2 == null ? -2 : dimension2.getId());
 	}
 	public TeleportLinkAdapter(String id, TeleporterSide transmitter, TeleporterSide receiver)
 	{

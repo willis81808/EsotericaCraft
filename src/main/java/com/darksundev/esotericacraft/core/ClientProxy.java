@@ -58,7 +58,6 @@ public class ClientProxy implements IProxy
 						World w = Minecraft.getInstance().world;
 						msg.spawnParticle(w);
 					});
-					context.get().setPacketHandled(true);
 				});
 
 		// reset inventory packet received
@@ -80,7 +79,6 @@ public class ClientProxy implements IProxy
 					{
 						Minecraft.getInstance().player.container.setAll(msg.items);
 					});
-					context.get().setPacketHandled(true);
 				});
 	}
 }

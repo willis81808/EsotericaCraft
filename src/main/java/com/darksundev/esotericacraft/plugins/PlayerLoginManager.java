@@ -11,13 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedOutEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 
@@ -66,6 +59,8 @@ public class PlayerLoginManager
 		}
 	}
 	
+	public static boolean isSingleplayer = false;
+	
 	// all online users
 	private static ArrayList<PlayerEntity> activeUsers = new ArrayList<PlayerEntity>();
 	// logged in users
@@ -104,6 +99,7 @@ public class PlayerLoginManager
 		return success;
 	}
 
+	/*
 	@SubscribeEvent
 	public static void onServerTick(ServerTickEvent event)
 	{
@@ -120,19 +116,19 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(PlayerInteractEvent event)
 	{
-		if (event.getWorld().isRemote || event.getWorld().getServer().isSinglePlayer())
+		if (event.getWorld().isRemote || isSingleplayer)
 			return;
 		
-		if (!authenticatedUsers.contains(event.getPlayer().getCachedUniqueIdString()) && event.isCancelable())
+		if (!authenticatedUsers.contains(event.getEntityPlayer().getCachedUniqueIdString()) && event.isCancelable())
 		{
 			event.setCanceled(true);
-			displayAuthenticationErrorMessage(event.getPlayer());
+			displayAuthenticationErrorMessage(event.getEntityPlayer());
 		}
 	}
 	@SubscribeEvent
 	public static void onUserInteract(BreakEvent event)
 	{
-		if (event.getWorld().isRemote() || event.getWorld().getWorld().getServer().isSinglePlayer())
+		if (event.getWorld().isRemote() || isSingleplayer)
 			return;
 		
 		if (!authenticatedUsers.contains(event.getPlayer().getCachedUniqueIdString()) && event.isCancelable())
@@ -144,7 +140,7 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserInteract(EntityPlaceEvent event)
 	{
-		if (event.getWorld().isRemote() || event.getWorld().getWorld().getServer().isSinglePlayer())
+		if (event.getWorld().isRemote() || isSingleplayer)
 			return;
 		
 		if (event.getEntity() instanceof PlayerEntity)
@@ -161,7 +157,7 @@ public class PlayerLoginManager
 	@SubscribeEvent
 	public static void onUserLogin(PlayerLoggedInEvent event)
 	{
-		if (event.getPlayer().getServer().isSinglePlayer())
+		if (isSingleplayer)
 			return;
 		
 		// record login
@@ -223,4 +219,6 @@ public class PlayerLoginManager
 		authenticatedUsers.remove(event.getPlayer().getCachedUniqueIdString());
 		activeUsers.remove(event.getPlayer());
 	}
+	
+	*/
 }

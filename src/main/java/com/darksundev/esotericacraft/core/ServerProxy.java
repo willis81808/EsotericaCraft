@@ -25,7 +25,6 @@ public class ServerProxy implements IProxy
 				// consumer
 				(msg, context) -> {
 					// do nothing
-					context.get().setPacketHandled(true);
 				});
 
 		// openinv command data packet
@@ -44,7 +43,6 @@ public class ServerProxy implements IProxy
 				(msg, context) ->
 				{
 					// do nothing
-					context.get().setPacketHandled(true);
 				});
 	}
 

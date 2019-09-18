@@ -37,8 +37,8 @@ public class TeleportReceiver extends TeleporterBase
 	}
 
 	@Override
-	protected void setThisSide(TeleportLinkAdapter link, BlockPos value, DimensionType dimension) {
-		link.receiver = new TeleporterSide(value.toLong(), dimension.getId());
+	protected void setThisSide(TeleportLinkAdapter link, TeleporterSide side) {
+		link.receiver = side;
 	}
 
 	@Override
@@ -47,12 +47,12 @@ public class TeleportReceiver extends TeleporterBase
 	}
 
 	@Override
-	protected void setOtherSide(TeleportLinkAdapter link, BlockPos value, DimensionType dimension) {
-		link.transmitter = new TeleporterSide(value.toLong(), dimension.getId());
+	protected void setOtherSide(TeleportLinkAdapter link, TeleporterSide side) {
+		link.transmitter = side;
 	}
 
 	@Override
-	protected TeleportLinkAdapter makeNewLinkAdapter(String key, BlockPos firstLink, DimensionType dimension) {
+	protected TeleportLinkAdapter makeNewLink(String key, BlockPos firstLink, DimensionType dimension) {
 		return new TeleportLinkAdapter(key, null, null, firstLink, dimension);
 	}
 

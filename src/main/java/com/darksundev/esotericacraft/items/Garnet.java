@@ -1,18 +1,15 @@
 package com.darksundev.esotericacraft.items;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
-import com.darksundev.esotericacraft.lists.ContainerList;
 import com.darksundev.esotericacraft.plugins.SignShopManager.SignShopData;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 
 public class Garnet extends Item
@@ -33,12 +30,6 @@ public class Garnet extends Item
 		World world = context.getWorld();
 		PlayerEntity player = context.getPlayer();
 		TileEntity te = world.getTileEntity(pos.up());
-
-		// open menu
-		player.openContainer(new SimpleNamedContainerProvider((id, pInv, p) -> {
-	         return ContainerList.TEST_CONTAINER.create(id, pInv);
-	      }, new StringTextComponent("")));
-		
 		
 		exit:
 		if (te instanceof SignTileEntity)

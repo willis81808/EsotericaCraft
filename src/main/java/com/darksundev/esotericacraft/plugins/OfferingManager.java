@@ -23,20 +23,7 @@ public class OfferingManager
 	public static void acceptOffering(ItemStack stack)
 	{
 		String key = stack.getDisplayName().getString();
-		if (stack.hasTag())
-		{
-			CompoundNBT list = stack.getTag().getCompound("BlockEntityTag");
-			if (list != null)
-			{
-				list.getList("Items", NBT.TAG_COMPOUND).forEach(item ->
-				{
-					ItemStack contents = ItemStack.read((CompoundNBT)item);
-					acceptOffering(contents);
-					EsotericaCraft.logger.info(String.format("%s: %s", contents.getDisplayName().getString(), contents.getCount()));			
-				});
-			}
-		}
-
+		
 		int value = 0;
 		if (buffer.containsKey(key))
 			value = buffer.get(key);

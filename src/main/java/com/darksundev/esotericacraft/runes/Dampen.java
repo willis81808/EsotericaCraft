@@ -66,9 +66,7 @@ public class Dampen extends Rune
 			if (isLinkedTo(player, observers.get(0).getPosition()))
 			{
 				removeLink(player, observers.get(0).getPosition());	//remove ownership data from staff
-				MiningFatigueObserver observer = observers.get(0);
-				MiningFatigueObserver.stopTracking(observer);
-				observer.remove();
+				observers.get(0).remove();
 
 				EsotericaCraft.messagePlayer(player, "Rune Disabled");
 			}
