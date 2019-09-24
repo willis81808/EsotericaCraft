@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.darksundev.esotericacraft.runes.Dampen;
 import com.darksundev.esotericacraft.runes.Disintegrate;
+import com.darksundev.esotericacraft.runes.PocketDimension;
 import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
@@ -30,6 +31,7 @@ public class RuneList
 		RuneManager.registerRune(soulTrapLite);
 		RuneManager.registerRune(dampen);
 		RuneManager.registerRune(disintegrate);
+		RuneManager.registerRune(pocketDimension);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -149,6 +151,19 @@ public class RuneList
 	 *		- - O - -
 	 */
 	public static Rune disintegrate = new Disintegrate();
+
+	/*
+	 * 	-: Ignored
+	 * 	E: ENCHANTED required
+	 * 	O: MUNDANE required
+	 * 
+	 * 		- E E E -
+	 * 		E E O E E
+	 * 		E O - O E
+	 * 		E E O E E
+	 * 		- E E E -
+	 */
+	public static Rune pocketDimension = new PocketDimension();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks

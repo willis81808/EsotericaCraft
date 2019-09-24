@@ -16,11 +16,15 @@ import net.minecraft.entity.item.BoatEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.TicketType;
 import net.minecraftforge.common.DimensionManager;
 
 public class WaypointPortal extends Rune
@@ -83,7 +87,6 @@ public class WaypointPortal extends Rune
 				DimensionType dimension = DimensionType.getById(link.receiver.dimension);
 				if (player.dimension != dimension)
 				{
-					player.changeDimension(dimension);
 					world = DimensionManager.getWorld(world.getServer(), dimension, true, true);
 				}
 				simpleTeleport(world, player, pos, BlockPos.fromLong(link.receiver.position));
@@ -93,7 +96,6 @@ public class WaypointPortal extends Rune
 				DimensionType dimension = DimensionType.getById(link.transmitter.dimension);
 				if (player.dimension != dimension)
 				{
-					player.changeDimension(dimension);
 					world = DimensionManager.getWorld(world.getServer(), dimension, true, true);
 				}
 				simpleTeleport(world, player, pos, BlockPos.fromLong(link.transmitter.position));
@@ -157,11 +159,18 @@ public class WaypointPortal extends Rune
 		else
 		{
 			// player wasn't sneaking- teleport player
+			// preload destination
+			final ChunkPos chunkpos = new ChunkPos(to);
+		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
+		    // teleport player
+		    ((ServerPlayerEntity)player).teleport((ServerWorld)world, to.getX()+.5, to.getY()+.5, to.getZ()+.5, player.rotationYaw, player.prevRotationPitch);
+		    /*
 			player.setPositionAndUpdate(
 					to.getX()+.5,
 					to.getY()+.5,
 					to.getZ()+.5
 				);
+			*/
 		}
 	}
 

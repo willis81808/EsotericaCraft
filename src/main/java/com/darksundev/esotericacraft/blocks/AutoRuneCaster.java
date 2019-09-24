@@ -63,7 +63,7 @@ public class AutoRuneCaster extends Block
 			if (cast.getRune() != null)
 			{
 				// spawn fire particles on sucessfull cast
-				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
+				//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
 				
 				// cast rune
 				cast.getRune().onCast(null, world, rootPos, area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
@@ -74,7 +74,7 @@ public class AutoRuneCaster extends Block
 			else
 			{
 				// spawn smoke particles when invalid rune/area is selected
-				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
+				//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.SMOKE));
 			}
 		}
 	}

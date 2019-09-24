@@ -31,10 +31,9 @@ public abstract class RuneObserverEntity extends MobEntity
 	@Override
 	public void baseTick()
 	{
-		observeTick();
-		
 		// do normal tick
 		super.baseTick();
+		observeTick();
 	}
 	public abstract void observeTick();
 	

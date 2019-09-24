@@ -5,6 +5,7 @@ import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.darksundev.esotericacraft.commands.DimensionCommand;
 import com.darksundev.esotericacraft.commands.InventoryCommand;
 import com.darksundev.esotericacraft.commands.LoginCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
@@ -88,6 +89,7 @@ public class EsotericaCraft
     	NoticeCommand.register(dispatch);
     	LoginCommand.register(dispatch);
     	OfferingsCommand.register(dispatch);
+    	DimensionCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)

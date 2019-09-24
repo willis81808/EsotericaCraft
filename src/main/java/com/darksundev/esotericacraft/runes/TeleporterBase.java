@@ -20,6 +20,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
@@ -203,14 +204,22 @@ public abstract class TeleporterBase extends Rune
 		// valid area found- do teleport
 		if (player == null || player.isSneaking())
 		{
+			World thisSideWorld = DimensionManager.getWorld(world.getServer(), DimensionType.getById(getThisSide(link).dimension), true, true);
 			// player is sneaking- teleport entities and not player
-			List<Entity> entities = getEntitiesToTeleport(world, from);
+			List<Entity> entities = getEntitiesToTeleport(thisSideWorld, from);
 			if (entities.size() == 0)
 			{
 				entities = getEntitiesToTeleport(world, BlockPos.fromLong(getOtherSide(link).position));
-				to = getValidTeleportPoint(world, player, BlockPos.fromLong(getThisSide(link).position));
+				to = getValidTeleportPoint(thisSideWorld, player, BlockPos.fromLong(getThisSide(link).position));
 				for (Entity entity : entities)
 				{
+					if (entity.dimension != thisSideWorld.dimension.getType())
+					{
+						player.sendMessage(new StringTextComponent(String.format("Old Dimension:%s, New Dimension:%s", 
+								entity.dimension.getRegistryName().toString(), 
+								thisSideWorld.dimension.getType().getRegistryName().toString())));
+						entity.changeDimension(thisSideWorld.dimension.getType());
+					}
 					entity.setPositionAndUpdate(
 							to.getX()+.5,
 							to.getY()+.5,
@@ -222,6 +231,13 @@ public abstract class TeleporterBase extends Rune
 			{
 				for (Entity entity : entities)
 				{
+					if (entity.dimension != world.dimension.getType())
+					{
+						player.sendMessage(new StringTextComponent(String.format("Old Dimension:%s, New Dimension:%s", 
+								entity.dimension.getRegistryName().toString(), 
+								world.dimension.getType().getRegistryName().toString())));
+						entity.changeDimension(world.dimension.getType());
+					}
 					entity.setPositionAndUpdate(
 							to.getX()+.5,
 							to.getY()+.5,
