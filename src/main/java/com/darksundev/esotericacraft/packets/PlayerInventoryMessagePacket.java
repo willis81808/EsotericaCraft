@@ -3,10 +3,11 @@ package com.darksundev.esotericacraft.packets;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.netty.util.IntSupplier;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 
-public class PlayerInventoryMessagePacket
+public class PlayerInventoryMessagePacket implements IntSupplier
 {
 	public List<ItemStack> items;
 	
@@ -42,5 +43,11 @@ public class PlayerInventoryMessagePacket
 		}
 		
 		return new PlayerInventoryMessagePacket(items);
+	}
+
+	@Override
+	public int get() throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

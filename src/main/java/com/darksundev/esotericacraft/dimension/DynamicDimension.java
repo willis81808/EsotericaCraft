@@ -110,7 +110,6 @@ public class DynamicDimension extends Dimension
     	
     	// register dimension
         DimensionType dimension = DimensionManager.registerDimension(rs, Registrar.DYNAMIC_DIMENSION, buffer, false);
-        DynamicDimensionManager.notifyPlayersOfNewDimension(dimension);		// send new dimension packet to all players
         return dimension;
 	}
 }

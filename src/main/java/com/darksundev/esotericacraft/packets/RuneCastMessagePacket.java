@@ -1,12 +1,13 @@
 package com.darksundev.esotericacraft.packets;
 
+import io.netty.util.IntSupplier;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class RuneCastMessagePacket
+public class RuneCastMessagePacket implements IntSupplier
 {
 	public enum ParticleType
 	{
@@ -81,5 +82,11 @@ public class RuneCastMessagePacket
 	public static RuneCastMessagePacket fromBuffer(PacketBuffer buffer)
 	{
 		return new RuneCastMessagePacket(buffer.readBlockPos(), ParticleType.fromInt(buffer.readByte()));
+	}
+
+	@Override
+	public int get() throws Exception {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

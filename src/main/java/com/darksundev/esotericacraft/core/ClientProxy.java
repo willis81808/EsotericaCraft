@@ -2,24 +2,18 @@ package com.darksundev.esotericacraft.core;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaCraftPacketHandler;
-import com.darksundev.esotericacraft.dimension.DynamicDimension;
 import com.darksundev.esotericacraft.packets.PlayerInventoryMessagePacket;
 import com.darksundev.esotericacraft.packets.RuneCastMessagePacket;
-import com.darksundev.esotericacraft.packets.DimensionDataPacket;
 import com.darksundev.esotericacraft.runes.IItemEffect;
 import com.darksundev.esotericacraft.runes.RuneManager;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.network.FMLHandshakeMessages;
 
 @EventBusSubscriber(modid = EsotericaCraft.modid, value = Dist.CLIENT)
 public class ClientProxy implements IProxy
@@ -45,31 +39,6 @@ public class ClientProxy implements IProxy
 	@Override
 	public void init()
 	{
-		// register dimension created event packet
-		EsotericaCraftPacketHandler.registerConsumer(DimensionDataPacket.class,
-				// encoder
-				(msg, buffer) ->
-				{
-					msg.encode(buffer);
-				},
-				// decoder
-				(buffer) ->
-				{ 
-					return DimensionDataPacket.decode(buffer);
-				},
-				// consumer
-				(msg, context) -> {
-					// register dimension
-					context.get().enqueueWork(() ->
-					{
-	                    if (DimensionType.getById(msg.id) == null) {
-	                    	DynamicDimension.register(msg.name.getPath(), Biomes.THE_VOID);
-		                    EsotericaCraft.logger.info(String.format("Registered dimension %s with ID %d", msg.name.getPath(), msg.id));
-	                    }
-	                    context.get().setPacketHandled(true);
-					});
-				});
-		
 		// register rune particle packet
 		EsotericaCraftPacketHandler.registerConsumer(RuneCastMessagePacket.class,
 				// encoder
