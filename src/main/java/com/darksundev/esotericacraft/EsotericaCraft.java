@@ -88,8 +88,7 @@ public class EsotericaCraft
 		catch (Exception e) {}
 		
 		logger.info("Registered Runes");
-		logger.info("Joe's Dimension Position " + BlockPos.fromLong(792473031958590L).toString());
-
+		
 		// run sided initialization
 		proxy.init();
 	}	
