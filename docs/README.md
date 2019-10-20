@@ -9,8 +9,6 @@ In addition to the mystical runes, this mod introduces a "sleep vote" system (co
 
 # Crafting Runes
 
-More recipes will be added here in the future...
-
 [none]: https://i.imgur.com/rHk2Ifb.png
 [mundane]: https://i.imgur.com/OCVBBV9.png
 [enchanted]: https://i.imgur.com/PnYfGrY.png
