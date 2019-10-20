@@ -36,6 +36,7 @@ public class DynamicDimension extends Dimension
 	
 	private Biome biomeType;
 
+	@SuppressWarnings("deprecation")
 	public DynamicDimension(World worldIn, DimensionType typeIn)
 	{
 		super(worldIn, typeIn);
@@ -94,6 +95,7 @@ public class DynamicDimension extends Dimension
 	@Override
 	public boolean doesXZShowFog(int x, int z) { return false; }
 
+	@SuppressWarnings("deprecation")
 	public static DimensionType register(String id, Biome biome)
 	{
 		ResourceLocation rs = Registrar.location(id);
@@ -104,8 +106,8 @@ public class DynamicDimension extends Dimension
 		}
 		
     	// format data
+		int data = Registry.BIOME.getId(biome);
     	PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-    	int data = Registry.BIOME.getId(biome);
     	buffer.writeInt(data);
     	
     	// register dimension
