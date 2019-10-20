@@ -21,7 +21,7 @@ Runes are created by placing Rune Materials (a.k.a blocks) in specific patterns 
 
 | Enchanted | &nbsp; Mundane &nbsp; | &nbsp;&nbsp;&nbsp; None &nbsp;&nbsp;&nbsp; |
 | --- | --- | --- |
-| <br><p align="center">![tier][enchanted]</p> | <br><p align="center">![tier][mundane]</p> | <br><p align="center">![tier][none]</p> |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![tier][enchanted] | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![tier][mundane] | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![tier][none] |
 
 Lists of each block type can be found here:
 
