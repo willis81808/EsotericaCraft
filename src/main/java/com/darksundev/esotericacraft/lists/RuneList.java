@@ -5,6 +5,7 @@ import java.util.HashMap;
 import com.darksundev.esotericacraft.runes.Dampen;
 import com.darksundev.esotericacraft.runes.Disintegrate;
 import com.darksundev.esotericacraft.runes.PocketDimension;
+import com.darksundev.esotericacraft.runes.RecallRune;
 import com.darksundev.esotericacraft.runes.Rune;
 import com.darksundev.esotericacraft.runes.RuneManager;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
@@ -32,6 +33,7 @@ public class RuneList
 		RuneManager.registerRune(dampen);
 		RuneManager.registerRune(disintegrate);
 		RuneManager.registerRune(pocketDimension);
+		RuneManager.registerRune(recall);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -164,6 +166,20 @@ public class RuneList
 	 * 		- E E E -
 	 */
 	public static Rune pocketDimension = new PocketDimension();
+
+	/*
+	 * 	-: Ignored
+	 * 	E: ENCHANTED required
+	 * 	O: MUNDANE required
+	 *  +: Redstone dust required
+	 * 
+	 * 		- + + + -
+	 * 		+ - + - +
+	 * 		+ + E + +
+	 * 		+ - + - +
+	 * 		- + + + -
+	 */
+	public static Rune recall = new RecallRune();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks
