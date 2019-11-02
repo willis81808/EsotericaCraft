@@ -12,6 +12,7 @@ In addition to the mystical runes, this mod introduces a "sleep vote" system (co
 [none]: https://i.imgur.com/rHk2Ifb.png
 [mundane]: https://i.imgur.com/OCVBBV9.png
 [enchanted]: https://i.imgur.com/PnYfGrY.png
+[other]: https://i.imgur.com/fyNVr4W.png
 
 ## Tiers
 
@@ -63,3 +64,14 @@ Lists of each block type can be found here:
 | ![tier][none]  | ![tier][enchanted]  | ![tier][enchanted] | ![tier][enchanted] | ![tier][none] |
 
 > Note: This rune requires that all its Enchanted blocks be either Diamond or Emerald blocks, and all Mundane blocks used in the pattern must be the same block.
+
+### Recall:
+
+| ![tier][none] | ![tier][other] | ![tier][other] | ![tier][other] | ![tier][none] |
+| --- | --- | --- | --- | --- |
+| ![tier][other]  | ![tier][none]  | ![tier][other] | ![tier][none] | ![tier][other] |
+| ![tier][other]  | ![tier][other]  | ![tier][enchanted] | ![tier][other] | ![tier][other] |
+| ![tier][other]  | ![tier][none]  | ![tier][other] | ![tier][none] | ![tier][other] |
+| ![tier][none]  | ![tier][other]  | ![tier][other] | ![tier][other] | ![tier][none] |
+
+> Note: Center enchanted block MUST be a Redstone Block. The rest must be Redstone Dust/Wire.
