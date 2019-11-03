@@ -31,7 +31,7 @@ public class PlayerHeadManager
 		// check for sweeping edge diamond axe
 		ItemStack item = ((PlayerEntity)event.getSource().getImmediateSource()).getHeldItemMainhand();
 		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(item);
-		if (item.getItem() == Items.DIAMOND_AXE && enchantments != null && enchantments.containsKey(Enchantments.SWEEPING))
+		if (item.getItem() == Items.DIAMOND_AXE && enchantments != null && enchantments.containsKey(Enchantments.SHARPNESS))
 		{
 			// create head
 			ItemStack head = new ItemStack(Blocks.PLAYER_HEAD, 1);
