@@ -75,6 +75,7 @@ public class RecallRune extends Rune implements IItemEffect
 
 		// remove redstone block
 		worldIn.removeBlock(pos, false);
+		worldIn.notifyBlockUpdate(pos, Blocks.REDSTONE_BLOCK.getDefaultState(), Blocks.AIR.getDefaultState(), 3);
 		
 		// save cast position and dimension
 		addData(item.getOrCreateTag(), worldIn.dimension.getType(), pos, player.getHeldItemOffhand().getItem() == ItemList.runing_staff);
