@@ -135,9 +135,6 @@ public class RuneManager
 		BlockState[][] area = new BlockState[5][5];
 		area[2][2] = block;
 
-		// log block clicked
-		EsotericaCraft.logger.info(block.getBlock().getTranslationKey());
-		
 		// get area
 		for (int x = -2; x <= 2; x++)
 		{
