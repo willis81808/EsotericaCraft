@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:yellow_dye"
+    },
+    {
+      "tag": "esotericacraft:pogos"
+    }
+  ],
+  "result": {
+    "item": "esotericacraft:yellow_pogo_stick"
+  }
+}

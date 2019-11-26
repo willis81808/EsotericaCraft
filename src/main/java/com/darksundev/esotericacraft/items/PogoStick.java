@@ -1,7 +1,5 @@
 package com.darksundev.esotericacraft.items;
 
-import com.darksundev.esotericacraft.lists.ItemList;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -40,8 +38,8 @@ public class PogoStick extends Item
 		PlayerEntity playerIn = (PlayerEntity) entityIn;
 		
 		// check if player is holding a pogo stick in either hand
-		if (playerIn.getHeldItemMainhand().getItem() == ItemList.pogo_stick ||
-			playerIn.getHeldItemOffhand().getItem() == ItemList.pogo_stick)
+		if (playerIn.getHeldItemMainhand().getItem() instanceof PogoStick ||
+			playerIn.getHeldItemOffhand().getItem() instanceof PogoStick)
 		{
 			// update fall distance if falling
 			if (playerIn.fallDistance > 0)

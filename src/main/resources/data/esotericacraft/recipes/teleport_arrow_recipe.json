@@ -1,0 +1,25 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern":
+    [
+        "aaa",
+        "aPa",
+		"aaa"
+    ],
+    "key":
+    {
+        "a":
+		{
+			"item": "minecraft:arrow"
+        },
+		"P":
+		{
+			"item": "esotericacraft:blink_potion"
+		}
+    },
+    "result":
+    {
+        "item": "esotericacraft:teleport_arrow",
+        "count": 8
+    }
+}

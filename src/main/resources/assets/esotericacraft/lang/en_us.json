@@ -1,9 +1,15 @@
 {
+	"block.esotericacraft.stone_path_block": "Stone Path",
+	"block.esotericacraft.auto_rune_caster_block": "Auto Rune Caster",
+	
 	"item.esotericacraft.pogo_stick": "Pogo Stick",
 	"item.esotericacraft.runing_staff": "Runing Staff",
 	"item.esotericacraft.diamond_dust": "Diamond Dust",
 	"item.esotericacraft.garnet": "Garnet",
-	
-	"block.esotericacraft.stone_path_block": "Stone Path",
-	"block.esotericacraft.auto_rune_caster_block": "Auto Rune Caster"
+    "item.esotericacraft.blue_pogo_stick": "Blue Pogo Stick",
+    "item.esotericacraft.yellow_pogo_stick": "Yellow Pogo Stick",
+    "item.esotericacraft.green_pogo_stick": "Green Pogo Stick",
+    "item.esotericacraft.teleport_arrow": "Teleporting Arrow",
+    "item.esotericacraft.blink_potion": "Potion of Blink",
+    "item.esotericacraft.weird_potion": "Weird Potion"
 }

@@ -108,7 +108,7 @@ public class PocketDimension extends Rune
 	    	{
 	    		pos.setPos(pos.getX(), pos.getY()+1, pos.getZ());
 	    	}
-			
+	    	
 			// teleport player to this pocket dimension's parent rune
 			dimensionWorld.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(pos), 1, player.getEntityId());
 			player.teleport(dimensionWorld, pos.getX()+0.5, pos.getY(), pos.getZ()+0.5, player.rotationYaw, player.rotationPitch);

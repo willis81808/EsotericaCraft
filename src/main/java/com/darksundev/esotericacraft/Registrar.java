@@ -5,10 +5,12 @@ import com.darksundev.esotericacraft.dimension.DynamicModDimension;
 import com.darksundev.esotericacraft.lists.BlockList;
 import com.darksundev.esotericacraft.lists.EntityList;
 import com.darksundev.esotericacraft.lists.ItemList;
+import com.darksundev.esotericacraft.lists.PotionList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.gen.ChunkGeneratorType;
 import net.minecraftforge.common.ModDimension;
@@ -42,7 +44,16 @@ public final class Registrar
 	{
 		final IForgeRegistry<EntityType<?>> registry = event.getRegistry();
 		EntityList.registerEntities(registry);
-		
+	}
+	//@SubscribeEvent
+	//public static void registerRecipes(RegistryEvent.Register<IRecipeSerializer<?>> event)
+	//{
+	//	  IRecipeSerializer.CRAFTING_SHAPELESS.
+	//}
+	@SubscribeEvent
+	public static void registerPotions(RegistryEvent.Register<Potion> event)
+	{
+		PotionList.registerPotions(event.getRegistry());
 	}
     @SubscribeEvent
 	public static void onDimensionRegistryEvent(RegistryEvent.Register<ModDimension> event)

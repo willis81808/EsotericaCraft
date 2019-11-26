@@ -17,6 +17,8 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -198,6 +200,10 @@ public abstract class TeleporterBase extends Rune
 	
 	private void teleport(World world, PlayerEntity player, BlockPos from, BlockPos to, TeleportLinkAdapter link)
 	{
+		// play sound
+		player.world.playSound((PlayerEntity)null, from.getX(), from.getY(), from.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+		
+		
 		// find valid area on other side of teleport linkage
 		to = getValidTeleportPoint(world, player, to);
 		
@@ -251,18 +257,18 @@ public abstract class TeleporterBase extends Rune
 			// preload destination
 			final ChunkPos chunkpos = new ChunkPos(to);
 		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
+		    
 		    // teleport player
 		    ((ServerPlayerEntity)player).teleport((ServerWorld)world, to.getX()+.5, to.getY()+.5, to.getZ()+.5, player.rotationYaw, player.prevRotationPitch);
-
-		    /*
-			// player wasn't sneaking- teleport player
-			player.setPositionAndUpdate(
-					to.getX()+.5,
-					to.getY()+.5,
-					to.getZ()+.5
-				);
-			*/
+		    
+		    // hopefully this makes the player's XP reset upon teleporting between dimensions.
+		    // Without this line the player's XP appears to be at 0 levels with 0 progress until
+		    // they get XP again
+		    player.giveExperiencePoints(0);
 		}
+
+		// play sound
+		world.playSound((PlayerEntity)null, to.getX(), to.getY(), to.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 1.0F, 1.0F);
 	}
 
 	protected abstract TeleporterSide getThisSide(TeleportLinkAdapter link);
