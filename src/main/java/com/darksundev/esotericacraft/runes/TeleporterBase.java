@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.EsotericaWorldSave;
+import com.darksundev.esotericacraft.lists.BlockList;
 import com.darksundev.esotericacraft.lists.RuneList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 import com.darksundev.esotericacraft.runes.TeleportLinkAdapter.TeleporterSide;
@@ -44,6 +45,14 @@ public abstract class TeleporterBase extends Rune
 	{
 		super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks);
 		
+		// prevent teleporter from being activated by hand if it is using an Auto Rune Caster
+		if (player != null && pattern[2][2].getBlock() == BlockList.auto_rune_caster_block)
+		{
+			EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
+			EsotericaCraft.messagePlayer(player, "This rune cannot be activated by hand.");
+			return;
+		}
+		
 		StringBuilder strBuilder = new StringBuilder();
 		for (BlockState markerBlock : enchantBlocks)
 		{
@@ -74,7 +83,7 @@ public abstract class TeleporterBase extends Rune
 				if (getOtherSide(link).position != -1)
 				{
 					DimensionType dimension = DimensionType.getById(getOtherSide(link).dimension);
-					if (player.dimension != dimension)
+					if (player != null && player.dimension != dimension)
 					{
 						player.changeDimension(dimension);
 						teleport(DimensionManager.getWorld(world.getServer(), dimension, true, true), player, pos, BlockPos.fromLong(getOtherSide(link).position), link);
@@ -94,7 +103,7 @@ public abstract class TeleporterBase extends Rune
 				if (getOtherSide(link).position != -1)
 				{
 					DimensionType dimension = DimensionType.getById(getOtherSide(link).dimension);
-					if (player.dimension != dimension)
+					if (player != null && player.dimension != dimension)
 					{
 						//player.changeDimension(dimension);
 						teleport(DimensionManager.getWorld(world.getServer(), dimension, true, true), player, pos, BlockPos.fromLong(getOtherSide(link).position), link);
@@ -111,14 +120,12 @@ public abstract class TeleporterBase extends Rune
 				// there is already a linked pair of portals with this signature
 				if (getOtherSide(link).position != -1)
 				{
-					// send warning message to casting player
-					EsotericaCraft.messagePlayer(player,
-							"The Aether resists!",
-							TextFormatting.RED
-						);
-					EsotericaCraft.messagePlayer(player,
-							"This path must already be in use..."
-						);
+					if (player != null)
+					{
+						// send warning message to casting player
+						EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
+						EsotericaCraft.messagePlayer(player, "This path must already be in use...");
+					}
 				}
 				// this signature has been activated in the past, but has not been linked to a second teleporter yet
 				// therefor we overrite the old partial link with a new one
@@ -135,34 +142,25 @@ public abstract class TeleporterBase extends Rune
 	
 	private List<Entity> getEntitiesToTeleport(World world, BlockPos root)
 	{
-		EsotericaCraft.logger.info("Found entities above rune:");
-		AxisAlignedBB searchArea = new AxisAlignedBB(root).expand(2, 2, 2);
+		AxisAlignedBB searchArea = new AxisAlignedBB(root).expand(2, 2, 2).expand(-2, 0, -2);
 		
-		// items
-		List<ItemEntity> items = world.getEntitiesWithinAABB(ItemEntity.class, searchArea);
-		for (ItemEntity i : items)
-			EsotericaCraft.logger.info(i.getDisplayName().getFormattedText());
+		// get all valid mobs
+		List<LivingEntity> mobs = new ArrayList<LivingEntity>();
+		for (LivingEntity m : world.getEntitiesWithinAABB(LivingEntity.class, searchArea))
+		{
+			boolean acceptable = true;
+			if (m instanceof PlayerEntity)
+			{
+				acceptable = !((PlayerEntity)m).isSneaking();
+			}
+			if (acceptable) mobs.add(m);
+		}
 		
-		// mobs
-		List<LivingEntity> mobs = world.getEntitiesWithinAABB(LivingEntity.class, searchArea);
-		for (LivingEntity m : mobs)
-			EsotericaCraft.logger.info(m.getDisplayName().getFormattedText());
-
-		// minecarts
-		List<AbstractMinecartEntity> minecarts = world.getEntitiesWithinAABB(AbstractMinecartEntity.class, searchArea);
-		for (AbstractMinecartEntity m : minecarts)
-			EsotericaCraft.logger.info(m.getDisplayName().getFormattedText());
-
-		// boats
-		List<BoatEntity> boats = world.getEntitiesWithinAABB(BoatEntity.class, searchArea);
-		for (BoatEntity b : boats)
-			EsotericaCraft.logger.info(b.getDisplayName().getFormattedText());
-		
-		// combine lists into one array
-		List<Entity> all = new ArrayList<Entity>(items);
-		all.addAll(mobs);
-		all.addAll(minecarts);
-		all.addAll(boats);
+		// get all other valid entities
+		List<Entity> all = new ArrayList<Entity>(mobs);
+		all.addAll(world.getEntitiesWithinAABB(ItemEntity.class, searchArea));				// add all items
+		all.addAll(world.getEntitiesWithinAABB(AbstractMinecartEntity.class, searchArea));	// add minecarts
+		all.addAll(world.getEntitiesWithinAABB(BoatEntity.class, searchArea));				// add boats
 		return all;
 	}
 	
@@ -201,7 +199,7 @@ public abstract class TeleporterBase extends Rune
 	private void teleport(World world, PlayerEntity player, BlockPos from, BlockPos to, TeleportLinkAdapter link)
 	{
 		// play sound
-		player.world.playSound((PlayerEntity)null, from.getX(), from.getY(), from.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+		world.playSound((PlayerEntity)null, from.getX(), from.getY(), from.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 1.0F, 1.0F);
 		
 		
 		// find valid area on other side of teleport linkage
@@ -254,21 +252,24 @@ public abstract class TeleporterBase extends Rune
 		}
 		else
 		{
-			// preload destination
-			final ChunkPos chunkpos = new ChunkPos(to);
-		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
-		    
 		    // teleport player
+		    preloadChunk(to, world, player);
 		    ((ServerPlayerEntity)player).teleport((ServerWorld)world, to.getX()+.5, to.getY()+.5, to.getZ()+.5, player.rotationYaw, player.prevRotationPitch);
 		    
-		    // hopefully this makes the player's XP reset upon teleporting between dimensions.
-		    // Without this line the player's XP appears to be at 0 levels with 0 progress until
-		    // they get XP again
+		    // resets the player's XP visualizer upon teleporting between dimensions
 		    player.giveExperiencePoints(0);
 		}
 
 		// play sound
 		world.playSound((PlayerEntity)null, to.getX(), to.getY(), to.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 1.0F, 1.0F);
+	}
+	
+	private static void preloadChunk(BlockPos pos, World world, PlayerEntity player)
+	{
+		// preload chunk containing `pos` and all surrounding chunk in a radius of 1
+		ChunkPos.getAllInBox(new ChunkPos(pos), 1).forEach(chunk -> {
+		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunk, 1, player.getEntityId());
+		});
 	}
 
 	protected abstract TeleporterSide getThisSide(TeleportLinkAdapter link);

@@ -70,7 +70,7 @@ public class PogoStick extends Item
 	{
 		ActionResult<ItemStack> result = super.onItemRightClick(worldIn, playerIn, handIn);
 
-		if (playerIn.onGround && !worldIn.isRemote)
+		if (!worldIn.isRemote() && !playerIn.isSneaking() && playerIn.onGround)
 			Jump(playerIn);
 		
 		return result;

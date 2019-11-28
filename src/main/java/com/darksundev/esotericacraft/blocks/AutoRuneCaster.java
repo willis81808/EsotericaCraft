@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 public class AutoRuneCaster extends Block
 {
 	private boolean isPowered = false;
+	private boolean toggle = false;
 	
 	public AutoRuneCaster()
 	{
@@ -41,9 +42,12 @@ public class AutoRuneCaster extends Block
 		if (isPowered != newPowerStatus)
 		{
 			isPowered = newPowerStatus;
+			toggle = !toggle;
 			
-			if (isPowered)
+			if (isPowered && toggle)
+			{
 				castRune(worldIn, pos);
+			}
 		}
 	}
 	
