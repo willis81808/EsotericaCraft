@@ -40,13 +40,13 @@ public class SoulTrapLite extends Rune implements IItemEffect
 	
 	
 	@Override
-	public void onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern,
-			BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		super.onCast(player, worldIn, pos, pattern, enchantBlocks, mundaneBlocks);
+		if (!super.onCast(player, worldIn, pos, pattern, enchantBlocks, mundaneBlocks))
+			return false;
 		
 		if (!validate(pattern))
-			return;
+			return false;
 		
 		// get staff player used to cast this rune
 		// note: preference given to the staff in the main hand, if the player is holding two
@@ -57,6 +57,8 @@ public class SoulTrapLite extends Rune implements IItemEffect
 		
 		// delete the enchant blocks
 		removeOfferingBlocks(worldIn, pos);
+		
+		return true;
 	}
 
 	private boolean validate(BlockState[][] pattern)
@@ -96,6 +98,11 @@ public class SoulTrapLite extends Rune implements IItemEffect
 	}
 
 	// Interface methods
+	@Override
+	public boolean effectCanStack()
+	{
+		return false;
+	}
 	@Override
 	public String getNBTEffectTag()
 	{

@@ -49,13 +49,14 @@ public class Dampen extends Rune
 	}
 
 	@Override
-	public void onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		super.onCast(player, worldIn, pos, pattern, enchantBlocks, mundaneBlocks);
+		if (!super.onCast(player, worldIn, pos, pattern, enchantBlocks, mundaneBlocks))
+			return false;
 
 		// ensure valid cast
 		if (!isValidCast(player, worldIn, enchantBlocks, mundaneBlocks))
-			return;
+			return false;
 
 		// toggle effect
 		AxisAlignedBB searchArea = new AxisAlignedBB(pos);
@@ -74,6 +75,7 @@ public class Dampen extends Rune
 			{
 				EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
 				EsotericaCraft.messagePlayer(player, "The rune has another master...");
+				return false;
 			}
 		}
 		else
@@ -87,6 +89,8 @@ public class Dampen extends Rune
 			
 			EsotericaCraft.messagePlayer(player, "Rune Enabled");
 		}
+		
+		return true;
 	}
 	
 	private boolean isValidCast(PlayerEntity player, World worldIn, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)

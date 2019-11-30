@@ -1,11 +1,18 @@
 package com.darksundev.esotericacraft.runes;
 
+import java.util.ArrayList;
+
 import com.darksundev.esotericacraft.EsotericaCraft;
+import com.darksundev.esotericacraft.lists.ItemList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 public class Rune
@@ -53,9 +60,58 @@ public class Rune
 	{
 		return pattern;
 	}
-	//public void onCast(ItemUseContext context, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
-	public void onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
+		if (this instanceof IItemEffect)
+		{
+			IItemEffect me = (IItemEffect)this;
+			
+			// check for any rune effect tags
+			// exit if already enchanted garnet found with unstackable enchantment
+			ItemStack item = getEnchantableGarnet(player);
+			CompoundNBT data = item.getTag();
+			if (data != null)
+			{
+				ArrayList<String> keys = new ArrayList<String>(data.keySet());
+				for (int i = 0; i < keys.size(); i++)
+				{
+					if (RuneManager.nbtTagMap.containsKey(keys.get(i)))
+					{
+						EsotericaCraft.logger.info(keys.get(i));
+						EsotericaCraft.logger.info(me.getNBTEffectTag());
+						
+						if (!keys.get(i).equals(me.getNBTEffectTag()))
+						{
+							EsotericaCraft.logger.info("Not equal...?");
+							if (!((IItemEffect)RuneManager.nbtTagMap.get(keys.get(i))).effectCanStack() || !me.effectCanStack())
+							{
+								EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
+								EsotericaCraft.messagePlayer(player, "These enchantments cannot be stacked on the same garnet...");
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		EsotericaCraft.logger.info("Cast Rune: " + name);
+		return true;
+	}
+	private ItemStack getEnchantableGarnet(PlayerEntity player)
+	{
+		Item main = player.getHeldItemMainhand().getItem();
+		Item off = player.getHeldItemOffhand().getItem();
+		
+		if (main == ItemList.runing_staff && off == ItemList.garnet)
+		{
+			return player.getHeldItemOffhand();
+		}
+		else if (off == ItemList.runing_staff && main == ItemList.garnet)
+		{
+			return player.getHeldItemMainhand();
+		}
+
+		return null;
 	}
 }

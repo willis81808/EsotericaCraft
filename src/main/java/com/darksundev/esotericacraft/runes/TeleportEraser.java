@@ -39,12 +39,12 @@ public class TeleportEraser extends Rune
 		});
 	}
 	@Override
-	public void onCast(PlayerEntity player, World w, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World w, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
 		// player didn't use redstone in corners, not a valid rune.
 		// abort cast
 		if (!isValid(player, pattern))
-			return;
+			return false;
 		
 		// if we got here the cast was valid, attempt to teleport
 		super.onCast(player, w, pos, pattern, enchantBlocks, mundaneBlocks);
@@ -84,6 +84,8 @@ public class TeleportEraser extends Rune
 			w.notifyBlockUpdate(pos.south().east(), Blocks.REDSTONE_TORCH.getDefaultState(), Blocks.AIR.getDefaultState(), 1);
 			ShowSuccessMessage(player);
 		}
+		
+		return true;
 	}
 	
 	private boolean isValid(PlayerEntity player, BlockState[][] pattern)

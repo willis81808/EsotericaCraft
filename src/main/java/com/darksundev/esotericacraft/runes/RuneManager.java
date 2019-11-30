@@ -2,6 +2,7 @@ package com.darksundev.esotericacraft.runes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Stream;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.lists.RuneList;
@@ -45,7 +46,7 @@ public class RuneManager
 	public static void onPlayerRightClickBlock(RightClickItem event)
 	{
 		// server side only
-		if (event.getWorld().isRemote)
+		if (event.getWorld().isRemote || event.getItemStack() != event.getPlayer().getHeldItemMainhand())
 			return;		
 		
 		// attempt to cast rune effects with currently held items
@@ -71,13 +72,12 @@ public class RuneManager
 		// check for any rune effect tags
 		if (data != null)
 		{
-			for (String key : data.keySet())
+			ArrayList<String> keys = new ArrayList<String>(data.keySet());
+			for (int i = 0; i < keys.size(); i++)
 			{
-				if (nbtTagMap.containsKey(key))
+				if (nbtTagMap.containsKey(keys.get(i)))
 				{
-					// execute rune effect, and pass this item to the event
-					((IItemEffect)nbtTagMap.get(key)).doRightClickBlockEffect(event, item);;
-					executed = true;
+					((IItemEffect)nbtTagMap.get(keys.get(i))).doRightClickBlockEffect(event, item);
 				}
 			}
 		}
@@ -92,13 +92,12 @@ public class RuneManager
 		// check for any rune effect tags
 		if (data != null)
 		{
-			for (String key : data.keySet())
+			ArrayList<String> keys = new ArrayList<String>(data.keySet());
+			for (int i = 0; i < keys.size(); i++)
 			{
-				if (nbtTagMap.containsKey(key))
+				if (nbtTagMap.containsKey(keys.get(i)))
 				{
-					// execute rune effect, and pass this item to the event
-					((IItemEffect)nbtTagMap.get(key)).doAttackEntityEffect(event, item);;
-					executed = true;
+					((IItemEffect)nbtTagMap.get(keys.get(i))).doAttackEntityEffect(event, item);;
 				}
 			}
 		}
@@ -156,6 +155,10 @@ public class RuneManager
 		}
 		
 		return area;
+	}
+	public static Stream<BlockPos> getAreaRadius(BlockPos pos, int x, int y, int z)
+	{
+		return BlockPos.MutableBlockPos.getAllInBox(pos.getX() - x, pos.getY() - y, pos.getZ() - z, pos.getX() + x, pos.getY() + y, pos.getZ() + z);
 	}
 	
 	public static RuneMaterial getMaterial(String blockId)

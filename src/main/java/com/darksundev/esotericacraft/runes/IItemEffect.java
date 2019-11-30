@@ -9,6 +9,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem
 public interface IItemEffect
 {
 	String getNBTEffectTag();
+	boolean effectCanStack();
 	void doRightClickBlockEffect(RightClickItem event, ItemStack item);
 	void doAttackEntityEffect(AttackEntityEvent event, ItemStack item);
 	void addData(CompoundNBT nbt, Object... args);

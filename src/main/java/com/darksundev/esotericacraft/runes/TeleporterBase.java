@@ -41,16 +41,17 @@ public abstract class TeleporterBase extends Rune
 	
 
 	@Override
-	public void onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks);
+		if (!super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks))
+			return false;
 		
 		// prevent teleporter from being activated by hand if it is using an Auto Rune Caster
 		if (player != null && pattern[2][2].getBlock() == BlockList.auto_rune_caster_block)
 		{
 			EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
 			EsotericaCraft.messagePlayer(player, "This rune cannot be activated by hand.");
-			return;
+			return false;
 		}
 		
 		StringBuilder strBuilder = new StringBuilder();
@@ -138,6 +139,8 @@ public abstract class TeleporterBase extends Rune
 		
 		// backup rune data
 		EsotericaWorldSave.backupData();
+		
+		return true;
 	}
 	
 	private List<Entity> getEntitiesToTeleport(World world, BlockPos root)

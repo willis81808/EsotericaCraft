@@ -68,15 +68,16 @@ public class SoulTrap extends Rune
 	}
 
 	@Override
-	public void onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks);
+		if (!super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks))
+			return false;
 		
 		// allow only emerald to be used
 		Set<BlockState> enchant = new HashSet<BlockState>();
 		Collections.addAll(enchant, enchantBlocks);
 		if (enchant.size() != 1 || enchant.iterator().next().getBlock() != Blocks.EMERALD_BLOCK)
-			return;
+			return false;
 		
 		// attempt to find entities above the rune
 		List<LivingEntity> entities = getMobs(world, pos);
@@ -89,7 +90,7 @@ public class SoulTrap extends Rune
 
 			EntityType<?> type = chosenOne.getType();
 			boolean invalid = (type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
-			if (invalid) return;
+			if (invalid) return false;
 			
 			ItemStack item = new ItemStack(getEgg(chosenOne.getType()));	
 			if (item != null || item.getItem() != Items.AIR)
@@ -106,6 +107,8 @@ public class SoulTrap extends Rune
 				rollConsumeBlocks(world, pos);
 			}
 		}
+		
+		return true;
 	}
 	
 	private static void rollConsumeBlocks(World world, BlockPos pos)

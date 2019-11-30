@@ -54,12 +54,12 @@ public class WaypointPortal extends Rune
 	}
 
 	@Override
-	public void onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World world, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
 		// player didn't use redstone in corners, not a valid rune.
 		// abort cast
 		if (!isValid(player, pattern))
-			return;
+			return false;
 		
 		// if we got here the cast was valid, attempt to teleport
 		super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks);
@@ -106,6 +106,8 @@ public class WaypointPortal extends Rune
 				ShowMissingSignatureErrorMessage(player);
 			}
 		}
+		
+		return true;
 	}
 	private void simpleTeleport(World world, PlayerEntity player, BlockPos from, BlockPos to)
 	{

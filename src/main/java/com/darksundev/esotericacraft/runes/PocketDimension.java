@@ -116,7 +116,7 @@ public class PocketDimension extends Rune
 	}
 	
 	@Override
-	public void onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
 		// construct pocket dimension name from position and dimension of this rune
 		String dimensionId = String.format("%d_%d", worldIn.dimension.getType().getId(), pos.toLong());
@@ -126,7 +126,7 @@ public class PocketDimension extends Rune
 			boolean valid = checkValid(worldIn, pos, pattern, enchantBlocks);
 			if (!valid)
 			{
-				return;
+				return false;
 			}
 			else
 			{
@@ -146,6 +146,8 @@ public class PocketDimension extends Rune
 		ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
 		dimensionWorld.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(teleportDestination), 1, player.getEntityId());
 		serverPlayer.teleport(dimensionWorld, teleportDestination.getX()+.5, teleportDestination.getY(), teleportDestination.getZ()+.5, player.rotationYaw, player.rotationPitch);
+			
+		return true;
 	}
 	
 	private void convertOfferingBlocks(World world, BlockPos position, BlockState[][] pattern)

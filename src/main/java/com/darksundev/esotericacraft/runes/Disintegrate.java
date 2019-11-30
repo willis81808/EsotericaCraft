@@ -15,6 +15,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
@@ -55,55 +57,51 @@ public class Disintegrate extends Rune implements IItemEffect
 	}
 
 	@Override
-	public void onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
+	public boolean onCast(PlayerEntity player, World worldIn, BlockPos pos, BlockState[][] pattern, BlockState[] enchantBlocks, BlockState[] mundaneBlocks)
 	{
-		super.onCast(player, worldIn, pos, pattern, enchantBlocks, mundaneBlocks);
+		if (!super.onCast(player, worldIn, pos, pattern, enchantBlocks, mundaneBlocks))
+			return false;
 
 		// look for an enchantable garnet in caster's hand
 		ItemStack garnet = getEnchantableGarnet(player);
 		if (garnet == null)
 		{
+			EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
 			EsotericaCraft.messagePlayer(player, "No enchantable garnet found...");
-			return;
+			return false;
 		}
 		
 		// enchant garnet
 		int strength = getStrength(enchantBlocks);
 		if (strength > 0)
 		{
-			EsotericaCraft.messagePlayer(player, "Zzzap! Energy crackles from the rune and is drawn into the garnet", TextFormatting.RED);
+			worldIn.playSound((PlayerEntity)null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER, SoundCategory.PLAYERS, 1.0F, 1.0F);
 			addData(garnet.getOrCreateTag(), strength);
-			worldIn.removeBlock(pos.north().north(), false);
-			worldIn.removeBlock(pos.north().east(), false);
-			worldIn.removeBlock(pos.north().west(), false);
-			worldIn.removeBlock(pos.east().east(), false);
-			worldIn.removeBlock(pos.west().west(), false);
-			worldIn.removeBlock(pos.south().east(), false);
-			worldIn.removeBlock(pos.south().west(), false);
-			worldIn.removeBlock(pos.south().south(), false);
-
-			worldIn.notifyBlockUpdate(pos.north().north(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.north().east(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.north().west(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.east().east(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.west().west(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.south().east(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.south().west(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
-			worldIn.notifyBlockUpdate(pos.south().south(), enchantBlocks[0], Blocks.AIR.getDefaultState(), 1);
+			
+			removeBlock(worldIn, pos.north().north(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.north().east(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.north().west(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.east().east(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.west().west(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.south().east(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.south().west(), enchantBlocks[0]);
+			removeBlock(worldIn, pos.south().south(), enchantBlocks[0]);
 		}
 		else 
 		{
-			// send warning message to casting player
-			EsotericaCraft.messagePlayer(player,
-					"The Aether resists!",
-					TextFormatting.RED
-				);
-			EsotericaCraft.messagePlayer(player,
-					"Either your rune is impure, your offering is not valuable enough, or both!"
-				);
+			EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
+			EsotericaCraft.messagePlayer(player, "Either your rune is impure, your offering is not valuable enough, or both!");
 		}
+		
+		return true;
 	}
 
+	private void removeBlock(World world, BlockPos pos, BlockState old)
+	{
+		world.destroyBlock(pos, false);
+		world.notifyBlockUpdate(pos, old, Blocks.AIR.getDefaultState(), 3);
+	}
+	
 	private int getStrength(BlockState[] enchantBlocks)
 	{
 		HashSet<BlockState> names = new HashSet<BlockState>();
@@ -112,11 +110,11 @@ public class Disintegrate extends Rune implements IItemEffect
 		if (names.size() == 1)
 		{
 			Block b = enchantBlocks[0].getBlock();
-			if (Blocks.EMERALD_BLOCK == b)
+			if (Blocks.DIAMOND_BLOCK == b)
 			{
 				return 4;
 			}
-			else if (Blocks.DIAMOND_BLOCK == b)
+			else if (Blocks.EMERALD_BLOCK == b)
 			{
 				return 3;
 			}
@@ -169,6 +167,11 @@ public class Disintegrate extends Rune implements IItemEffect
 		}
 	}
 	
+	@Override
+	public boolean effectCanStack()
+	{
+		return false;
+	}
 	@Override
 	public String getNBTEffectTag()
 	{
