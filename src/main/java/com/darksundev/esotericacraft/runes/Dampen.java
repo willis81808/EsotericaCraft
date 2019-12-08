@@ -192,13 +192,13 @@ public class Dampen extends Rune
 			staff.setTag(data);
 		}
 	}
-	private boolean isLinkedTo(PlayerEntity player, BlockPos runePos)
+	public static boolean isLinkedTo(PlayerEntity player, BlockPos runePos)
 	{
 		// OP override
 		if (ModOverrideCommand.hasOverridePermission(player))
 			return true;
 		
-		ItemStack staff = player.getHeldItemMainhand();
+		ItemStack staff = (player.getHeldItemMainhand().getItem() == ItemList.runing_staff) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
 		if (staff.getItem() != ItemList.runing_staff)
 		{
 			staff = player.getHeldItemOffhand();
