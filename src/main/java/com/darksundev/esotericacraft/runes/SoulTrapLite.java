@@ -3,7 +3,6 @@ package com.darksundev.esotericacraft.runes;
 import java.util.HashSet;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
-import com.darksundev.esotericacraft.lists.ItemList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
@@ -50,10 +49,11 @@ public class SoulTrapLite extends Rune implements IItemEffect
 		
 		// get staff player used to cast this rune
 		// note: preference given to the staff in the main hand, if the player is holding two
-		ItemStack staff = (player.getHeldItemMainhand().getItem() == ItemList.runing_staff) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
-		
-		// add charge to staff
-		addData(staff.getOrCreateTag(), 1);
+		//ItemStack staff = (player.getHeldItemMainhand().getItem() == ItemList.runing_staff) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
+
+		ItemStack garnet = getEnchantableGarnet(player);
+		// add charge to garnet
+		addData(garnet.getOrCreateTag(), 1);
 		
 		// delete the enchant blocks
 		removeOfferingBlocks(worldIn, pos);
@@ -104,6 +104,11 @@ public class SoulTrapLite extends Rune implements IItemEffect
 		return false;
 	}
 	@Override
+	public boolean requireGarnet()
+	{
+		return true;
+	}
+	@Override
 	public String getNBTEffectTag()
 	{
 		return NBT_TAG;
@@ -118,13 +123,13 @@ public class SoulTrapLite extends Rune implements IItemEffect
 	{
 		// only apply to mobs
 		EntityType<?> type = event.getTarget().getType();
-		boolean invalid = (type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
+		boolean invalid = (type == EntityType.IRON_GOLEM || type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
 		if (invalid) return;
 		
 		// convert entity into egg
 		Entity entity = event.getTarget();
 		World world = entity.world;
-		ItemStack egg = new ItemStack(SoulTrap.getEgg(type));	
+		ItemStack egg = new ItemStack(SoulTrap.getEgg(type));
 		if (egg != null || egg.getItem() != Items.AIR)
 		{
 			// spawn item in world

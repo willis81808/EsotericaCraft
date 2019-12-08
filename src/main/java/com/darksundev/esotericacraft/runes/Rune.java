@@ -69,6 +69,12 @@ public class Rune
 			// check for any rune effect tags
 			// exit if already enchanted garnet found with unstackable enchantment
 			ItemStack item = getEnchantableGarnet(player);
+			if (item == null && me.requireGarnet())
+			{
+				EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
+				EsotericaCraft.messagePlayer(player, "You must hold a garnet to receive your enchantment!");
+				return false;
+			}
 			CompoundNBT data = item.getTag();
 			if (data != null)
 			{
@@ -98,7 +104,7 @@ public class Rune
 		EsotericaCraft.logger.info("Cast Rune: " + name);
 		return true;
 	}
-	private ItemStack getEnchantableGarnet(PlayerEntity player)
+	protected ItemStack getEnchantableGarnet(PlayerEntity player)
 	{
 		Item main = player.getHeldItemMainhand().getItem();
 		Item off = player.getHeldItemOffhand().getItem();

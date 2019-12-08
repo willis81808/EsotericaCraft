@@ -15,7 +15,6 @@ import net.minecraft.block.pattern.BlockPatternBuilder;
 import net.minecraft.block.pattern.BlockStateMatcher;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ParticleTypes;
@@ -138,27 +137,16 @@ public class RecallRune extends Rune implements IItemEffect
         		 .where('.', CachedBlockInfo.hasState(IS_NONE_TIER))
         		 .build();
 	}
-	private ItemStack getEnchantableGarnet(PlayerEntity player)
-	{
-		Item main = player.getHeldItemMainhand().getItem();
-		Item off = player.getHeldItemOffhand().getItem();
-		
-		if (main == ItemList.runing_staff && off == ItemList.garnet)
-		{
-			return player.getHeldItemOffhand();
-		}
-		else if (off == ItemList.runing_staff && main == ItemList.garnet)
-		{
-			return player.getHeldItemMainhand();
-		}
-
-		return null;
-	}
 	
 	@Override
 	public boolean effectCanStack()
 	{
 		return false;
+	}
+	@Override
+	public boolean requireGarnet()
+	{
+		return true;
 	}
 	@Override
 	public String getNBTEffectTag() { return NBT_TAG; }
@@ -241,6 +229,8 @@ public class RecallRune extends Rune implements IItemEffect
 	    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
 	    // teleport player
 	    ((ServerPlayerEntity)player).teleport((ServerWorld)world, to.getX()+.5, to.getY()+.5, to.getZ()+.5, player.rotationYaw, player.prevRotationPitch);
+
+	    player.giveExperiencePoints(0);
 	    
 	    world.playSound(null, to, SoundEvents.ENTITY_ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
 	}

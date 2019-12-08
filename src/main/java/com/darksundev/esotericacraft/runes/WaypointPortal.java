@@ -156,6 +156,8 @@ public class WaypointPortal extends Rune
 						to.getY()+.5,
 						to.getZ()+.5
 					);
+				if (entity instanceof PlayerEntity) 
+				    player.giveExperiencePoints(0);
 			}
 		}
 		else
@@ -166,6 +168,7 @@ public class WaypointPortal extends Rune
 		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunkpos, 1, player.getEntityId());
 		    // teleport player
 		    ((ServerPlayerEntity)player).teleport((ServerWorld)world, to.getX()+.5, to.getY()+.5, to.getZ()+.5, player.rotationYaw, player.prevRotationPitch);
+		    player.giveExperiencePoints(0);
 		    /*
 			player.setPositionAndUpdate(
 					to.getX()+.5,

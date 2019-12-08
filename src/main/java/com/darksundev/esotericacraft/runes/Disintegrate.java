@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
-import com.darksundev.esotericacraft.lists.ItemList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.Block;
@@ -12,7 +11,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.SoundCategory;
@@ -130,22 +128,6 @@ public class Disintegrate extends Rune implements IItemEffect
 		
 		return 0;
 	}
-	private ItemStack getEnchantableGarnet(PlayerEntity player)
-	{
-		Item main = player.getHeldItemMainhand().getItem();
-		Item off = player.getHeldItemOffhand().getItem();
-		
-		if (main == ItemList.runing_staff && off == ItemList.garnet)
-		{
-			return player.getHeldItemOffhand();
-		}
-		else if (off == ItemList.runing_staff && main == ItemList.garnet)
-		{
-			return player.getHeldItemMainhand();
-		}
-
-		return null;
-	}
 	private Vec3d getTargetPoint(PlayerEntity player, World world)
 	{
 		// get look direction, and range
@@ -171,6 +153,11 @@ public class Disintegrate extends Rune implements IItemEffect
 	public boolean effectCanStack()
 	{
 		return false;
+	}
+	@Override
+	public boolean requireGarnet()
+	{
+		return true;
 	}
 	@Override
 	public String getNBTEffectTag()
