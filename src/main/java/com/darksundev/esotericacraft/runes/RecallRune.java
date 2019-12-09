@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
-import com.darksundev.esotericacraft.lists.ItemList;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 
 import net.minecraft.block.BlockState;
@@ -88,7 +87,7 @@ public class RecallRune extends Rune implements IItemEffect
 		destroyOffering(worldIn, pos);
 		
 		// save cast position and dimension
-		addData(item.getOrCreateTag(), worldIn.dimension.getType(), pos, player.getHeldItemOffhand().getItem() == ItemList.runing_staff);
+		addData(item.getOrCreateTag(), worldIn.dimension.getType(), pos);
 		
 		return true;
 	}
@@ -157,12 +156,6 @@ public class RecallRune extends Rune implements IItemEffect
 	{
 		// deserialize data
 		CompoundNBT data = item.getTag();
-		int value = data.getInt(getNBTEffectTag());
-		if (value == 1)
-		{
-			data.putInt(getNBTEffectTag(), 0);
-			return;
-		}
 		BlockPos pos = BlockPos.fromLong(data.getLong(getNBTEffectTag()+"_pos"));
 		DimensionType dimension = DimensionType.getById(data.getInt(getNBTEffectTag()+"_dimension"));
 		
@@ -189,8 +182,7 @@ public class RecallRune extends Rune implements IItemEffect
 	@Override
 	public void addData(CompoundNBT nbt, Object... args)
 	{
-		boolean mainhand = (boolean) args[2];
-		nbt.putInt(getNBTEffectTag(), mainhand ? 0 : 1);
+		nbt.putInt(getNBTEffectTag(), 1);
 		
 		// serialize dimension
 		DimensionType dimension = (DimensionType) args[0];
