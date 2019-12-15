@@ -1,7 +1,6 @@
 package com.darksundev.esotericacraft.plugins;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -13,7 +12,6 @@ import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,14 +20,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 @EventBusSubscriber(modid = EsotericaCraft.modid)
 public class SleepManager
 {
-	private interface ChangeTimeCommand {
-		public void execute();
-	}
-	
 	private static final Random rng = new Random();
-	private static long ticks = 0;
-	private static LinkedList<ChangeTimeCommand> commands = new LinkedList<ChangeTimeCommand>();
-
+	
 	// TODO: serialize and save this data to a file, preferrably human readable-editable
 	private static final long MORNING = 1000;
 	private static boolean alertsEnabled = true;
@@ -53,17 +45,6 @@ public class SleepManager
 		};
 	
 	/* Minecraft Event Listeners */
-	@SubscribeEvent
-	public static void onServerTick(ServerTickEvent event)
-	{
-		ticks++;
-		
-		if (ticks % 150 == 0 && !commands.isEmpty())
-		{
-			commands.getLast().execute();;
-			commands.removeLast();
-		}
-	}
 	@SubscribeEvent
 	public static void onPlayerSleep(PlayerSleepInBedEvent event)
 	{
@@ -156,7 +137,7 @@ public class SleepManager
 				);
 
 			//schedule a change time command
-			commands.add(() -> {
+			TaskManager.enqueueTask(150, () -> {
 				server.getWorld(DimensionType.OVERWORLD).setDayTime(MORNING);
 				sleeping.clear();
 			});

@@ -7,11 +7,13 @@ import org.apache.logging.log4j.Logger;
 
 import com.darksundev.esotericacraft.commands.BackCommand;
 import com.darksundev.esotericacraft.commands.DimensionCommand;
+import com.darksundev.esotericacraft.commands.ExecuteOnLoginCommand;
 import com.darksundev.esotericacraft.commands.InventoryCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 import com.darksundev.esotericacraft.commands.NoticeCommand;
 import com.darksundev.esotericacraft.commands.OfferingsCommand;
 import com.darksundev.esotericacraft.commands.SleepVoteCommand;
+import com.darksundev.esotericacraft.commands.SmiteCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
@@ -85,6 +87,8 @@ public class EsotericaCraft
     	OfferingsCommand.register(dispatch);
     	DimensionCommand.register(dispatch);
     	BackCommand.register(dispatch);
+    	SmiteCommand.register(dispatch);
+    	ExecuteOnLoginCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)

@@ -45,7 +45,7 @@ public abstract class TeleporterBase extends Rune
 	{
 		if (!super.onCast(player, world, pos, pattern, enchantBlocks, mundaneBlocks))
 			return false;
-		
+
 		// prevent teleporter from being activated by hand if it is using an Auto Rune Caster
 		if (player != null && pattern[2][2].getBlock() == BlockList.auto_rune_caster_block)
 		{
@@ -96,9 +96,10 @@ public abstract class TeleporterBase extends Rune
 				}
 			}
 			// this rune has already been linked
-			else if (getThisSide(link).position == pos.toLong() ||
-					getThisSide(link).position == pos.up().toLong() ||
-					getThisSide(link).position == pos.down().toLong())
+			//else if (getThisSide(link).position == pos.toLong() ||
+			//		getThisSide(link).position == pos.up().toLong() ||
+			//		getThisSide(link).position == pos.down().toLong())
+			else if (getThisSide(link).position == pos.toLong())
 			{
 				// if both sides are linked then teleport player
 				if (getOtherSide(link).position != -1)
@@ -126,6 +127,8 @@ public abstract class TeleporterBase extends Rune
 						// send warning message to casting player
 						EsotericaCraft.messagePlayer(player, "The Aether resists!", TextFormatting.RED);
 						EsotericaCraft.messagePlayer(player, "This path must already be in use...");
+						BlockPos realPosition = BlockPos.fromLong(getThisSide(link).position);
+						EsotericaCraft.logger.info(String.format("Location2: (%d, %d, %d)", realPosition.getX(), realPosition.getY(), realPosition.getZ()));
 					}
 				}
 				// this signature has been activated in the past, but has not been linked to a second teleporter yet
@@ -177,7 +180,7 @@ public abstract class TeleporterBase extends Rune
 			BlockPos next = target.up();
 			BlockState destination1 = world.getBlockState(target);
 			BlockState destination2 = world.getBlockState(next);
-			valid = destination1.isAir(world, target) && destination2.isAir(world, next);
+			valid = !destination1.causesSuffocation(world, target) && !destination2.causesSuffocation(world, next);
 			
 			attempts ++;
 			if (attempts > 10)

@@ -38,20 +38,23 @@ public class RuningStaff extends Item
 			// look for rune in area
 			BlockState[][] area = RuneManager.getArea(world, rootPos);
 			RuneCast cast = RuneManager.getRune(area);
+			BlockPos pos = context.getPos();
 			
 			// try looking above selected area if first try didn't work
 			// (this covers a situation where the player hasn't filled in the center
 			// of the rune, and has to select the block below the center)
 			if (cast.getRune() == null)
 			{
-				area = RuneManager.getArea(world, rootPos.up());
+				pos = rootPos.up();
+				area = RuneManager.getArea(world, pos);
 				cast = RuneManager.getRune(area);
 			}
 			// this covers the situation where the top of the rune is obstructed and the
 			// player has to click the block above the middle
 			if (cast.getRune() == null)
 			{
-				area = RuneManager.getArea(world, rootPos.down());
+				pos = rootPos.down();
+				area = RuneManager.getArea(world, pos);
 				cast = RuneManager.getRune(area);
 			}
 			
@@ -60,9 +63,9 @@ public class RuningStaff extends Item
 			{
 				// spawn fire particles on sucessfull cast
 				EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.ALL.noArg(), new RuneCastMessagePacket(rootPos, ParticleType.FIRE));
-				
+				EsotericaCraft.logger.info(String.format("Location1: (%d, %d, %d)", pos.getX(), pos.getY(), pos.getZ()));
 				// cast rune
-				cast.getRune().onCast(context.getPlayer(), context.getWorld(), context.getPos(), area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
+				cast.getRune().onCast(context.getPlayer(), context.getWorld(), pos, area, cast.getEnchantBlocks(), cast.getMundaneBlocks());
 			}
 			else
 			{
