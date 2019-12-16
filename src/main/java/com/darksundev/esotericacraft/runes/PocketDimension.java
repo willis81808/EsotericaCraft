@@ -4,23 +4,25 @@ import java.util.HashSet;
 
 import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.Registrar;
+import com.darksundev.esotericacraft.Utils;
 import com.darksundev.esotericacraft.dimension.DynamicDimension;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
+import com.darksundev.esotericacraft.tags.MyTags;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.server.TicketType;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickEmpty;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickItem;
@@ -51,7 +53,7 @@ public class PocketDimension extends Rune
 			new Tier[]{Tier.NONE, 		Tier.ENCHANTED,	Tier.ENCHANTED,	Tier.ENCHANTED,	Tier.NONE}
 		});
 	}
-
+	
 	@SubscribeEvent
 	public static void onPlayerRightClickBlock(RightClickEmpty event)
 	{
@@ -110,7 +112,8 @@ public class PocketDimension extends Rune
 	    	}
 	    	
 			// teleport player to this pocket dimension's parent rune
-			dimensionWorld.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(pos), 1, player.getEntityId());
+			//dimensionWorld.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(pos), 1, player.getEntityId());
+			TeleporterBase.preloadChunk(pos, dimensionWorld, player);
 			player.teleport(dimensionWorld, pos.getX()+0.5, pos.getY(), pos.getZ()+0.5, player.rotationYaw, player.rotationPitch);
 		}
 	}
@@ -136,7 +139,7 @@ public class PocketDimension extends Rune
 			}
 		}
 		// register or get dimension
-		DimensionType dimension = DynamicDimension.register(dimensionId, Biomes.THE_VOID);
+		DimensionType dimension = DynamicDimension.register(dimensionId, getBiomeType(pattern));
 		
 		// get spawn point in pocket dimension
 		ServerWorld dimensionWorld = worldIn.getServer().getWorld(dimension);
@@ -144,10 +147,67 @@ public class PocketDimension extends Rune
 
 		// teleport player
 		ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
-		dimensionWorld.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(teleportDestination), 1, player.getEntityId());
+		//dimensionWorld.getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(teleportDestination), 1, player.getEntityId());
+		TeleporterBase.preloadChunk(pos, dimensionWorld, player);
 		serverPlayer.teleport(dimensionWorld, teleportDestination.getX()+.5, teleportDestination.getY(), teleportDestination.getZ()+.5, player.rotationYaw, player.rotationPitch);
 			
 		return true;
+	}
+	
+	private static Biome getBiomeType(BlockState[][] pattern)
+	{
+		HashSet<Block> blocks = new HashSet<Block>();
+		blocks.add(pattern[1][2].getBlock());
+		blocks.add(pattern[2][1].getBlock());
+		blocks.add(pattern[2][3].getBlock());
+		blocks.add(pattern[3][2].getBlock());
+		if (blocks.size() == 1)
+		{
+			Block b = blocks.iterator().next();
+			
+			if (BlockTags.PLANKS.contains(b))
+			{
+				return (Biome)Utils.pickRandom(
+						Biomes.FOREST,
+						Biomes.DARK_FOREST,
+						Biomes.BIRCH_FOREST,
+						Biomes.FLOWER_FOREST,
+						Biomes.TALL_BIRCH_FOREST,
+						Biomes.BIRCH_FOREST_HILLS,
+						Biomes.DARK_FOREST_HILLS);
+			}
+			else if (b == Blocks.RED_SANDSTONE)
+			{
+				return (Biome)Utils.pickRandom(
+						Biomes.BADLANDS,
+						Biomes.BADLANDS_PLATEAU,
+						Biomes.ERODED_BADLANDS,
+						Biomes.MODIFIED_BADLANDS_PLATEAU,
+						Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU,
+						Biomes.WOODED_BADLANDS_PLATEAU);
+			}
+			else if (MyTags.SANDSTONE.contains(b))
+			{
+				return (Biome)Utils.pickRandom(
+						Biomes.DESERT,
+						Biomes.DESERT_HILLS,
+						Biomes.DESERT_LAKES);
+			}
+			else if (MyTags.BAMBOO.contains(b))
+			{
+				return (Biome)Utils.pickRandom(
+						Biomes.BAMBOO_JUNGLE,
+						Biomes.BAMBOO_JUNGLE_HILLS);
+			}
+			else if (b == Blocks.COBBLESTONE)
+			{
+				return (Biome)Utils.pickRandom(
+						Biomes.GRAVELLY_MOUNTAINS,
+						Biomes.MODIFIED_GRAVELLY_MOUNTAINS);
+			}
+		}
+		
+		return Biomes.THE_VOID;
 	}
 	
 	private void convertOfferingBlocks(World world, BlockPos position, BlockState[][] pattern)

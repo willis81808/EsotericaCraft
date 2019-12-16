@@ -270,12 +270,9 @@ public abstract class TeleporterBase extends Rune
 		world.playSound((PlayerEntity)null, to.getX(), to.getY(), to.getZ(), SoundEvents.BLOCK_BEACON_POWER_SELECT, SoundCategory.PLAYERS, 1.0F, 1.0F);
 	}
 	
-	private static void preloadChunk(BlockPos pos, World world, PlayerEntity player)
+	public static void preloadChunk(BlockPos pos, World world, PlayerEntity player)
 	{
-		// preload chunk containing `pos` and all surrounding chunk in a radius of 1
-		ChunkPos.getAllInBox(new ChunkPos(pos), 1).forEach(chunk -> {
-		    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, chunk, 1, player.getEntityId());
-		});
+	    ((ServerWorld)world).getChunkProvider().func_217228_a(TicketType.POST_TELEPORT, new ChunkPos(pos), 3, player.getEntityId());
 	}
 
 	protected abstract TeleporterSide getThisSide(TeleportLinkAdapter link);

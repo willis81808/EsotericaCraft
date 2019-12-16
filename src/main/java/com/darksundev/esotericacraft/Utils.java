@@ -18,4 +18,8 @@ public class Utils
 	{
 		return new StringTextComponent(string);
 	}
+	public static Object pickRandom(Object...objects)
+	{
+		return objects[EsotericaCraft.rng.nextInt(objects.length)];
+	}
 }

@@ -217,6 +217,8 @@ public class RuneList
 		new RuneMaterial("block.minecraft.polished_granite",		Tier.MUNDANE),
 		new RuneMaterial("block.minecraft.polished_diorite",		Tier.MUNDANE),
 		new RuneMaterial("block.minecraft.polished_andesite",		Tier.MUNDANE),
+		new RuneMaterial("block.minecraft.bamboo",					Tier.MUNDANE),
+		new RuneMaterial("block.minecraft.bamboo_sapling",			Tier.MUNDANE),
 		
 							/*-------- ENCHANTED --------*/
 		// Misc

@@ -1,5 +1,6 @@
 package com.darksundev.esotericacraft.commands;
 
+import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.dimension.DynamicDimension;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.server.ServerWorld;
@@ -42,8 +44,29 @@ public class DimensionCommand
 	{
 		try
 		{
-			DimensionType dimension = DynamicDimension.register(dimensionId, Biomes.THE_VOID);
+			//Biome b = Biomes.THE_VOID;
+			Biome b = Biomes.THE_VOID;
+			switch (EsotericaCraft.rng.nextInt(6))
+			{
+			case 0:
+				b = Biomes.DESERT_HILLS;
+				break;
+			case 1:
+				b = Biomes.GRAVELLY_MOUNTAINS;
+				break;
+			case 2:
+				b = Biomes.BAMBOO_JUNGLE;
+				break;
+			case 3:
+				b = Biomes.BADLANDS;
+				break;
+			case 4:
+				b = Biomes.FOREST;
+				break;
+			}
+			
 			ServerPlayerEntity player = source.asPlayer();
+			DimensionType dimension = DynamicDimension.register(dimensionId, b);
 			
 			if (source.getWorld().dimension.getType() == DimensionType.OVERWORLD)
 				overworldPos = player.getPosition();
