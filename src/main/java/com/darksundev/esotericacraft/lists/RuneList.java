@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.darksundev.esotericacraft.runes.Dampen;
 import com.darksundev.esotericacraft.runes.Disintegrate;
+import com.darksundev.esotericacraft.runes.ExplorerRune;
 import com.darksundev.esotericacraft.runes.PocketDimension;
 import com.darksundev.esotericacraft.runes.RecallRune;
 import com.darksundev.esotericacraft.runes.Rune;
@@ -34,6 +35,7 @@ public class RuneList
 		RuneManager.registerRune(disintegrate);
 		RuneManager.registerRune(pocketDimension);
 		RuneManager.registerRune(recall);
+		RuneManager.registerRune(explorer);
 	}
 	public static void registerAllRuneMaterials()
 	{
@@ -180,6 +182,19 @@ public class RuneList
 	 * 		- + + + -
 	 */
 	public static Rune recall = new RecallRune();
+	
+	/*
+	 * 	-: Ignored
+	 * 	E: ENCHANTED required
+	 * 	O: MUNDANE required
+	 * 
+	 * 		O - E - O
+	 * 		- - O - -
+	 * 		E O - O E
+	 * 		- - O - -
+	 * 		O - E - O
+	 */
+	public static Rune explorer = new ExplorerRune();
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Rune Component Blocks
