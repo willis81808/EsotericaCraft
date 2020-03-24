@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.darksundev.esotericacraft.commands.BackCommand;
 import com.darksundev.esotericacraft.commands.DimensionCommand;
+import com.darksundev.esotericacraft.commands.ExecuteAfterCommand;
 import com.darksundev.esotericacraft.commands.ExecuteOnLoginCommand;
 import com.darksundev.esotericacraft.commands.InventoryCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
@@ -89,6 +90,7 @@ public class EsotericaCraft
     	BackCommand.register(dispatch);
     	SmiteCommand.register(dispatch);
     	ExecuteOnLoginCommand.register(dispatch);
+    	ExecuteAfterCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)
