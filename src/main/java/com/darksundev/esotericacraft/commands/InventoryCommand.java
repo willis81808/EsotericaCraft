@@ -50,11 +50,13 @@ public class InventoryCommand
 		if (listeners.containsKey(target.getCachedUniqueIdString()) || inventories.containsKey(sender.getCachedUniqueIdString()))
 		{
 			if (sender != target) {
-				closeInventory(source, sender);
-				return openInventory(source, sender, target);
-			}
-			else if (!viewMapping.containsKey(sender) && viewMapping.get(sender) == target) {
-				closeInventory(source, sender);
+				if (!viewMapping.containsKey(sender) && viewMapping.get(sender) == target) {
+					return closeInventory(source, sender);
+				}
+				else {
+					closeInventory(source, sender);
+					return openInventory(source, sender, target);
+				}
 			}
 			source.sendFeedback(Utils.textComponentFromString("You cannot view your own inventory..."), true);
 			return 1;
