@@ -16,6 +16,7 @@ import com.darksundev.esotericacraft.commands.NoticeCommand;
 import com.darksundev.esotericacraft.commands.OfferingsCommand;
 import com.darksundev.esotericacraft.commands.SleepVoteCommand;
 import com.darksundev.esotericacraft.commands.SmiteCommand;
+import com.darksundev.esotericacraft.commands.VanishCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
 import com.darksundev.esotericacraft.core.ServerProxy;
@@ -93,6 +94,7 @@ public class EsotericaCraft
     	ExecuteOnLoginCommand.register(dispatch);
     	ExecuteAfterCommand.register(dispatch);
     	BroadcastCommand.register(dispatch);
+    	VanishCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)
