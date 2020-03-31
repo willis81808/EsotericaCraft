@@ -49,8 +49,8 @@ public class InventoryCommand
 	{
 		if (listeners.containsKey(target.getCachedUniqueIdString()) || inventories.containsKey(sender.getCachedUniqueIdString()))
 		{
-			if (sender != target) {
-				if (!viewMapping.containsKey(sender) && viewMapping.get(sender) == target) {
+			if (sender.getCachedUniqueIdString() != target.getCachedUniqueIdString()) {
+				if (!viewMapping.containsKey(sender) && viewMapping.get(sender).getCachedUniqueIdString() == target.getCachedUniqueIdString()) {
 					return closeInventory(source, sender);
 				}
 				else {
@@ -61,12 +61,16 @@ public class InventoryCommand
 			source.sendFeedback(Utils.textComponentFromString("You cannot view your own inventory..."), true);
 			return 1;
 		}
+		else if (sender.getCachedUniqueIdString() == target.getCachedUniqueIdString()) {
+			source.sendFeedback(Utils.textComponentFromString("You cannot view your own inventory..."), true);
+			return 1;
+		}
 		
 		viewMapping.put(sender, target);
 		
 		// make sender's inventory look like target's
 		inventories.put(sender.getCachedUniqueIdString(), sender.container.getInventory());
-		sender.container.setAll(target.container.getInventory());
+		setInventory(sender, target.container.getInventory());
 
 		// listen for changes to target's inventory & keep admin's view up to date
 		IContainerListener targetListener = new IContainerListener() {
@@ -75,10 +79,8 @@ public class InventoryCommand
 			@Override
 			public void sendAllContents(Container containerToSend, NonNullList<ItemStack> itemsList) { }
 			@Override
-			public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack)
-			{
-				sender.sendSlotContents(target.openContainer, slotInd, stack);
-				sender.container.setAll(target.container.getInventory());
+			public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
+				setInventory(sender, containerToSend.getInventory());
 			}
 		};
 		target.container.addListener(targetListener);
@@ -91,10 +93,8 @@ public class InventoryCommand
 			@Override
 			public void sendAllContents(Container containerToSend, NonNullList<ItemStack> itemsList) { }
 			@Override
-			public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack)
-			{
-				target.sendSlotContents(sender.openContainer, slotInd, stack);
-				target.container.setAll(sender.container.getInventory());
+			public void sendSlotContents(Container containerToSend, int slotInd, ItemStack stack) {
+				setInventory(target, containerToSend.getInventory());
 			}
 		};
 		sender.container.addListener(adminListener);
@@ -120,12 +120,21 @@ public class InventoryCommand
 			listeners.remove(target.getCachedUniqueIdString());
 		}
 	}
+	
+	private static void setInventory(ServerPlayerEntity player, List<ItemStack> items)
+	{
+		player.container.clear();
+		player.openContainer.detectAndSendChanges();
+		for(int i = 0; i < items.size(); ++i)
+		{
+			player.container.getSlot(i).putStack(items.get(i));
+		}
+	}
 	public static void resetInventory(ServerPlayerEntity sender)
 	{
 		String UID = sender.getCachedUniqueIdString();
 		List<ItemStack> inv = inventories.get(UID);
-		//EsotericaCraftPacketHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> { return sender; }), new PlayerInventoryMessagePacket(inv));
-		sender.container.setAll(inv);
+		setInventory(sender, inv);
 		inventories.remove(UID);
 	}
 

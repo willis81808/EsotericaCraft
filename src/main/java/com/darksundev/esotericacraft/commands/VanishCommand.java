@@ -2,7 +2,6 @@ package com.darksundev.esotericacraft.commands;
 
 import java.util.HashSet;
 
-import com.darksundev.esotericacraft.EsotericaCraft;
 import com.mojang.brigadier.CommandDispatcher;
 
 import net.minecraft.command.CommandSource;
@@ -10,12 +9,9 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.TickEvent.Type;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraft.world.server.ChunkManager;
+import net.minecraft.world.server.ServerWorld;
 
-@EventBusSubscriber(modid = EsotericaCraft.modid)
 public class VanishCommand
 {
 	private static HashSet<ServerPlayerEntity> invisiblePlayers = new HashSet<ServerPlayerEntity>();
@@ -35,31 +31,26 @@ public class VanishCommand
 	{
 		if (invisiblePlayers.contains(player))
 		{
+			ChunkManager manager = ((ServerWorld)player.world).getChunkProvider().chunkManager;
+			manager.track(player);
+			for(ChunkManager.EntityTracker tracker : manager.entities.values())
+			{
+				tracker.updateTrackingState(player);
+			}
 			invisiblePlayers.remove(player);
 			source.sendFeedback(new StringTextComponent("You are now visible!").applyTextStyles(TextFormatting.RED, TextFormatting.ITALIC), true);
 		}
 		else
 		{
-			for (ServerPlayerEntity p : source.getServer().getPlayerList().getPlayers())
-			{
-				p.removeTrackingPlayer(player);
-			}
 			invisiblePlayers.add(player);
+			
+			ChunkManager.EntityTracker tracker = player.getServerWorld().getChunkProvider().chunkManager.entities.remove(player.getEntityId());
+			if (tracker != null) {
+				tracker.removeAllTrackers();
+			}
+			
 			source.sendFeedback(new StringTextComponent("You are now vanished!").applyTextStyles(TextFormatting.GREEN, TextFormatting.ITALIC), true);
 		}
 		return 1;
-	}
-
-	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent event)
-	{
-		if (event.type != Type.SERVER)
-			return;
-		
-		EsotericaCraft.logger.info(event.player.getName().toString());
-		for (ServerPlayerEntity p : invisiblePlayers)
-		{
-			event.player.removeTrackingPlayer(p);
-		}
 	}
 }
