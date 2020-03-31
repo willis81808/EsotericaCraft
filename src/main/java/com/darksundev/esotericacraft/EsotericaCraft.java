@@ -10,12 +10,14 @@ import com.darksundev.esotericacraft.commands.BroadcastCommand;
 import com.darksundev.esotericacraft.commands.DimensionCommand;
 import com.darksundev.esotericacraft.commands.ExecuteAfterCommand;
 import com.darksundev.esotericacraft.commands.ExecuteOnLoginCommand;
+import com.darksundev.esotericacraft.commands.HealCommand;
 import com.darksundev.esotericacraft.commands.InventoryCommand;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 import com.darksundev.esotericacraft.commands.NoticeCommand;
 import com.darksundev.esotericacraft.commands.OfferingsCommand;
 import com.darksundev.esotericacraft.commands.SleepVoteCommand;
 import com.darksundev.esotericacraft.commands.SmiteCommand;
+import com.darksundev.esotericacraft.commands.TopCommand;
 import com.darksundev.esotericacraft.commands.VanishCommand;
 import com.darksundev.esotericacraft.core.ClientProxy;
 import com.darksundev.esotericacraft.core.IProxy;
@@ -95,6 +97,8 @@ public class EsotericaCraft
     	ExecuteAfterCommand.register(dispatch);
     	BroadcastCommand.register(dispatch);
     	VanishCommand.register(dispatch);
+    	HealCommand.register(dispatch);
+    	TopCommand.register(dispatch);
     }
 	
 	public static void messagePlayer(PlayerEntity player, String message, TextFormatting... formattings)
