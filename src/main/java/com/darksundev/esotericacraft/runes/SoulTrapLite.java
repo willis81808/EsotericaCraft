@@ -123,7 +123,7 @@ public class SoulTrapLite extends Rune implements IItemEffect
 	{
 		// only apply to mobs
 		EntityType<?> type = event.getTarget().getType();
-		boolean invalid = (type == EntityType.IRON_GOLEM || type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
+		boolean invalid = (event.getTarget() instanceof PlayerEntity || type == EntityType.IRON_GOLEM || type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
 		if (invalid) return;
 		
 		// convert entity into egg
@@ -137,6 +137,7 @@ public class SoulTrapLite extends Rune implements IItemEffect
 			world.addEntity(new ItemEntity(world, p.getX(), p.getY() + .5, p.getZ(), egg));
 			entity.remove();
 			EsotericaCraft.logger.info(String.format("Converting %s to an egg", entity.getDisplayName().getFormattedText()));
+			event.setCanceled(true);
 
 			// remove charge from staff
 			int usesRemaining = item.getTag().getInt(getNBTEffectTag());

@@ -66,7 +66,7 @@ public class DimensionCommand
 			}
 			
 			ServerPlayerEntity player = source.asPlayer();
-			DimensionType dimension = DynamicDimension.register(dimensionId, b);
+			DimensionType dimension = DynamicDimension.register(dimensionId, b, false);
 			
 			if (source.getWorld().dimension.getType() == DimensionType.OVERWORLD)
 				overworldPos = player.getPosition();

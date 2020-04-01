@@ -2,6 +2,8 @@ package com.darksundev.esotericacraft;
 
 import com.darksundev.esotericacraft.dimension.DynamicDimension;
 import com.darksundev.esotericacraft.dimension.DynamicModDimension;
+import com.darksundev.esotericacraft.dimension.DynamicVoidDimension;
+import com.darksundev.esotericacraft.dimension.DynamicVoidModDimension;
 import com.darksundev.esotericacraft.lists.BlockList;
 import com.darksundev.esotericacraft.lists.EntityList;
 import com.darksundev.esotericacraft.lists.ItemList;
@@ -26,6 +28,8 @@ public final class Registrar
 {
     @ObjectHolder(DynamicDimension.resourceLocation)
     public static final DynamicModDimension DYNAMIC_DIMENSION = null;
+    @ObjectHolder(DynamicVoidDimension.resourceLocation)
+    public static final DynamicVoidModDimension DYNAMIC_VOID_DIMENSION = null;
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event)
@@ -59,6 +63,7 @@ public final class Registrar
 	public static void onDimensionRegistryEvent(RegistryEvent.Register<ModDimension> event)
 	{
 		event.getRegistry().register(new DynamicModDimension().setRegistryName(DynamicDimension.resourceLocation));
+		event.getRegistry().register(new DynamicVoidModDimension().setRegistryName(DynamicVoidDimension.resourceLocation));
 	}
     @SubscribeEvent
 	public static void onDimensionChunkGeneratorRegistryEvent(RegistryEvent.Register<ChunkGeneratorType<?,?>> event)

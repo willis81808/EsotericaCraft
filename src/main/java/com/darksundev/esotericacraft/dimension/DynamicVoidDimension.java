@@ -14,9 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
@@ -33,33 +31,35 @@ import net.minecraftforge.common.DimensionManager;
  * A huge thank you to Commoble for taking the time to document this:
  * https://gist.github.com/Commoble/ac7d7b57c9cbbfcae310c4ab110c3cc0
  */
-public class DynamicDimension extends Dimension
+public class DynamicVoidDimension extends Dimension
 {
 	public static final ChunkGeneratorType<VoidDimensionSettings, VoidChunkGenerator> VOID_CHUNK_GENERATOR = new ChunkGeneratorType<VoidDimensionSettings, VoidChunkGenerator>(VoidChunkGenerator::new, true, VoidDimensionSettings::new);
 	public static final ChunkGeneratorType<EndGenerationSettings, FloatingIslandChunkGenerator> ISLAND_CHUNK_GENERATOR = new ChunkGeneratorType<EndGenerationSettings, FloatingIslandChunkGenerator>(FloatingIslandChunkGenerator::new, true, EndGenerationSettings::new);
-	public static final String resourceLocation = EsotericaCraft.modid+":"+"dynamicdimension";
+	public static final String resourceLocation = EsotericaCraft.modid+":"+"dynamicvoiddimension";
 	public static final BlockPos origin = new BlockPos(0, 130, 0);
 	private static final Random rng = new Random();
 	
-	public Biome biomeType;
 	public boolean floatingIslands;
 	
-	@SuppressWarnings("deprecation")
-	public DynamicDimension(World worldIn, DimensionType typeIn)
+	public DynamicVoidDimension(World worldIn, DimensionType typeIn)
 	{
 		super(worldIn, typeIn);
-		int biome = typeIn.getData().getInt(0);
-		
-		biomeType = Registry.BIOME.getByValue(biome);
-		floatingIslands = typeIn.getData().getBoolean(4);
-		EsotericaCraft.logger.info("Dimension Biome: " + biomeType.getRegistryName().toString());
+		floatingIslands = typeIn.getData().getBoolean(0);
 	}
 
 	@Override
 	public ChunkGenerator<?> createChunkGenerator()
 	{
-		SingleBiomeProviderSettings singlebiomeprovidersettings = BiomeProviderType.FIXED.createSettings().setBiome(biomeType);
-		return ChunkGeneratorType.SURFACE.create(this.world, BiomeProviderType.FIXED.create(singlebiomeprovidersettings), ChunkGeneratorType.SURFACE.createSettings());
+		if (floatingIslands)
+		{
+			SingleBiomeProviderSettings singlebiomeprovidersettings = BiomeProviderType.FIXED.createSettings().setBiome(Biomes.THE_VOID);
+	        return ISLAND_CHUNK_GENERATOR.create(this.world, BiomeProviderType.FIXED.create(singlebiomeprovidersettings), ISLAND_CHUNK_GENERATOR.createSettings());
+		}
+		else
+		{
+			SingleBiomeProviderSettings singlebiomeprovidersettings = BiomeProviderType.FIXED.createSettings().setBiome(Biomes.THE_VOID);
+	        return VOID_CHUNK_GENERATOR.create(this.world, BiomeProviderType.FIXED.create(singlebiomeprovidersettings), VOID_CHUNK_GENERATOR.createSettings());
+		}
 	}
 	
     @Nullable
@@ -121,62 +121,30 @@ public class DynamicDimension extends Dimension
 	}
 
 	@Override
-	public float calculateCelestialAngle(long worldTime, float partialTicks) {
-		if (this.biomeType == Biomes.THE_VOID || this.biomeType == Biomes.THE_END)
-		{
-			return 0;
-		}
-		else
-		{
-		    double d0 = MathHelper.frac((double)worldTime / 24000.0D - 0.25D);
-		    double d1 = 0.5D - Math.cos(d0 * Math.PI) / 2.0D;
-		    return (float)(d0 * 2.0D + d1) / 3.0F;
-		}
-	}
+	public float calculateCelestialAngle(long worldTime, float partialTicks) { return 0; }
 	@Override
 	public Vec3d getFogColor(float celestialAngle, float partialTicks) {
-		if (this.biomeType == Biomes.THE_VOID)
-		{
-			return new Vec3d(10/255d, 10/255d, 10/255d);
-		}
-		else
-		{
-			float f = MathHelper.cos(celestialAngle * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
-			f = MathHelper.clamp(f, 0.0F, 1.0F);
-			float f1 = 1.0F;
-			float f2 = 0.84705883F;
-			float f3 = 0.7529412F;
-			f1 = f1 * (f * 0.91F + 0.09F);
-			f2 = f2 * (f * 0.94F + 0.06F);
-			f3 = f3 * (f * 0.94F + 0.06F);
-			return new Vec3d((double)f1, (double)f2, (double)f3);
-		}
+		return new Vec3d(10/255d, 10/255d, 10/255d);
 	}
 	@Override
 	public boolean isSurfaceWorld()
 	{
-		if (biomeType == Biomes.THE_VOID || biomeType == Biomes.THE_END)
-			return false;
-		return true;
+		return false;
 	}
 	@Override
 	public boolean hasSkyLight()
 	{
-		if (biomeType == Biomes.THE_VOID || biomeType == Biomes.THE_END)
-			return false;
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean canRespawnHere()
 	{
-		//return this.biomeType != Biomes.THE_VOID;
 		return false;
 	}
 	@Override
 	public boolean doesXZShowFog(int x, int z) { return false; }
 
-	@SuppressWarnings("deprecation")
 	public static DimensionType register(String id, Biome biome, boolean floatingIslands)
 	{
 		ResourceLocation rs = Registrar.location(id);
@@ -187,13 +155,11 @@ public class DynamicDimension extends Dimension
 		}
 		
     	// format data
-		int data = Registry.BIOME.getId(biome);
     	PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-    	buffer.writeInt(data);
     	buffer.writeBoolean(floatingIslands);
     	
     	// register dimension
-        DimensionType dimension = DimensionManager.registerDimension(rs, Registrar.DYNAMIC_DIMENSION, buffer, false);
+        DimensionType dimension = DimensionManager.registerDimension(rs, Registrar.DYNAMIC_VOID_DIMENSION, buffer, false);
         return dimension;
 	}
 }

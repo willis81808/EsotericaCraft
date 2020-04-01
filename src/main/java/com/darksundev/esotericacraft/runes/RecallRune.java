@@ -12,6 +12,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.pattern.BlockPattern;
 import net.minecraft.block.pattern.BlockPatternBuilder;
 import net.minecraft.block.pattern.BlockStateMatcher;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -150,10 +151,19 @@ public class RecallRune extends Rune implements IItemEffect
 	@Override
 	public String getNBTEffectTag() { return NBT_TAG; }
 	@Override
-	public void doAttackEntityEffect(AttackEntityEvent event, ItemStack item) { /* do nothing */ }
+	public void doAttackEntityEffect(AttackEntityEvent event, ItemStack item)
+	{
+		Entity target = event.getTarget();
+		if (target instanceof PlayerEntity)
+		{
+			doRecallEffect(item, event.getEntity().world, (PlayerEntity)target);
+			event.setCanceled(true);
+		}
+	}
 	@Override
 	public void doRightClickBlockEffect(RightClickItem event, ItemStack item)
 	{
+		/*
 		// deserialize data
 		CompoundNBT data = item.getTag();
 		BlockPos pos = BlockPos.fromLong(data.getLong(getNBTEffectTag()+"_pos"));
@@ -176,9 +186,35 @@ public class RecallRune extends Rune implements IItemEffect
 			data.remove(getNBTEffectTag()+"_pos");
 			item.getTag().remove(getNBTEffectTag()+"_charges");
 		}
-		
-		// remove data
+		*/
+		doRecallEffect(item, event.getWorld(), event.getPlayer());
 	}
+	private void doRecallEffect(ItemStack item, World world, PlayerEntity player)
+	{
+		// deserialize data
+		CompoundNBT data = item.getTag();
+		BlockPos pos = BlockPos.fromLong(data.getLong(getNBTEffectTag()+"_pos"));
+		DimensionType dimension = DimensionType.getById(data.getInt(getNBTEffectTag()+"_dimension"));
+		
+
+		int usesRemaining = item.getTag().getInt(getNBTEffectTag()+"_charges");
+		if (usesRemaining > 0)
+		{
+			// teleport
+			teleport(pos, DimensionManager.getWorld(world.getServer(), dimension, true, true), player);
+			item.getTag().putInt(getNBTEffectTag()+"_charges", --usesRemaining);
+		}
+		
+		if (usesRemaining == 0)
+		{
+			// out of usages, remove enchantment data
+			data.remove(getNBTEffectTag());
+			data.remove(getNBTEffectTag()+"_dimension");
+			data.remove(getNBTEffectTag()+"_pos");
+			item.getTag().remove(getNBTEffectTag()+"_charges");
+		}
+	}
+	
 	@Override
 	public void addData(CompoundNBT nbt, Object... args)
 	{

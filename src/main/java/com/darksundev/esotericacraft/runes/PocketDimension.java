@@ -6,6 +6,7 @@ import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.Registrar;
 import com.darksundev.esotericacraft.Utils;
 import com.darksundev.esotericacraft.dimension.DynamicDimension;
+import com.darksundev.esotericacraft.dimension.DynamicVoidDimension;
 import com.darksundev.esotericacraft.runes.RuneManager.Tier;
 import com.darksundev.esotericacraft.tags.MyTags;
 
@@ -139,7 +140,16 @@ public class PocketDimension extends Rune
 			}
 		}
 		// register or get dimension
-		DimensionType dimension = DynamicDimension.register(dimensionId, getBiomeType(pattern));
+		BiomeType type = getBiomeType(pattern);
+		DimensionType dimension;
+		if (type.biome == Biomes.THE_VOID)
+		{
+			dimension = DynamicVoidDimension.register(dimensionId, type.biome, type.floatingIsland);
+		}
+		else
+		{
+			dimension = DynamicDimension.register(dimensionId, type.biome, type.floatingIsland);
+		}
 		
 		// get spawn point in pocket dimension
 		ServerWorld dimensionWorld = worldIn.getServer().getWorld(dimension);
@@ -153,8 +163,16 @@ public class PocketDimension extends Rune
 			
 		return true;
 	}
-	
-	private static Biome getBiomeType(BlockState[][] pattern)
+	private static class BiomeType
+	{
+		public Biome biome;
+		public boolean floatingIsland;
+		public BiomeType(Biome biome, boolean floatingIsland) {
+			this.biome = biome;
+			this.floatingIsland = floatingIsland;
+		}
+	}
+	private static BiomeType getBiomeType(BlockState[][] pattern)
 	{
 		HashSet<Block> blocks = new HashSet<Block>();
 		blocks.add(pattern[1][2].getBlock());
@@ -165,9 +183,11 @@ public class PocketDimension extends Rune
 		{
 			Block b = blocks.iterator().next();
 			
+			BiomeType result = new BiomeType(Biomes.THE_VOID, false);
+			
 			if (BlockTags.PLANKS.contains(b))
 			{
-				return (Biome)Utils.pickRandom(
+				result.biome = (Biome)Utils.pickRandom(
 						Biomes.FOREST,
 						Biomes.DARK_FOREST,
 						Biomes.BIRCH_FOREST,
@@ -178,7 +198,7 @@ public class PocketDimension extends Rune
 			}
 			else if (b == Blocks.RED_SANDSTONE)
 			{
-				return (Biome)Utils.pickRandom(
+				result.biome = (Biome)Utils.pickRandom(
 						Biomes.BADLANDS,
 						Biomes.BADLANDS_PLATEAU,
 						Biomes.ERODED_BADLANDS,
@@ -188,26 +208,33 @@ public class PocketDimension extends Rune
 			}
 			else if (MyTags.SANDSTONE.contains(b))
 			{
-				return (Biome)Utils.pickRandom(
+				result.biome = (Biome)Utils.pickRandom(
 						Biomes.DESERT,
 						Biomes.DESERT_HILLS,
 						Biomes.DESERT_LAKES);
 			}
 			else if (MyTags.BAMBOO.contains(b))
 			{
-				return (Biome)Utils.pickRandom(
+				result.biome = (Biome)Utils.pickRandom(
 						Biomes.BAMBOO_JUNGLE,
 						Biomes.BAMBOO_JUNGLE_HILLS);
 			}
 			else if (b == Blocks.COBBLESTONE)
 			{
-				return (Biome)Utils.pickRandom(
+				result.biome = (Biome)Utils.pickRandom(
 						Biomes.GRAVELLY_MOUNTAINS,
 						Biomes.MODIFIED_GRAVELLY_MOUNTAINS);
 			}
+			else if (b == Blocks.END_STONE)
+			{
+				result.biome = Biomes.THE_VOID;
+				result.floatingIsland = true;
+			}
+			
+			return result;
 		}
 		
-		return Biomes.THE_VOID;
+		return new BiomeType(Biomes.THE_VOID, false);
 	}
 	
 	private void convertOfferingBlocks(World world, BlockPos position, BlockState[][] pattern)

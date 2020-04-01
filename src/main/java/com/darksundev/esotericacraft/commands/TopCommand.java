@@ -3,7 +3,6 @@ package com.darksundev.esotericacraft.commands;
 import com.darksundev.esotericacraft.runes.TeleporterBase;
 import com.mojang.brigadier.CommandDispatcher;
 
-import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -26,7 +25,6 @@ public class TopCommand
 		searching:
 		for (int i = 256; i > 0; i--) {
 			BlockPos lookingAt = new BlockPos(player.posX, i, player.posZ);
-			BlockState state = player.world.getBlockState(lookingAt);
 			if (!player.world.isAirBlock(lookingAt))
 			{
 				if (player.world.isAirBlock(lookingAt.up()))

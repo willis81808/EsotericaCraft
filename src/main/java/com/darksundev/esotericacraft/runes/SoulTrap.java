@@ -89,7 +89,7 @@ public class SoulTrap extends Rune
 			LivingEntity chosenOne = entities.get(0);
 
 			EntityType<?> type = chosenOne.getType();
-			boolean invalid = (type == EntityType.IRON_GOLEM || type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
+			boolean invalid = (chosenOne instanceof PlayerEntity || type == EntityType.IRON_GOLEM || type == EntityType.PILLAGER) || (type == EntityType.ILLUSIONER) || (type == EntityType.EVOKER) || (type == EntityType.SHULKER) || (type == EntityType.TRADER_LLAMA) || (type == EntityType.VEX) || (type == EntityType.VINDICATOR) || (type == EntityType.WANDERING_TRADER) || (type == EntityType.WITHER) || (type == EntityType.RAVAGER) || (type == EntityType.ELDER_GUARDIAN) || (type == EntityType.WITHER);
 			if (invalid) return false;
 			
 			ItemStack item = new ItemStack(getEgg(chosenOne.getType()));	
