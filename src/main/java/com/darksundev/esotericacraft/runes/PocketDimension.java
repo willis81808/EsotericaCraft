@@ -187,14 +187,18 @@ public class PocketDimension extends Rune
 			
 			if (BlockTags.PLANKS.contains(b))
 			{
-				result.biome = (Biome)Utils.pickRandom(
-						Biomes.FOREST,
-						Biomes.DARK_FOREST,
-						Biomes.BIRCH_FOREST,
-						Biomes.FLOWER_FOREST,
-						Biomes.TALL_BIRCH_FOREST,
-						Biomes.BIRCH_FOREST_HILLS,
-						Biomes.DARK_FOREST_HILLS);
+				if (b == Blocks.DARK_OAK_PLANKS)
+					result.biome = (Biome)Utils.pickRandom(Biomes.DARK_FOREST, Biomes.DARK_FOREST);
+				else if (b == Blocks.OAK_PLANKS)
+					result.biome = (Biome)Utils.pickRandom(Biomes.FOREST, Biomes.FOREST, Biomes.PLAINS, Biomes.SUNFLOWER_PLAINS, Biomes.SWAMP, Biomes.SWAMP_HILLS);
+				else if (b == Blocks.BIRCH_PLANKS)
+					result.biome = (Biome)Utils.pickRandom(Biomes.BIRCH_FOREST, Biomes.BIRCH_FOREST_HILLS, Biomes.TALL_BIRCH_FOREST, Biomes.TALL_BIRCH_HILLS);
+				else if (b == Blocks.ACACIA_PLANKS)
+					result.biome = (Biome)Utils.pickRandom(Biomes.SHATTERED_SAVANNA, Biomes.SHATTERED_SAVANNA_PLATEAU, Biomes.SAVANNA, Biomes.SAVANNA_PLATEAU);
+				else if (b == Blocks.SPRUCE_PLANKS)
+					result.biome = (Biome)Utils.pickRandom(Biomes.TAIGA, Biomes.GIANT_SPRUCE_TAIGA, Biomes.GIANT_SPRUCE_TAIGA_HILLS, Biomes.GIANT_TREE_TAIGA, Biomes.GIANT_TREE_TAIGA_HILLS, Biomes.SNOWY_TAIGA, Biomes.SNOWY_TAIGA_HILLS, Biomes.SNOWY_TAIGA_MOUNTAINS, Biomes.TAIGA_HILLS, Biomes.TAIGA_MOUNTAINS);
+				else if (b == Blocks.JUNGLE_PLANKS)
+					result.biome = (Biome)Utils.pickRandom(Biomes.JUNGLE, Biomes.JUNGLE_HILLS, Biomes.BAMBOO_JUNGLE, Biomes.BAMBOO_JUNGLE_HILLS, Biomes.MODIFIED_JUNGLE);
 			}
 			else if (b == Blocks.RED_SANDSTONE)
 			{
@@ -213,12 +217,12 @@ public class PocketDimension extends Rune
 						Biomes.DESERT_HILLS,
 						Biomes.DESERT_LAKES);
 			}
-			else if (MyTags.BAMBOO.contains(b))
-			{
-				result.biome = (Biome)Utils.pickRandom(
-						Biomes.BAMBOO_JUNGLE,
-						Biomes.BAMBOO_JUNGLE_HILLS);
-			}
+			//else if (MyTags.BAMBOO.contains(b))
+			//{
+			//	result.biome = (Biome)Utils.pickRandom(
+			//			Biomes.BAMBOO_JUNGLE,
+			//			Biomes.BAMBOO_JUNGLE_HILLS);
+			//}
 			else if (b == Blocks.COBBLESTONE)
 			{
 				result.biome = (Biome)Utils.pickRandom(
