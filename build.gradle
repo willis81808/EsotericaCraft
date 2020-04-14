@@ -3,9 +3,11 @@ buildscript {
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        maven {url='https://dist.creeper.host/Sponge/maven'}
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -13,9 +15,12 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '4.6_1'
-group = 'com.darksundev.esotericacraft' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'EsotericaCraft'
+//version = '4.6_1'
+//group = 'com.darksundev.esotericacraft' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+//archivesBaseName = 'EsotericaCraft'
+version = "${mod_version}"
+group = "com.darksundev.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "${modid}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -38,6 +43,7 @@ minecraft {
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -51,6 +57,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
@@ -90,6 +97,7 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.14.4-28.1.96'
+    compile 'org.spongepowered:mixin:0.8'
 
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
@@ -121,7 +129,8 @@ jar {
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "MixinConfigs": "EsotericaCraft.mixins.json"
         ])
     }
 }
@@ -146,4 +155,10 @@ publishing {
             url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
+}
+
+apply plugin: 'org.spongepowered.mixin'
+
+mixin {
+    add sourceSets.main, "EsotericaCraft.refmap.json"
 }

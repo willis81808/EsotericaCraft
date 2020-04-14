@@ -3,7 +3,8 @@ loaderVersion="[28,)" #mandatory (28 is current forge version)
 [[mods]] #mandatory
 
 modId="esotericacraft" #mandatory
-version="${4.6_1}" #mandatory
+#version="${4.6_1}" #mandatory
+version="${file.jarVersion}"
 displayName="EsotericaCraft" #mandatory
 
 description='''
