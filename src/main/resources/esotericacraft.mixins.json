@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "esotericacraft.refmap.json",
   "mixins": [
-    "MixinVanillaInventoryCodeHooks"
+  	"MixinPlayerEntity",
+  	"MixinHopperTileEntity"
   ],
   "injectors": {
     "defaultRequire": 1

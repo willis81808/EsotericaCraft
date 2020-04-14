@@ -34,7 +34,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * Chest Shop plugin
  * Shops are protected such that only their owner can open/break them, and no hopper can pull items out of it.
- * (Hopper protection comes from a core modification defined in the "MixinVanillaInventoryCodeHooks" class)
+ * (Hopper protection comes from a core modification defined in the "MixinHopperTileEntity" class)
  * 
  * A sign placed on the side of a chest with the following lines would create a shop
  * owned by "Bird_Person" selling 32 coal in exchange for 1 diamond:

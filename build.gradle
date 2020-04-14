@@ -1,9 +1,9 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://dist.creeper.host/Sponge/maven' }
         jcenter()
         mavenCentral()
-        maven {url='https://dist.creeper.host/Sponge/maven'}
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
@@ -21,13 +21,6 @@ archivesBaseName = "${modid}"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
-repositories{
-    maven {url='https://dist.creeper.host/Sponge/maven'}
-
-    jcenter()
-    mavenCentral()
-}
-
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -44,10 +37,10 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging data for a userdev environment
             //property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            arg "-mixin.config="+archivesBaseName+".mixins.json"
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
@@ -94,6 +87,19 @@ minecraft {
             }
         }
     }
+}
+
+repositories {
+    maven {
+        url = "https://dist.creeper.host/Sponge/maven"
+    }
+
+    maven {
+        name = 'sponge'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -162,7 +168,6 @@ publishing {
 }
 
 apply plugin: 'org.spongepowered.mixin'
-
 mixin {
     add sourceSets.main, "${modid}.refmap.json"
 }
