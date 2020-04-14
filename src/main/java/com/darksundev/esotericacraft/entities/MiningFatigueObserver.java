@@ -82,7 +82,7 @@ public class MiningFatigueObserver extends RuneObserverEntity
 			if (!ModOverrideCommand.hasOverridePermission(p))
 			{
 				// is player within range?
-				if (distanceBetween(p.getPosition(), this.getPosition()) <= RANGE && !Dampen.isLinkedTo(p, this.getPosition()))
+				if (distanceBetween(p.getPosition(), this.getPosition()) <= RANGE && !Dampen.isLinkedTo(p, this))
 				{
 					// apply fatigue	
 					p.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 40, 0));
@@ -154,7 +154,7 @@ public class MiningFatigueObserver extends RuneObserverEntity
 				if (event.getEntity() instanceof PlayerEntity)
 				{
 					PlayerEntity player = (PlayerEntity)event.getEntity();
-					ignore = Dampen.isLinkedTo(player, i.getPosition());
+					ignore = Dampen.isLinkedTo(player, i);
 				}
 				if (!ignore)
 				{
@@ -179,7 +179,7 @@ public class MiningFatigueObserver extends RuneObserverEntity
 			//if (pos.withinDistance(p.getPosition(), RANGE+1))
 			if (distanceBetween(pos, i.getPosition()) <= RANGE)
 			{
-				if (!(player != null && Dampen.isLinkedTo(player, i.getPosition())))
+				if (!(player != null && Dampen.isLinkedTo(player, i)))
 				{
 					event.setCanceled(true);
 					return;

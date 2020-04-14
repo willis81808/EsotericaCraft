@@ -64,9 +64,9 @@ public class Dampen extends Rune
 		if (observers.size() > 0)
 		{
 			// remove existing rune observer
-			if (isLinkedTo(player, observers.get(0).getPosition()))
+			if (isLinkedTo(player, observers.get(0)))
 			{
-				removeLink(player, observers.get(0).getPosition());	//remove ownership data from staff
+				removeLink(player, observers.get(0));	//remove ownership data from staff
 				observers.get(0).remove();
 
 				EsotericaCraft.messagePlayer(player, "Rune Disabled");
@@ -85,7 +85,7 @@ public class Dampen extends Rune
 			worldIn.addEntity(observer);
 			
 			// log rune in new owner's staff
-			linkOwner(player, observer.getPosition());
+			linkOwner(player, observer);
 			
 			EsotericaCraft.messagePlayer(player, "Rune Enabled");
 		}
@@ -125,7 +125,7 @@ public class Dampen extends Rune
 		return true;
 	}
 	
-	private void removeLink(PlayerEntity player, BlockPos runePos)
+	private void removeLink(PlayerEntity player, MiningFatigueObserver observer)
 	{
 		ItemStack staff = player.getHeldItemMainhand();
 		if (staff.getItem() != ItemList.runing_staff)
@@ -143,7 +143,7 @@ public class Dampen extends Rune
 			long[] ownerships = data.getLongArray(NBT_DATA_TAG);
 			
 			// construct new list
-			long pos = runePos.toLong();
+			long pos = observer.getPosition().toLong();
 			List<Long> newData = new ArrayList<Long>();
 			if (ownerships != null && ownerships.length > 0)
 			{
@@ -164,7 +164,7 @@ public class Dampen extends Rune
 			}
 		}
 	}
-	private void linkOwner(PlayerEntity player, BlockPos runePos)
+	private void linkOwner(PlayerEntity player, MiningFatigueObserver observer)
 	{
 		ItemStack staff = player.getHeldItemMainhand();
 		if (staff.getItem() != ItemList.runing_staff)
@@ -187,12 +187,12 @@ public class Dampen extends Rune
 			{
 				ownerships = new long[1];
 			}
-			ownerships[ownerships.length-1] = runePos.toLong();
+			ownerships[ownerships.length-1] = observer.getPosition().toLong();
 			data.putLongArray(NBT_DATA_TAG, ownerships);
 			staff.setTag(data);
 		}
 	}
-	public static boolean isLinkedTo(PlayerEntity player, BlockPos runePos)
+	public static boolean isLinkedTo(PlayerEntity player, MiningFatigueObserver observer)
 	{
 		// OP override
 		if (ModOverrideCommand.hasOverridePermission(player))
@@ -216,7 +216,7 @@ public class Dampen extends Rune
 				for (long l : positions)
 				{
 					BlockPos ownerPos = BlockPos.fromLong(l);
-					if (runePos.equals(ownerPos))
+					if (observer.getPosition().equals(ownerPos))
 					{
 						return true;
 					}

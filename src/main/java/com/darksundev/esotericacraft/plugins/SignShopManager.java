@@ -7,13 +7,16 @@ import com.darksundev.esotericacraft.Utils;
 import com.darksundev.esotericacraft.commands.ModOverrideCommand;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
 import net.minecraft.block.WallSignBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.ChestType;
 import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -21,6 +24,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.Tags.Blocks;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -158,7 +162,6 @@ public class SignShopManager
 									ItemStack goods = new ItemStack(product);
 									goods.setCount(data.give.count);
 									player.addItemStackToInventory(goods);
-									
 								}
 							}
 							else
@@ -177,8 +180,20 @@ public class SignShopManager
 		}
 		else if (Blocks.CHESTS_WOODEN.contains(b.getBlock()))
 		{
+			if (player.isSneaking())
+				return;
+			
 			// is there a sign nearby?
 			SignTileEntity sign = findSign(event.getPos(), w);
+			
+			// check again for double chests
+			if (sign == null && b.get(ChestBlock.TYPE) != ChestType.SINGLE)
+			{
+				Direction dir = ChestBlock.getDirectionToAttached(b);
+				sign = findSign(event.getPos().add(dir.getDirectionVec()), w);
+			}
+			
+			// sign found
 			if (sign != null)
 			{
 				// is the sign a valid shop sign?
@@ -231,6 +246,15 @@ public class SignShopManager
 		{
 			// is there a sign nearby?
 			SignTileEntity sign = findSign(event.getPos(), w);
+
+			// check again for double chests
+			if (sign == null && b.get(ChestBlock.TYPE) != ChestType.SINGLE)
+			{
+				Direction dir = ChestBlock.getDirectionToAttached(b);
+				sign = findSign(event.getPos().add(dir.getDirectionVec()), w);
+			}
+			
+			// sign found
 			if (sign != null)
 			{
 				// is the sign a valid shop sign?
@@ -248,7 +272,54 @@ public class SignShopManager
 		
 		if (!validUse && !ModOverrideCommand.hasOverridePermission(player))
 		{
-			event.setCanceled(true);;
+			event.setCanceled(true);
+		}
+	}
+	@SubscribeEvent
+	public static void onExplosion(ExplosionEvent.Detonate event)
+	{
+		World w = event.getWorld();
+		List<BlockPos> blocks = event.getAffectedBlocks();
+		for (int i = blocks.size() - 1; i >= 0; i--)
+		{
+			BlockState b = w.getBlockState(blocks.get(i));
+
+			// trying to break a chest or wall sign?
+			if (b.getBlock() instanceof WallSignBlock)
+			{
+				// is this a valid shop sign?
+				SignTileEntity sign = (SignTileEntity) w.getTileEntity(blocks.get(i));
+				SignShopData data = new SignShopData(sign.signText);
+				if (data.isValidShop)
+				{
+					EsotericaCraft.messageAllPlayers(w.getServer().getPlayerList(), "Protected shop sign from explosion");
+					blocks.remove(i);
+				}
+			}
+			else if (Blocks.CHESTS_WOODEN.contains(b.getBlock()))
+			{
+				// is there a sign nearby?
+				SignTileEntity sign = findSign(blocks.get(i), w);
+
+				// check again for double chests
+				if (sign == null && b.get(ChestBlock.TYPE) != ChestType.SINGLE)
+				{
+					Direction dir = ChestBlock.getDirectionToAttached(b);
+					sign = findSign(blocks.get(i).add(dir.getDirectionVec()), w);
+				}
+				
+				// sign found
+				if (sign != null)
+				{
+					// is the sign a valid shop sign?
+					SignShopData data = new SignShopData(sign.signText);
+					if (data.isValidShop)
+					{
+						EsotericaCraft.messageAllPlayers(w.getServer().getPlayerList(), "Protected shop chest from explosion");
+						blocks.remove(i);
+					}
+				}
+			}
 		}
 	}
 	
