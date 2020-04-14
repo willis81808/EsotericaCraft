@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.darksundev.esotericacraft.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "esotericacraft.refmap.json",
+  "mixins": [
+    "MixinVanillaInventoryCodeHooks"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}
