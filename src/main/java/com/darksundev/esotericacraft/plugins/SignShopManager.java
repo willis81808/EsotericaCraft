@@ -114,7 +114,7 @@ public class SignShopManager
 					}
 					
 					// attempt to process purchase
-					if (data.owner.equals(player.getDisplayName().getString()))
+					if (data.owner.equals(player.getName().getString()))
 					{
 						// we own this shop
 						EsotericaCraft.messagePlayer(player, "Owner recognized", TextFormatting.GREEN);
@@ -215,7 +215,7 @@ public class SignShopManager
 				if (data.isValidShop)
 				{
 					// is this player the shop owner?
-					if (data.owner.equals(player.getDisplayName().getString()) || ModOverrideCommand.hasOverridePermission(player))
+					if (data.owner.equals(player.getName().getString()) || ModOverrideCommand.hasOverridePermission(player))
 					{
 						event.setUseBlock(Result.ALLOW);
 					}
@@ -250,7 +250,7 @@ public class SignShopManager
 			if (data.isValidShop)
 			{
 				// is this player the shop owner?
-				if (!data.owner.equals(player.getDisplayName().getString()))
+				if (!data.owner.equals(player.getName().getString()))
 				{
 					validUse = false;
 				}
@@ -276,7 +276,7 @@ public class SignShopManager
 				if (data.isValidShop)
 				{
 					// is this player the shop owner?
-					if (!data.owner.equals(player.getDisplayName().getString()))
+					if (!data.owner.equals(player.getName().getString()))
 					{
 						validUse = false;
 					}
@@ -306,7 +306,6 @@ public class SignShopManager
 				SignShopData data = new SignShopData(sign.signText);
 				if (data.isValidShop)
 				{
-					EsotericaCraft.messageAllPlayers(w.getServer().getPlayerList(), "Protected shop sign from explosion");
 					blocks.remove(i);
 				}
 			}
@@ -329,7 +328,6 @@ public class SignShopManager
 					SignShopData data = new SignShopData(sign.signText);
 					if (data.isValidShop)
 					{
-						EsotericaCraft.messageAllPlayers(w.getServer().getPlayerList(), "Protected shop chest from explosion");
 						blocks.remove(i);
 					}
 				}
