@@ -11,6 +11,7 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -167,7 +168,6 @@ publishing {
     }
 }
 
-apply plugin: 'org.spongepowered.mixin'
 mixin {
     add sourceSets.main, "${modid}.refmap.json"
 }

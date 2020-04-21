@@ -50,7 +50,8 @@ public class SignShopManager
 {
 	@SubscribeEvent
 	public static void onPlayerRightClickBlock(RightClickBlock event)
-	{		
+	{
+		
 		// server side only
 		if (event.getWorld().isRemote)
 			return;

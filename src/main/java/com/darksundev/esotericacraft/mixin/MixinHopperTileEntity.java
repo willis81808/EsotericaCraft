@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-import com.darksundev.esotericacraft.EsotericaCraft;
 import com.darksundev.esotericacraft.plugins.SignShopManager;
 import com.darksundev.esotericacraft.plugins.SignShopManager.SignShopData;
 
@@ -46,8 +45,6 @@ public abstract class MixinHopperTileEntity extends LockableLootTileEntity imple
 
 		if (Blocks.CHESTS_WOODEN.contains(above.getBlock()))
 		{
-			EsotericaCraft.logger.info("Chest found");
-			
 			// is there a sign nearby?
 			SignTileEntity sign = SignShopManager.findSign(pos, world);
 
@@ -60,14 +57,11 @@ public abstract class MixinHopperTileEntity extends LockableLootTileEntity imple
 			
 			// sign found
 			if (sign != null)
-			{
-				EsotericaCraft.logger.info("Found Sign");
-				
+			{				
 				// is the sign a valid shop sign?
 				SignShopData data = new SignShopData(sign.signText);
 				if (data.isValidShop)
 				{
-					EsotericaCraft.logger.info("Is Shop");
 					return false;
 				}
 			}

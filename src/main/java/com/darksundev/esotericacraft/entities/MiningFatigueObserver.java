@@ -11,9 +11,10 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
@@ -69,6 +70,8 @@ public class MiningFatigueObserver extends RuneObserverEntity
 	@Override
 	public void observeTick()
 	{
+		return;
+		/*
 		// server side only
 		if (world.isRemote)
 			return;
@@ -87,6 +90,56 @@ public class MiningFatigueObserver extends RuneObserverEntity
 					// apply fatigue	
 					p.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 40, 0));
 				}
+			}
+		}
+		*/
+	}
+	
+	public static void setDampenBossBarVisible(PlayerEntity player, boolean visible)
+	{
+		MinecraftServer server = player.world.getServer();
+		String name = player.getName().getString();
+		String lower = name.toLowerCase();
+		if (visible)
+		{
+			server.getCommandManager().handleCommand(server.getCommandSource(), String.format("/say \"hello\""));
+			server.getCommandManager().handleCommand(server.getCommandSource(), String.format("/bossbar add %s:dampen \"Dampened\"", lower));
+			server.getCommandManager().handleCommand(server.getCommandSource(), String.format("/bossbar set %s:dampen color pink", lower));
+			server.getCommandManager().handleCommand(server.getCommandSource(), String.format("/bossbar set %s:dampen value 100", lower));
+			server.getCommandManager().handleCommand(server.getCommandSource(), String.format("/bossbar set %s:dampen players %s", lower, name));
+		}
+		else
+		{
+			server.getCommandManager().handleCommand(server.getCommandSource(), String.format("/bossbar remove %s:dampen", lower));
+		}
+	}
+	
+	@SubscribeEvent
+	public static void onPlayerTick(PlayerTickEvent event)
+	{
+		// server side only
+		if (event.player.world.isRemote || ModOverrideCommand.hasOverridePermission(event.player))
+			return;
+	
+		for (MiningFatigueObserver i : instances)
+		{
+			// is player within range?
+			if (distanceBetween(event.player.getPosition(), i.getPosition()) <= RANGE)
+			{
+				// apply fatigue
+				if (!Dampen.isLinkedTo(event.player, i))
+				{
+					event.player.addPotionEffect(new EffectInstance(Effects.MINING_FATIGUE, 40, 0));
+				}
+				else
+				{
+					event.player.addPotionEffect(new EffectInstance(Effects.SLOW_FALLING, 40, 0));
+				}
+				//setDampenBossBarVisible(event.player, true);
+			}
+			else
+			{
+				//setDampenBossBarVisible(event.player, false);
 			}
 		}
 	}

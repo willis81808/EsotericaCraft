@@ -173,6 +173,9 @@ public class Dampen extends Rune
 		}
 		if (staff.getItem() == ItemList.runing_staff)
 		{
+			// add owner nbt data as tag to entity
+			observer.addTag(player.getUniqueID().toString());
+			
 			CompoundNBT data = staff.getTag();
 			if (data == null)
 				data = new CompoundNBT();
@@ -196,6 +199,9 @@ public class Dampen extends Rune
 	{
 		// OP override
 		if (ModOverrideCommand.hasOverridePermission(player))
+			return true;
+		
+		if (observer.getTags().contains(player.getUniqueID().toString()))
 			return true;
 		
 		ItemStack staff = (player.getHeldItemMainhand().getItem() == ItemList.runing_staff) ? player.getHeldItemMainhand() : player.getHeldItemOffhand();
